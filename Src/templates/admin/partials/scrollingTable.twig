@@ -1,0 +1,39 @@
+<div id="scrollingTableContainer">
+    <table class="scrollingTable">
+        <thead>
+        <tr>
+            <th colspan="10">
+                {{ title }}
+                {% if insertLink %}
+                    <a class="tableCaptionAction" href="{{ path_for(insertLink.route) }}">{{ insertLink.text }}</a>
+                {% endif %}
+            </th>
+        </tr>
+        {% set break = false %}
+        {% for row in table if not break %}
+            <tr>
+                {% for key in row|keys %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+            {% set break = true %}
+        {% endfor %}
+        </thead>
+        <tbody>
+        {% for row in table %}
+            <tr>
+                {% for key, value in row %}
+                    {% if key == updateColumn %}
+                        {% set primaryKey = value %}
+                        <td><a href="{{ path_for(updateRoute, {"primaryKey": value}) }}" title="update">{{ value }}</a></td>
+                    {% elseif key == 'delete' %}
+                        <td><a href="{{ path_for(value, {"primaryKey": primaryKey}) }}" title="delete">X</a></td>
+                    {% else %}
+                        <td>{{ value }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
