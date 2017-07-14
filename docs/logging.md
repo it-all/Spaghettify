@@ -10,4 +10,4 @@ written to in ErrorHandler::handleError()
 events.log
 written by monolog (slim's container['logger'])
 
-Note that some errors/events are written to both events.log and phpErrors.log (ie, CSRF Check Failure, Too many login attempts failuer).
+Note that some errors/events are written to both events.log and phpErrors.log (ie, CSRF Check Failure, Too many login attempts failure).
