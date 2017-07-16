@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure;
 
 use Slim\Container;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class View
 {
@@ -19,7 +21,7 @@ class View
         return $this->container->{$name};
     }
 
-    public function pageNotFound($request, $response)
+    public function pageNotFound(Request $request, Response $response)
     {
         return $this->view->render(
             $response,

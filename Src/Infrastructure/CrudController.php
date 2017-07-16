@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\DatabaseTableForm;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Form;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class CrudController extends Controller
 {
     protected $model;
     protected $routePrefix;
 
-    public function postInsert($request, $response, $args)
+    public function postInsert(Request $request, Response $response, $args)
     {
         $form = new DatabaseTableForm($this->model);
         $this->setFormInput($request, $form);
@@ -25,7 +25,7 @@ class CrudController extends Controller
         }
     }
 
-    public function putUpdate($request, $response, $args)
+    public function putUpdate(Request $request, Response $response, $args)
     {
         $form = new DatabaseTableForm($this->model);
         $this->setFormInput($request, $form);
@@ -38,12 +38,12 @@ class CrudController extends Controller
         }
     }
 
-    public function getDelete($request, $response, $args)
+    public function getDelete(Request $request, Response $response, $args)
     {
         return $this->delete($response, $args);
     }
 
-    protected function setFormInput($request, DatabaseTableForm $form)
+    protected function setFormInput(Request $request, DatabaseTableForm $form)
     {
         foreach ($form->getFields() as $fieldName => $fieldInfo) {
             $_SESSION['formInput'][$fieldName] = ($request->getParam($fieldName) !== null) ? trim($request->getParam($fieldName)) : '';
@@ -102,7 +102,7 @@ class CrudController extends Controller
         }
     }
 
-    protected function update($response, $args, DatabaseTableForm $form)
+    protected function update(Response $response, $args, DatabaseTableForm $form)
     {
         if (!$this->authorization->checkFunctionality($this->routePrefix.'.update')) {
             throw new \Exception('No permission.');
@@ -146,7 +146,7 @@ class CrudController extends Controller
         }
     }
 
-    protected function delete($response, $args, string $returnColumn = null, bool $sendEmail = false)
+    protected function delete(Response $response, $args, string $returnColumn = null, bool $sendEmail = false)
     {
         if (!$this->authorization->checkFunctionality($this->routePrefix.'.delete')) {
             throw new \Exception('No permission.');

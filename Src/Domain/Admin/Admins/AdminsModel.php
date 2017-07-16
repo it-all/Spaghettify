@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\FormHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 
 class AdminsModel extends DatabaseTableModel
@@ -129,8 +128,12 @@ class AdminsModel extends DatabaseTableModel
      * @return resource
      * @throws \Exception
      */
-    public function updateByPrimaryKey(array $columnValues, $primaryKeyValue, $primaryKeyName = 'id')
+    public function updateByPrimaryKey(array $columnValues, $primaryKeyValue, bool $validatePrimaryKeyValue = false)
     {
+        if ($validatePrimaryKeyValue && !$this->selectForPrimaryKey($primaryKeyValue)) {
+            throw new \Exception("Invalid $primaryKeyName $primaryKeyValue for $this->tableName");
+        }
+
         // todo update role if nec
         $q = new QueryBuilder("UPDATE admins SET name = $1, username = $2", $columnValues['name'], $columnValues['username']);
         $argNum = 3;

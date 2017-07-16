@@ -7,7 +7,7 @@ use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertUpdateBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\UpdateBuilder;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\FormHelper;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 
 class DatabaseTableModel
 {
@@ -27,9 +27,12 @@ class DatabaseTableModel
     private $uniqueColumns;
 
     /**
-     * @var array. the form fields can vary based on whether the action is insert or update, and every page will not use a form, so they are not constructed upon instantiation
+     * @var array. the form fields can vary based on whether the action is insert or update
+     * every page will not use a form, so they are not constructed upon instantiation
      */
     protected $formFields;
+
+    protected $defaultFormFieldValues;
 
     public function __construct(string $tableName)
     {
@@ -169,6 +172,52 @@ class DatabaseTableModel
         return '';
     }
 
+    protected function validateDatabaseActionString(string $databaseAction)
+    {
+        if ($databaseAction != 'insert' && $databaseAction != 'update') {
+            throw new \Exception("databaseAction must be insert or update ".$databaseAction);
+        }
+    }
+
+    /**
+     * conditions for returning false:
+     * - primary column and skip
+     */
+    protected function includeFormFieldForColumn(DatabaseColumnModel $column): bool
+    {
+        if ($column->isPrimaryKey()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** also sets $this->>defaultFormFieldValues */
+    protected function setFormFields(string $databaseAction = 'insert', array $fieldData = null)
+    {
+        $this->validateDatabaseActionString($databaseAction);
+
+        $this->formFields = [];
+        $this->defaultFormFieldValues = [];
+
+        foreach ($this->getColumns() as $column) {
+            if ($this->includeFormFieldForColumn($column)) {
+                $this->formFields[$column->getName()] = DatabaseTableForm::getFieldFromDatabaseColumn($column);
+                $this->defaultFormFieldValues[$column->getName()] = $column->getDefaultValue();
+            }
+        }
+
+        if ($databaseAction == 'update') {
+            // override post method
+            $this->formFields['_METHOD'] = DatabaseTableForm::getPutMethodField();
+        }
+
+        $this->formFields['submit'] = DatabaseTableForm::getSubmitField();
+    }
+
+
+    // getters
+
     /**
      * @param bool $plural if false last character is removed
      * @return string
@@ -181,8 +230,6 @@ class DatabaseTableModel
         }
         return $name;
     }
-
-    // getters
 
     public function getTableName()
     {
@@ -214,5 +261,23 @@ class DatabaseTableModel
         }
 
         return false;
+    }
+
+    public function getFormFields(string $databaseAction = 'insert', array $fieldData = null)
+    {
+        if (!isset($this->formFields)) {
+            $this->setFormFields($databaseAction, $fieldData);
+        }
+
+        return $this->formFields;
+    }
+
+    public function getDefaultFormFieldValues()
+    {
+        if (!isset($this->defaultFormFieldValues)) {
+            throw new \Exception('formFields property not set');
+        }
+
+        return $this->defaultFormFieldValues;
     }
 }

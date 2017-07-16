@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\UserInterface;
+namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
 class Form
 {
@@ -122,8 +122,7 @@ class Form
         return '';
     }
 
-    /** possibly make this a static fn */
-    protected function getSubmitField(string $value = 'Go!', string $name = 'submit')
+    public static function getSubmitField(string $value = 'Go!', string $name = 'submit')
     {
         return [
             'tag' => 'input',
@@ -135,8 +134,7 @@ class Form
         ];
     }
 
-    /** possibly make this a static fn */
-    protected function getPutMethodField()
+    public static function getPutMethodField()
     {
         return [
             'tag' => 'input',
@@ -160,8 +158,7 @@ class Form
         return $rules;
     }
 
-    /** possibly make this a static fn */
-    protected function getSelectField(array &$formField, array $options, $defaultValue)
+    public static function getSelectField(array &$formField, array $options, $defaultValue)
     {
         $formField['tag'] = 'select';
         $formField['options']['-- select --'] = 'disabled';

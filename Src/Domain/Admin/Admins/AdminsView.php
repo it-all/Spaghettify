@@ -5,6 +5,8 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\AdminCrudView;
 use Slim\Container;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class AdminsView extends AdminCrudView
 {
@@ -19,7 +21,7 @@ class AdminsView extends AdminCrudView
      * @param $response
      * @param $args
      */
-    public function index($request, $response, $args)
+    public function index(Request $request, Response $response, $args)
     {
         $this->indexView($response, 'id, name, username');
     }
@@ -31,7 +33,7 @@ class AdminsView extends AdminCrudView
      * @param $args
      * @return mixed
      */
-    public function getUpdate($request, $response, $args)
+    public function getUpdate(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {

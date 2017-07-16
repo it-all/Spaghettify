@@ -31,9 +31,6 @@ class ValidationService
         array $rules
     ): bool
     {
-        // if field is not required and value is empty stop validating this field (unless it is for a confirm rule)
-//            if (!array_key_exists('confirm', $rules[$fieldName]) && !array_key_exists('required', $rules[$fieldName]) && self::isBlankOrNull($fieldValue)) {
-
         // if ruleContext is false do not process
         if ($ruleContext === false) {
             return false;
@@ -152,6 +149,13 @@ class ValidationService
             case 'integer':
                 if (!self::isInteger($fieldValue)) {
                     $this->setError($fieldName, $rule);
+                    return false;
+                }
+                break;
+
+            case 'positiveInteger':
+                if (!self::isInteger($fieldValue) || $fieldValue <= 0) {
+                    $this->setError($fieldName, 'positive integer');
                     return false;
                 }
                 break;

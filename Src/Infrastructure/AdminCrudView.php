@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\DatabaseTableForm;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use Slim\Container;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 abstract class AdminCrudView extends AdminView
 {
@@ -23,17 +25,17 @@ abstract class AdminCrudView extends AdminView
         parent::__construct($container);
     }
 
-    public function index($request, $response, $args)
+    public function index(Request $request, Response $response, $args)
     {
         $this->indexView($response);
     }
 
-    public function getInsert($request, $response, $args)
+    public function getInsert(Request $request, Response $response, $args)
     {
         return $this->insertView($response);
     }
 
-    public function getUpdate($request, $response, $args)
+    public function getUpdate(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
@@ -53,7 +55,7 @@ abstract class AdminCrudView extends AdminView
         return $this->updateView($request, $response, $args, $fieldData);
     }
 
-    protected function indexView($response, string $columns = '*')
+    protected function indexView(Response $response, string $columns = '*')
     {
         if ($results = pg_fetch_all($this->model->select($columns, 'PRIMARYKEY', false))) {
             $numResults = count($results);
@@ -84,9 +86,9 @@ abstract class AdminCrudView extends AdminView
         );
     }
 
-    protected function insertView($response)
+    protected function insertView(Response $response)
     {
-        $form = new DatabaseTableForm($this->model);
+        $form = new DatabaseTableForm($this->model, 'insert');
 
         return $this->view->render(
             $response,
@@ -102,9 +104,9 @@ abstract class AdminCrudView extends AdminView
         );
     }
 
-    protected function updateView($request, $response, $args, $fieldData = null)
+    protected function updateView(Request $request, Response $response, $args, $fieldData = null)
     {
-        $form = new DatabaseTableForm($this->model, $fieldData);
+        $form = new DatabaseTableForm($this->model, 'update', $fieldData);
 
         return $this->view->render(
             $response,

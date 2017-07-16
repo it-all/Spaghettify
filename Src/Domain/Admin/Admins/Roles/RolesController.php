@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Marketing\Testimonials;
+namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
 use It_All\Spaghettify\Src\Infrastructure\CrudController;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class TestimonialsController extends CrudController
+class RolesController extends CrudController
 {
     public function __construct(Container $container)
     {
-        $this->model = new TestimonialsModel();
-        $this->view = new TestimonialsView($container);
-        $this->routePrefix = 'testimonials';
+        $this->model = new RolesModel();
+        $this->view = new RolesView($container);
+        $this->routePrefix = 'roles';
         parent::__construct($container);
     }
 
@@ -27,6 +27,6 @@ class TestimonialsController extends CrudController
      */
     public function getDelete(Request $request, Response $response, $args)
     {
-        return $this->delete($response, $args,'person');
+        return $this->delete($response, $args,'role');
     }
 }

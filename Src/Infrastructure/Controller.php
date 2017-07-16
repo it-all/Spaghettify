@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use Slim\Container;
 
 abstract class Controller

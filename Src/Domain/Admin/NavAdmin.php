@@ -42,13 +42,24 @@ class NavAdmin
                 'minimumPermissions' => $container->authorization->getMinimumPermission('admins.index'),
                 'link' => 'admins.index',
                 'subSections' => [
+
                     'Insert' => [
                         'minimumPermissions' => $container->authorization->getMinimumPermission('admins.insert'),
                         'link' => 'admins.insert',
+                    ],
+
+                    'Roles' => [
+                        'minimumPermissions' => $container->authorization->getMinimumPermission('roles.index'),
+                        'link' => 'roles.index',
+                        'subSections' => [
+                            'Insert' => [
+                            'minimumPermissions' => $container->authorization->getMinimumPermission('roles.insert'),
+                            'link' => 'roles.insert',
+                            ]
+                        ],
                     ]
                 ]
             ]
-
         ];
     }
 

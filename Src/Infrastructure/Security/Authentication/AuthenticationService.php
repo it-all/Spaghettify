@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\FormHelper;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\Utilities\ValidationService;
 
 class AuthenticationService
@@ -104,7 +104,7 @@ class AuthenticationService
 
         foreach ($fieldColumns as $columnName => $fieldInfo) {
             $fieldName = ($fieldInfo['nameOverride']) ?: $columnName;
-            $loginFields[$fieldName] = FormHelper::getFieldFromDatabaseColumn(
+            $loginFields[$fieldName] = DatabaseTableForm::getFieldFromDatabaseColumn(
                 $adminsModel->getColumnByName($columnName),
                 $fieldInfo['labelOverride'],
                 $fieldInfo['inputOverride'],
@@ -115,7 +115,7 @@ class AuthenticationService
             );
         }
 
-        $loginFields['submit'] = FormHelper::getSubmitField();
+        $loginFields['submit'] = DatabaseTableForm::getSubmitField();
 
         return $loginFields;
     }

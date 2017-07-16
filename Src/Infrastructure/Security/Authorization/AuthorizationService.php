@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
+use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\printPreArray;
 use Psr\Log\InvalidArgumentException;
 
@@ -14,7 +15,8 @@ class AuthorizationService
     public function __construct(array $functionalityMinimumPermissions = [])
     {
         $this->functionalityMinimumPermissions = $functionalityMinimumPermissions;
-        $this->roles = ['owner', 'director', 'manager', 'shipper', 'admin', 'store', 'bookkeeper'];
+        $rolesModel = new RolesModel();
+        $this->roles = $rolesModel->getRoles();
     }
 
     public function getMinimumPermission(string $functionality)

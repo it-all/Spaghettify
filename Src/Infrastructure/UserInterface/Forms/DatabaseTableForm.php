@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\UserInterface;
+namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
@@ -11,29 +11,36 @@ class DatabaseTableForm extends Form
     const TEXTAREA_COLS = 50;
     const TEXTAREA_ROWS = 5;
 
-    public function __construct(DatabaseTableModel $databaseTableModel, array $fieldData = null)
+    public function __construct(DatabaseTableModel $databaseTableModel, string $databaseAction = 'insert', array $fieldData = null)
     {
-        $databaseAction = (is_array($fieldData)) ? 'update' : 'insert';
+        // todo, decide whether to use commented code below (and remove code in model), or leave as is
 
-        $fields = [];
-        $defaultValues = [];
+//        $this->validateDatabaseActionString($databaseAction);
+//
+//        $fields = [];
+//        $defaultValues = [];
+//
+//        foreach ($databaseTableModel->getColumns() as $column) {
+//            if ($this->includeFieldForColumn($column, $databaseAction)) {
+//                $fields[$column->getName()] = $this->getFieldFromDatabaseColumn($column);
+//                $defaultValues[$column->getName()] = $column->getDefaultValue();
+//            }
+//        }
+//
+//        if ($databaseAction == 'update') {
+//            // override post method
+//            $fields['_METHOD'] = $this->getPutMethodField();
+//        }
+//
+//        $fields['submit'] = $this->getSubmitField();
+//        parent::__construct($fields);
+//
+//        $fieldValues = ($databaseAction == 'insert') ? $defaultValues : $fieldData;
+//        $this->insertValuesErrors($fieldValues);
 
-        foreach ($databaseTableModel->getColumns() as $column) {
-            if ($this->shouldIncludeFieldForColumn($column, $databaseAction)) {
-                $fields[$column->getName()] = $this->getFieldFromDatabaseColumn($column);
-                $defaultValues[$column->getName()] = $column->getDefaultValue();
-            }
-        }
+        parent::__construct($databaseTableModel->getFormFields($databaseAction, $fieldData));
 
-        if ($databaseAction == 'update') {
-            // override post method
-            $fields['_METHOD'] = $this->getPutMethodField();
-        }
-
-        $fields['submit'] = $this->getSubmitField();
-        parent::__construct($fields);
-
-        $fieldValues = ($databaseAction == 'insert') ? $defaultValues : $fieldData;
+        $fieldValues = ($databaseAction == 'insert') ? $databaseTableModel->getDefaultFormFieldValues() : $fieldData;
         $this->insertValuesErrors($fieldValues);
     }
 
@@ -47,9 +54,8 @@ class DatabaseTableForm extends Form
    /**
      * conditions for returning false:
      * - primary column and skip
-     * - created field for update form
      */
-    protected function shouldIncludeFieldForColumn(DatabaseColumnModel $column, string $databaseAction = 'insert'): bool
+    protected function includeFieldForColumn(DatabaseColumnModel $column): bool
     {
         if ($column->isPrimaryKey()) {
             return false;
@@ -58,16 +64,14 @@ class DatabaseTableForm extends Form
         return true;
     }
 
-    /** possibly make this a static function to call for any db column */
-    protected function getFieldFromDatabaseColumn(
+    public static function getFieldFromDatabaseColumn(
         DatabaseColumnModel $column,
         string $labelOverride = null,
         string $inputTypeOverride = null,
         array $validationOverride = null,
         string $nameOverride = null,
         string $idOverride = null,
-        bool $persist = true,
-        string $valueOverride = null // only for input fields
+        bool $persist = true
     ): array
     {
         $columnName = $column->getName();
@@ -110,14 +114,14 @@ class DatabaseTableForm extends Form
 
             case 'character varying':
                 $formField['tag'] = 'input';
-                $formField['attributes']['type'] = $this->getInputType($inputTypeOverride);
+                $formField['attributes']['type'] = self::getInputType($inputTypeOverride);
                 // must have max defined
                 $formField['attributes']['maxlength'] = $column->getCharacterMaximumLength();
                 $formField['validation']['maxlength'] = $column->getCharacterMaximumLength();
                 break;
 
             case 'USER-DEFINED':
-                $this->getSelectField($formField, $column->getEnumOptions(), $columnDefaultValue);
+                self::getSelectField($formField, $column->getEnumOptions(), $columnDefaultValue);
                 break;
 
             case 'boolean':
@@ -127,23 +131,27 @@ class DatabaseTableForm extends Form
                 $formField['isBoolean'] = true; // throw some column info for help with checking the box
                 break;
 
+            case 'numeric':
+            case 'smallint':
+            case 'bigint':
+            case 'integer':
+                $formField['tag'] = 'input';
+                $formField['attributes']['type'] = 'number';
+                break;
+
             default:
                 $formField['tag'] = 'input';
-                $formField['attributes']['type'] = $this->getInputType($inputTypeOverride);
-        }
-
-        if ($valueOverride !== null) {
-            if ($formField['tag'] == 'input') {
-                $formField['attributes']['value'] = $valueOverride;
-            }
+                $formField['attributes']['type'] = self::getInputType($inputTypeOverride);
         }
 
         $formField['persist'] = $persist;
 
+        // todo - look into field class for flexibility
+//        $field = new Field($formField['tag'], )
         return $formField;
     }
 
-    protected function getInputType(string $inputTypeOverride = null)
+    public static function getInputType(string $inputTypeOverride = null)
     {
         return ($inputTypeOverride) ? $inputTypeOverride : 'text';
     }

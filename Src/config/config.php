@@ -33,7 +33,7 @@ return [
         'emailTo' => ['owner', 'programmer'], // emails must be set in 'emails' section
         'fatalMessage' => 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.',
         'echoDev' => true, // echo on dev servers (note, live server will never echo)
-        'emailDev' => true // email on dev servers (note, live server will always email)
+        'emailDev' => false // email on dev servers (note, live server will always email)
     ],
 
     'emails' => [
@@ -43,14 +43,19 @@ return [
     ],
 
     'adminMinimumPermissions' => [
-        'admins.index' => 'store',
+        'admins.index' => 'manager',
         'admins.insert' => 'director',
         'admins.update' => 'director',
         'admins.delete' => 'director',
-        'testimonials.index' => 'admin',
-        'testimonials.insert' => 'admin',
-        'testimonials.update' => 'admin',
-        'testimonials.delete' => 'admin'
+        'testimonials.index' => 'user',
+        'testimonials.insert' => 'user',
+        'testimonials.update' => 'user',
+        'testimonials.delete' => 'manager',
+        'roles.index' => 'manager',
+        'roles.insert' => 'director',
+        'roles.update' => 'director',
+        'roles.delete' => 'director',
+
     ],
 
     'maxFailedLogins' => 5

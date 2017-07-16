@@ -8,7 +8,7 @@ declare(strict_types=1);
 // -----------------------------------------------------------------------------
 
 // Create initial connection to DB
-$db = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
+$database = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
     $config['database']['name'],
     $config['database']['username'],
     $config['database']['password'],
@@ -17,8 +17,8 @@ $db = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
 );
 
 // Database
-$container['db'] = function($container) use ($db) {
-    return $db;
+$container['database'] = function($container) use ($database) {
+    return $database;
 };
 
 // Authentication

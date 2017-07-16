@@ -94,6 +94,45 @@ $slim->get('/' . $config['dirs']['admin'] . '/admins/delete/{primaryKey}',
     ->setName('admins.delete');
 // end admins
 
+// roles
+$rolesPath = $domainAdminNs.'\Admins\Roles\\';
+$slim->get('/' . $config['dirs']['admin'] . '/roles',
+    $rolesPath . 'RolesView:index')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['roles.index']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('roles.index');
+
+$slim->get('/' . $config['dirs']['admin'] . '/roles/insert',
+    $rolesPath . 'RolesView:getInsert')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['roles.insert']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('roles.insert');
+
+$slim->post('/' . $config['dirs']['admin'] . '/roles/insert',
+    $rolesPath . 'RolesController:postInsert')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['roles.insert']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('roles.post.insert');
+
+$slim->get('/' . $config['dirs']['admin'] . '/roles/{primaryKey}',
+    $rolesPath . 'RolesView:getUpdate')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['roles.update']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('roles.update');
+
+$slim->put('/' . $config['dirs']['admin'] . '/roles/{primaryKey}',
+    $rolesPath . 'RolesController:putUpdate')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['roles.update']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('roles.put.update');
+
+$slim->get('/' . $config['dirs']['admin'] . '/roles/delete/{primaryKey}',
+    $rolesPath . 'RolesController:getDelete')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['roles.delete']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('roles.delete');
+// end roles
+
 // testimonials
 $testimonialsPath = $domainAdminNs . '\Marketing\Testimonials\\';
 

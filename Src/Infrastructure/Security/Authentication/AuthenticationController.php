@@ -4,16 +4,21 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Form;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class AuthenticationController extends Controller
 {
-    function postLogin($request, $response, $args)
+    function postLogin(Request $request, Response $response, $args)
     {
         $_SESSION['formInput'] = $request->getParsedBody();
 
+        $form = new Form($this->authentication->getLoginFields());
+
         if (!$this->validator->validate(
                 $request->getParsedBody(),
-                $this->authentication->getLoginFieldsValidationRules())
+                $form->getValidationRules())
         ) {
             // redisplay the form with input values and error(s)
             $av = new AuthenticationView($this->container);
@@ -52,7 +57,7 @@ class AuthenticationController extends Controller
         return $response->withRedirect($this->router->pathFor('authentication.login'));
     }
 
-    public function getLogout($request, $response)
+    public function getLogout(Request $request, Response $response)
     {
         $this->logger->addInfo($_SESSION['user']['username'].' logged out');
         $this->authentication->logout();
