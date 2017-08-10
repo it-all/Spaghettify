@@ -17,7 +17,10 @@ return [
 
         // Twig Settings
         'view' => [
-            'pathTemplates' => $config['pathTemplates'],
+            'paths' => [
+                $config['pathTemplates'],
+                $config['pathTwigMacros']
+            ],
             'pathCache' => $config['storage']['pathCache'].'twig/',
             'autoReload' => $config['twigAutoReload'],
             'debug' => true

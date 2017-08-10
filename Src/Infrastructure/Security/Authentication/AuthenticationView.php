@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\AdminView;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Form;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\Form;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -16,8 +17,9 @@ class AuthenticationView extends AdminView
             return $response->withRedirect($this->router->pathFor('home'));
         }
 
-        $form = new Form($this->authentication->getLoginFields());
-        $form->insertValuesErrors();
+        $form = $this->authentication->getForm($this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), $this->router->pathFor('authentication.post.login'));
+
+        FormHelper::unsetSessionVars();
 
         // render page
         return $this->view->render(
@@ -25,9 +27,7 @@ class AuthenticationView extends AdminView
             'admin/authentication/login.twig',
             [
                 'title' => '::Login',
-                'focusField' => $this->authentication->getFocusField(),
-                'formFields' => $form->getFields(),
-                'generalFormError' => $form->getGeneralError()
+                'form' => $form
             ]
         );
     }

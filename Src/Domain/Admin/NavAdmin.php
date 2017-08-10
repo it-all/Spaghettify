@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain;
+namespace It_All\Spaghettify\Src\Domain\Admin;
 use It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationService;
 use Slim\Container;
 

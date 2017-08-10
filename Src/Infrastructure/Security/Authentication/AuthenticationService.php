@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
+use It_All\FormFormer\Fields\InputField;
+use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use It_All\Spaghettify\Src\Infrastructure\Utilities\ValidationService;
 
 class AuthenticationService
@@ -79,6 +82,42 @@ class AuthenticationService
     public function logout()
     {
         unset($_SESSION['user']);
+    }
+
+    /** note there should be different validation rules for logging in than creating users.
+     * ie no minlength or character rules on password here
+     */
+    public function getLoginFieldValidationRules(): array
+    {
+        $adminsModel = new AdminsModel();
+
+        $usernameColumn = $adminsModel->getColumnByName('username');
+
+        return [
+            'username' => [
+                'required' => true,
+                'alpha' => true,
+                'maxlength' => $usernameColumn->getCharacterMaximumLength(),
+                'minlength' => '4'
+            ],
+            'password_hash' => [
+                'required' => true
+            ]
+        ];
+    }
+
+    public function getForm(string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $action)
+    {
+        $adminsModel = new AdminsModel();
+
+        $fields = [];
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('username'), true);
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('password_hash'), true, 'Password');
+        $fields[] = FormHelper::getCsrfNameField($csrfNameKey, $csrfNameValue);
+        $fields[] = FormHelper::getCsrfValueField($csrfValueKey, $csrfValueValue);
+        $fields[] = FormHelper::getSubmitField();
+
+        return new Form($fields, ['method' => 'post', 'action' => $action, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
     }
 
     public function getLoginFields(): array

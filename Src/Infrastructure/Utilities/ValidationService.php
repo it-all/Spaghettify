@@ -11,7 +11,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Utilities;
 class ValidationService
 {
     private $errors;
-    private $formInputData;
+    private $inputData;
 
     public function __construct()
     {
@@ -23,7 +23,7 @@ class ValidationService
         return array_key_exists('required', $rules[$fieldName]);
     }
 
-    private function shouldProcessRule(
+    private function willProcessRule(
         string $fieldName,
         $fieldValue,
         string $rule,
@@ -41,21 +41,37 @@ class ValidationService
             return false;
         }
 
+        // if there's an error on the confirm field then do not validate the confirmation
+        if ($rule == 'confirm' && isset($this->errors[$this->getFieldNameToConfirm($fieldName)])) {
+            return false;
+        }
+
         return true;
     }
 
-    public function validate(array $formInputData, array $rules): bool
+    // convention prepends 'confirm_' to the second field for confirmation... remove to find other field to compare with
+    private function getFieldNameToConfirm(string $confirmFieldName): string
+    {
+        if (substr($confirmFieldName, 0, 8) != 'confirm_') {
+            throw new \Exception('Invalid confirm field name '.$confirmFieldName);
+        }
+
+        return substr($confirmFieldName, 8);
+    }
+
+    // note that inputData keys without associated rules will not be validated and will not cause exceptions or errors
+    public function validate(array $inputData, array $rules): bool
     {
         // save for special case where confirming two fields match, ex. password creation confirmation field
-        $this->formInputData = $formInputData;
+        $this->inputData = $inputData;
 
         foreach ($rules as $fieldName => $fieldRules) {
 
-            // check for name of form field found in rules in submitted data set
-            $fieldValue = isset($formInputData[$fieldName]) ? $formInputData[$fieldName] : '';
+            // use empty string instead of null in order to use fns like strlen
+            $fieldValue = isset($this->inputData[$fieldName]) ? $this->inputData[$fieldName] : '';
 
             foreach ($fieldRules as $rule => $ruleContext) {
-                if ($this->shouldProcessRule($fieldName, $fieldValue, $rule, $ruleContext, $rules)) {
+                if ($this->willProcessRule($fieldName, $fieldValue, $rule, $ruleContext, $rules)) {
                     if (!$this->validateRule($fieldName, $fieldValue, $rule, $ruleContext)) {
                         break; // stop validating further rules for this field upon error
                     }
@@ -63,16 +79,12 @@ class ValidationService
             }
         }
 
-        if (!empty($this->errors)) {
-            $_SESSION['validationErrors'] = $this->errors;
-            return false;
-        }
-        return true;
+        return empty($this->errors);
     }
 
     // note regex delimiter must be %.
     // note, do not use fieldName in error message, as the field label may be different and cause confusion
-    private function validateRule(string $fieldName, string $fieldValue, string $rule, $context = null): bool
+    private function validateRule(string $fieldName, $fieldValue, string $rule, $context = null): bool
     {
         // special case, regex ie [a-z]
         if (substr($rule, 0, 1) == '%') {
@@ -119,6 +131,19 @@ class ValidationService
                 }
                 break;
 
+            case 'alpha':
+                if (!filter_var(
+                    $fieldValue,
+                    FILTER_VALIDATE_REGEXP,
+                    array(
+                        "options"=>array("regexp" => "%^[a-zA-ZW]+$%")
+                    )
+                )) {
+                    $this->setError($fieldName, $rule, 'Only letters allowed');
+                    return false;
+                }
+                break;
+
             case 'alphaspace':
                 if (!filter_var(
                     $fieldValue,
@@ -160,29 +185,12 @@ class ValidationService
                 }
                 break;
 
-            case 'date':
-                if (!self::isDbDate($fieldValue)) {
-                    $this->setError($fieldName, $rule);
-                    return false;
-                }
-                break;
-
-            case 'timestamp':
-                if (!self::isDbTimestamp($fieldValue)) {
-                    $this->setError($fieldName, $rule);
-                    return false;
-                }
-                break;
-
             case 'confirm':
-                // if there's already an error on the confirm field then do not validate the confirmation
-                // convention prepends 'confirm_' to the second field for confirmation... remove to find other field to compare with
-
-                $fieldNameToConfirm = trim($fieldName, 'confirm_');
+                $fieldNameToConfirm = $this->getFieldNameToConfirm($fieldName);
                 if (isset($this->errors[$fieldNameToConfirm])) {
                     break;
                 }
-                $fieldValueToConfirm = $this->formInputData[$fieldNameToConfirm];
+                $fieldValueToConfirm = $this->inputData[$fieldNameToConfirm];
 
                 if ($fieldValue !== $fieldValueToConfirm) {
                     $confirmErrorMessage = 'must match';
@@ -208,7 +216,7 @@ class ValidationService
         return $this->errors;
     }
 
-    public function getError(string $fieldName)
+    public function getError(string $fieldName): string
     {
         return (array_key_exists($fieldName, $this->errors)) ? $this->errors[$fieldName] : '';
     }
@@ -216,38 +224,39 @@ class ValidationService
 
     // VALIDATION FUNCTIONS
 
+    public static function isEmail(string $check): bool
+    {
+        return filter_var($check, FILTER_VALIDATE_EMAIL);
+    }
+
     /**
      * Check input for being an integer
      * either type int or the string equivalent of an integer
      * @param $in any type
      * note empty string returns false
-     * note 0 or "0" returns true (as it should - no 0 problem as is mentioned by some sites)
+     * note 0 or "0" returns true with the 0 fix implemented https://www.w3schools.com/php/filter_validate_int.asp
      * note 4.00 returns true but "4.00" returns false
      * @return bool
      */
     public static function isInteger($check): bool
     {
-        return (filter_var($check, FILTER_VALIDATE_INT) === false) ? false : true;
+        return filter_var($check, FILTER_VALIDATE_INT) === 0 || filter_var($check, FILTER_VALIDATE_INT);
     }
 
     public static function isWholeNumber($check): bool
     {
-        return (!self::isInteger($check) || $check < 0) ? false : true;
+        return self::isInteger($check) && $check >= 0;
     }
 
     /**
      * checks if string is blank or null
      * this can be helpful for validating required form fields
      * @param string $check
-     * @param bool $trim
      * @return bool
      */
-    public static function isBlankOrNull($check, bool $trim = true): bool
+    public static function isBlankOrNull($check): bool
     {
-        if ($trim) {
-            $check = trim($check);
-        }
-        return (strlen($check) == 0 || $check === null);
+        return $check === null || strlen($check) == 0;
     }
 
     /**
@@ -256,12 +265,9 @@ class ValidationService
      * @param string $check
      * @return bool
      */
-    public static function isBlankOrZero(string $check, bool $trim = true): bool
+    public static function isBlankOrZero(string $check): bool
     {
-        if ($trim) {
-            $check = trim($check);
-        }
-        return (strlen($check) == 0 || $check === '0');
+        return strlen($check) == 0 || $check === '0';
     }
 
     /**
@@ -271,106 +277,23 @@ class ValidationService
      */
     public static function isPositiveInteger(string $check): bool
     {
-        return (self::isInteger($check) && $check > 0);
+        return self::isInteger($check) && $check > 0;
     }
 
 
     public static function isNumericPositive($check): bool
     {
-        if (!is_numeric($check) || $check <= 0) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param string $check
-     * @return bool
-     * format YYYY-mm-dd
-     */
-    public static function isDbDate(string $check): bool
-    {
-        if (strlen($check) != 10) {
-            return false;
-        }
-        if (substr($check, 4, 1) != "-" || substr($check, 7, 1) != "-") {
-            return false;
-        }
-        // if all zeros not ok
-        if ($check == '0000-00-00') {
-            return false;
-        }
-        $yr = substr($check, 0, 4);
-        $mo = substr($check, 5, 2);
-        $dy = substr($check, 8, 2);
-        if (substr($yr, 0, 2) != '20') {
-            return false;
-        }
-        if ($mo > 12 || !is_numeric($mo) || (substr($mo, 0, 1) != '0' && substr($mo, 0, 1) != '1')) {
-            return false;
-        }
-        if ($dy > 31 || !is_numeric($dy) || (substr($mo, 0, 1) != '0' && substr($mo, 0, 1) != '1')) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @param $dbDate has already been verified to be isDbDate()
-     * @return bool
-     */
-    public static function isDbDateInPast(string $dbDate):bool
-    {
-        return self::dbDateCompare($dbDate) < 0;
+        return is_numeric($check) && $check > 0;
     }
 
     public static function isDigit($check)
     {
-        if (strlen($check) != 1 || !self::isInteger($check)) {
-            return false;
-        }
-        return true;
-    }
-
-    public static function isTwoCharNumber($check, $max = 99, $leadingZeroOk = true): bool
-    {
-        if (strlen($check) != 2) {
-            return false;
-        }
-        if (!self::isDigit(substr($check, 0, 1)) || !self::isDigit(substr($check, 1))) {
-            return false;
-        }
-        if (!$leadingZeroOk && substr($check, 0, 1) == '0') {
-            return false;
-        }
-        $checkInt = (int)$check;
-        if ($checkInt > $max) {
-            return false;
-        }
-        return true;
-    }
-
-    public static function isDbMilitaryHours($check): bool
-    {
-        // 00 - 23
-        return self::isTwoCharNumber($check, 23);
-    }
-
-    public static function isMinutes($check): bool
-    {
-        // 00 - 59
-        return self::isTwoCharNumber($check, 59);
-    }
-
-    public static function isSeconds($check): bool
-    {
-        // 00 - 59
-        return self::isMinutes($check);
+        return strlen($check) == 1 && self::isInteger($check);
     }
 
     /**
      * @param $d1
-     * @param $d2 if null compare to today
+     * @param $d2 if null compare d1 to today
      * d1, d2 already verified to be isDbDate()
      * @return int
      */
@@ -390,46 +313,6 @@ class ValidationService
     public static function convertDateMktime($dbDate): int
     {
         return mktime(0, 0, 0, substr($dbDate, 5, 2), substr($dbDate, 8, 2), substr($dbDate, 0, 4));
-    }
-
-    public static function isDbTimestamp($check): bool
-    {
-        if (!self::isDbDate(substr($check, 0, 10))) {
-            return false;
-        }
-        // remainder of string like  10:08:16.717238
-        if (substr($check, 10, 1) != ' ') {
-            return false;
-        }
-        $timeParts = explode(":", substr($check, 11));
-        // ok without seconds
-        if (count($timeParts) != 2 && count($timeParts) != 3) {
-            return false;
-        }
-        foreach ($timeParts as $index => $timePart) {
-            if ($index == 0) {
-                if (!self::isDbMilitaryHours($timePart)) {
-                    return false;
-                }
-            } elseif ($index == 1) {
-                if (!self::isMinutes($timePart)) {
-                    return false;
-                }
-            } else {
-                if (!self::isSeconds(substr($timePart, 0, 2))) {
-                    return false;
-                }
-                if (strlen($timePart) > 2 && !is_numeric(substr($timePart, 2))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public static function isEmail(string $check): bool
-    {
-        return filter_var($check, FILTER_VALIDATE_EMAIL);
     }
 
     // END VALIDATION FUNCTIONS

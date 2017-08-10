@@ -5,6 +5,8 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\Form;
 
 class AdminsModel extends DatabaseTableModel
 {
@@ -73,7 +75,7 @@ class AdminsModel extends DatabaseTableModel
             $confirmPasswordHashFieldValidation = array_merge($passwordHashFieldValidation, ['confirm' => true]);
 
             // override post method
-            $this->formFields['_METHOD'] = FormHelper::getPutMethodField();
+            $this->formFields['_METHOD'] = Form::getPutMethodField();
         }
 
         foreach ($this->getColumns() as $databaseColumnModel) {
@@ -92,7 +94,7 @@ class AdminsModel extends DatabaseTableModel
                     $validationOverride = $passwordHashFieldValidation;
                 }
 
-                $this->formFields[$name] = FormHelper::getFieldFromDatabaseColumn(
+                $this->formFields[$name] = DatabaseTableForm::getFieldFromDatabaseColumn(
                     $databaseColumnModel,
                     $labelOverride,
                     $inputTypeOverride,
@@ -105,7 +107,7 @@ class AdminsModel extends DatabaseTableModel
             }
         }
 
-        $this->formFields['submit'] = FormHelper::getSubmitField();
+        $this->formFields['submit'] = Form::getSubmitField();
 
         $this->setPersistPasswords();
     }

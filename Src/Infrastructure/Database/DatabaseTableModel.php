@@ -193,7 +193,7 @@ class DatabaseTableModel
     }
 
     /** also sets $this->>defaultFormFieldValues */
-    protected function setFormFields(string $databaseAction = 'insert', array $fieldData = null)
+    protected function setFormFields(string $databaseAction = 'insert')
     {
         $this->validateDatabaseActionString($databaseAction);
 

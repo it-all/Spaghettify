@@ -28,6 +28,7 @@ return [
     ],
 
     'pathTemplates' => APP_ROOT . 'templates/',
+    'pathTwigMacros' => APP_ROOT . '../vendor/it-all/form-former/src/twigMacros',
 
     'errors' => [
         'emailTo' => ['owner', 'programmer'], // emails must be set in 'emails' section
@@ -58,5 +59,5 @@ return [
 
     ],
 
-    'maxFailedLogins' => 5
+    'maxFailedLogins' => 500
 ];

@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
+use It_All\FormFormer\Fields\InputField;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 
-class DatabaseTableForm extends Form
+class DatabaseTableForm
 {
     const TEXTAREA_COLS = 50;
     const TEXTAREA_ROWS = 5;
@@ -66,93 +67,92 @@ class DatabaseTableForm extends Form
 
     public static function getFieldFromDatabaseColumn(
         DatabaseColumnModel $column,
-        string $labelOverride = null,
-        string $inputTypeOverride = null,
-        array $validationOverride = null,
-        string $nameOverride = null,
-        string $idOverride = null,
-        bool $persist = true
-    ): array
+        bool $addRequiredAttribute = false,
+        string $labelOverride = '',
+        string $inputTypeOverride = '',
+        string $nameOverride = '',
+        string $idOverride = ''
+    )
     {
         $columnName = $column->getName();
         $columnDefaultValue = $column->getDefaultValue();
 
         // set label
         if ($inputTypeOverride == 'hidden') {
-            $label = null;
-        } elseif ($labelOverride !== null) {
+            $label = '';
+        } elseif (strlen($labelOverride) > 0) {
             $label = $labelOverride;
         } else {
             $label = ucwords(str_replace('_', ' ', $columnName));
         }
 
-        $formField = [
+        $field = [
             'label' => $label,
             'attributes' => [
                 'name' => ($nameOverride) ? $nameOverride : $columnName,
                 'id' => ($idOverride) ? $idOverride : $columnName
-            ],
-            'validation' => (is_array($validationOverride)) ? $validationOverride : $column->getValidation()
+            ]
         ];
+        if ($addRequiredAttribute) {
+            $field['attributes']['required'] = 'required';
+        }
 
         // the rest of $formField is derived in the switch statement
         switch ($column->getType()) {
 
             case 'text':
-                $formField['tag'] = 'textarea';
-                $formField['attributes']['cols'] = self::TEXTAREA_COLS;
-                $formField['attributes']['rows'] = self::TEXTAREA_ROWS;
+                $field['tag'] = 'textarea';
+                $field['attributes']['cols'] = self::TEXTAREA_COLS;
+                $field['attributes']['rows'] = self::TEXTAREA_ROWS;
                 break;
 
             // input fields of various types
 
             case 'date':
-                $formField['tag'] = 'input';
-                $formField['attributes']['type'] = 'date';
+                $field['tag'] = 'input';
+                $field['attributes']['type'] = 'date';
                 break;
 
 
             case 'character varying':
-                $formField['tag'] = 'input';
-                $formField['attributes']['type'] = self::getInputType($inputTypeOverride);
+                $field['tag'] = 'input';
+                $field['attributes']['type'] = self::getInputType($inputTypeOverride);
                 // must have max defined
-                $formField['attributes']['maxlength'] = $column->getCharacterMaximumLength();
-                $formField['validation']['maxlength'] = $column->getCharacterMaximumLength();
+                $field['attributes']['maxlength'] = $column->getCharacterMaximumLength();
+
+                $formField = new InputField($field['label'], FormHelper::getInputFieldAttributes($field['attributes']['name'], $field['attributes']), FormHelper::getFieldError($field['attributes']['name']));
                 break;
 
             case 'USER-DEFINED':
-                self::getSelectField($formField, $column->getEnumOptions(), $columnDefaultValue);
+                self::getSelectField($field, $column->getEnumOptions(), $columnDefaultValue);
                 break;
 
             case 'boolean':
-                $formField['tag'] = 'input';
-                $formField['attributes']['type'] = 'checkbox';
-                $formField['validation'] = [];
-                $formField['isBoolean'] = true; // throw some column info for help with checking the box
+                $field['tag'] = 'input';
+                $field['attributes']['type'] = 'checkbox';
+                $field['isBoolean'] = true; // throw some column info for help with checking the box
                 break;
 
             case 'numeric':
             case 'smallint':
             case 'bigint':
             case 'integer':
-                $formField['tag'] = 'input';
-                $formField['attributes']['type'] = 'number';
+                $field['tag'] = 'input';
+                $field['attributes']['type'] = 'number';
                 break;
 
             default:
-                $formField['tag'] = 'input';
-                $formField['attributes']['type'] = self::getInputType($inputTypeOverride);
+                $field['tag'] = 'input';
+                $field['attributes']['type'] = self::getInputType($inputTypeOverride);
         }
 
-        $formField['persist'] = $persist;
 
-        // todo - look into field class for flexibility
-//        $field = new Field($formField['tag'], )
+
         return $formField;
     }
 
-    public static function getInputType(string $inputTypeOverride = null)
+    public static function getInputType(string $inputTypeOverride = '')
     {
-        return ($inputTypeOverride) ? $inputTypeOverride : 'text';
+        return (strlen($inputTypeOverride) > 0) ? $inputTypeOverride : 'text';
     }
 }

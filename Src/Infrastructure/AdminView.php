@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure;
 
-use It_All\Spaghettify\Src\Domain\NavAdmin;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\FormHelper;
+use It_All\Spaghettify\Src\Domain\Admin\NavAdmin;
 use Slim\Container;
 
 class AdminView

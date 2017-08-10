@@ -7,19 +7,13 @@
 {% block htmlBodyContent %}
 
     {% include 'admin/partials/header.twig' %}
+    {% import 'formMacro.twig' as formMacro %}
 
     <main>
         <div id="simpleContainer">
             <h1>Login</h1>
             <h5>Authorized for use by {{ businessName }} employees and associates only.</h5>
-            <form name="loginForm" method="post" action="{{ path_for('authentication.post.login')}}">
-                {% if generalFormError %}
-                    <span class="generalFormError">{{ generalFormError }}</span>
-                {% endif %}
-                {% import 'macros/formFields.twig' as formFieldsMacro %}
-                {{ formFieldsMacro.render(formFields) }}
-                {% include 'partials/csrfFields.twig' %}
-            </form>
+            {{ formMacro.render(form) }}
         </div>
     </main>
 
@@ -27,9 +21,9 @@
 
 {% endblock %}
 {% block htmlBodyJs %}
-    {% if focusField %}
+    {% if form.getFocusFieldId %}
         <script type="text/javascript">
-            window.onload = document.getElementById('{{ focusField }}').focus();
+            window.onload = document.getElementById('{{ form.getFocusFieldId }}').focus();
         </script>
     {% endif %}
     <script type="text/javascript" src="/js/uiHelper.js"></script>

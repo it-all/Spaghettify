@@ -36,7 +36,7 @@ $container['authorization'] = function($container) {
 // Twig
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
-    $view = new \Slim\Views\Twig($settings['view']['pathTemplates'], [
+    $view = new \Slim\Views\Twig($settings['view']['paths'], [
         'cache' => $settings['view']['pathCache'],
         'auto_reload' => $settings['view']['autoReload'],
         'debug' => $settings['view']['debug']
