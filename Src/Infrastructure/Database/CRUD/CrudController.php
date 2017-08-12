@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 
+use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use Slim\Http\Request;
 use Slim\Http\Response;

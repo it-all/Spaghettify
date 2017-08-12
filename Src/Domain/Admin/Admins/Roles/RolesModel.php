@@ -10,8 +10,7 @@ class RolesModel extends DatabaseTableModel
     public function __construct()
     {
         parent::__construct('roles');
-        $levelColumn = $this->getColumnByName('level');
-        $levelColumn->addValidation('positiveInteger', true);
+        $this->addColumnNameConstraint('level', 'positive');
     }
 
     public function getRoles(): array

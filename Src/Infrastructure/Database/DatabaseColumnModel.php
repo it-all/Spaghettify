@@ -25,7 +25,9 @@ class DatabaseColumnModel
     */
     private $isUnique;
 
-    /** @var can be string or null */
+    private $constraints;
+
+    /** @var string */
     private $defaultValue;
 
     /** @var string */
@@ -34,7 +36,7 @@ class DatabaseColumnModel
     /** @var string */
     private $udtName;
 
-    /** @var  array|null only applies to enum (USER-DEFINED) types */
+    /** @var  array only applies to enum (USER-DEFINED) types */
     private $enumOptions;
 
     /** @var array http://www.postgresql.org/docs/9.4/static/datatype-numeric.html */
@@ -51,46 +53,23 @@ class DatabaseColumnModel
         $this->isUnique = $columnInfo['is_unique'];
         $this->setEnumOptions();
         $this->setDefaultValue($columnInfo['column_default']);
+        $this->constraints = [];
+        if ($columnInfo['is_unique']) {
+            $this->addConstraint('unique');
+        }
     }
 
-    private function setValidation()
+    // make public since ORM does not sniff out every constraint, some must be added manually when table model is extended
+    public function addConstraint(string $constraint)
     {
-        $this->validation = [];
-
-        if (!$this->isNullable) {
-            $this->addValidation('required', true);
-        }
-        switch ($this->type) {
-            case 'numeric':
-                $this->addValidation('numeric', true);
-                break;
-            case 'smallint':
-            case 'bigint':
-            case 'integer':
-                $this->addValidation('integer', true);
-                break;
-            case 'date':
-                $this->addValidation('date', true);
-                break;
-            case 'timestamp without time zone':
-                $this->addValidation('timestamp', true);
-                break;
-            case 'boolean':
-            case 'character':
-            case 'character varying':
-            case 'text' :
-            case 'USER-DEFINED':
-                break; // no default validation
-            default:
-                throw new \Exception("$this->type column type validation not defined, column $this->name");
-        }
+        $this->constraints[] = $constraint;
     }
 
     /** input can be null */
-    public function setDefaultValue($columnDefault)
+    private function setDefaultValue($columnDefault)
     {
         if (is_null($columnDefault)) {
-            $this->defaultValue = null;
+            $this->defaultValue = '';
         } else {
             switch ($this->type) {
                 case 'character':
@@ -118,7 +97,7 @@ class DatabaseColumnModel
     public function setEnumOptions()
     {
         if ($this->type != 'USER-DEFINED') {
-            $this->enumOptions = null;
+            $this->enumOptions = [];
         } else {
             $this->enumOptions = [];
             $q = new QueryBuilder("SELECT e.enumlabel as enum_value FROM pg_type t JOIN pg_enum e on t.oid = e.enumtypid JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE t.typname = $1", $this->udtName);
@@ -130,30 +109,6 @@ class DatabaseColumnModel
                 $this->enumOptions[] = $row['enum_value'];
             }
         }
-    }
-
-    public function addValidation(string $validationType, $validationValue)
-    {
-        $this->validation[$validationType] = $validationValue;
-    }
-
-    public function removeValidation(string $validationType)
-    {
-        if (isset($this->validation[$validationType])) {
-            unset($this->validation[$validationType]);
-        }
-    }
-
-    /** true if validation type is set */
-    public function validationTypeExists($vType):bool
-    {
-        return array_key_exists($vType, $this->validation);
-    }
-
-    /** true if required validation is set */
-    public function isRequired(): bool
-    {
-        return $this->validationTypeExists('required');
     }
 
     /**
@@ -177,15 +132,6 @@ class DatabaseColumnModel
 
     // getters
 
-    public function getValidation(): array
-    {
-        if (!isset($this->validation)) {
-            $this->setValidation();
-        }
-
-        return $this->validation;
-    }
-
     public function getName(): string
     {
         return $this->name;
@@ -201,9 +147,14 @@ class DatabaseColumnModel
         return $this->isNullable;
     }
 
+    public function getConstraint(string $constraint): bool
+    {
+        return in_array($constraint, $this->constraints);
+    }
+
     public function getIsUnique(): bool
     {
-        return $this->isUnique;
+        return $this->getConstraint('unique');
     }
 
     public function getCharacterMaximumLength()
@@ -222,7 +173,7 @@ class DatabaseColumnModel
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     public function getEnumOptions()
     {

@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 
+use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use Slim\Container;
@@ -88,17 +89,14 @@ abstract class AdminCrudView extends AdminView
 
     protected function insertView(Response $response)
     {
-        $form = new DatabaseTableForm($this->model, 'insert');
+        $form = new DatabaseTableForm($this->model, $this->routePrefix.'.post.insert', $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue());
 
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
                 'title' => 'Insert '. $this->model->getFormalTableName(false),
-                'formActionRoute' => $this->routePrefix.'.post.insert',
-                'formFields' => $form->getFields(),
-                'focusField' => $form->getFocusField(),
-                'generalFormError' => $form->getGeneralError(),
+                'form' => $form,
                 'navigationItems' => $this->navigationItems
             ]
         );

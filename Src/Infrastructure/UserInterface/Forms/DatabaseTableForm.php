@@ -4,45 +4,43 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
 use It_All\FormFormer\Fields\InputField;
+use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 
-class DatabaseTableForm
+class DatabaseTableForm extends Form
 {
     const TEXTAREA_COLS = 50;
     const TEXTAREA_ROWS = 5;
 
-    public function __construct(DatabaseTableModel $databaseTableModel, string $databaseAction = 'insert', array $fieldData = null)
+    public function __construct(DatabaseTableModel $databaseTableModel, string $formAction, string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $databaseAction = 'insert', array $fieldData = null)
     {
-        // todo, decide whether to use commented code below (and remove code in model), or leave as is
+        $this->validateDatabaseActionString($databaseAction);
 
-//        $this->validateDatabaseActionString($databaseAction);
-//
-//        $fields = [];
+        $fields = [];
 //        $defaultValues = [];
-//
-//        foreach ($databaseTableModel->getColumns() as $column) {
-//            if ($this->includeFieldForColumn($column, $databaseAction)) {
-//                $fields[$column->getName()] = $this->getFieldFromDatabaseColumn($column);
-//                $defaultValues[$column->getName()] = $column->getDefaultValue();
-//            }
-//        }
-//
-//        if ($databaseAction == 'update') {
-//            // override post method
-//            $fields['_METHOD'] = $this->getPutMethodField();
-//        }
-//
-//        $fields['submit'] = $this->getSubmitField();
-//        parent::__construct($fields);
-//
+
+        foreach ($databaseTableModel->getColumns() as $column) {
+            if ($this->includeFieldForColumn($column, $databaseAction)) {
+                $fields[] = $this->getFieldFromDatabaseColumn($column);
+            }
+        }
+
+        if ($databaseAction == 'update') {
+            // override post method
+            $fields[] = FormHelper::getPutMethodField();
+        }
+
+        $fields[] = FormHelper::getCsrfNameField($csrfNameKey, $csrfNameValue);
+        $fields[] = FormHelper::getCsrfValueField($csrfValueKey, $csrfValueValue);
+
+        $fields[] = FormHelper::getSubmitField();
+
+        parent::__construct($fields, ['method' => 'post', 'action' => $formAction, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
+
 //        $fieldValues = ($databaseAction == 'insert') ? $defaultValues : $fieldData;
 //        $this->insertValuesErrors($fieldValues);
 
-        parent::__construct($databaseTableModel->getFormFields($databaseAction, $fieldData));
-
-        $fieldValues = ($databaseAction == 'insert') ? $databaseTableModel->getDefaultFormFieldValues() : $fieldData;
-        $this->insertValuesErrors($fieldValues);
     }
 
     protected function validateDatabaseActionString(string $databaseAction)
@@ -54,7 +52,7 @@ class DatabaseTableForm
 
    /**
      * conditions for returning false:
-     * - primary column and skip
+     * - primary column
      */
     protected function includeFieldForColumn(DatabaseColumnModel $column): bool
     {
@@ -119,6 +117,10 @@ class DatabaseTableForm
                 $field['attributes']['type'] = self::getInputType($inputTypeOverride);
                 // must have max defined
                 $field['attributes']['maxlength'] = $column->getCharacterMaximumLength();
+                // value
+                if (strlen($columnDefaultValue) > 0) {
+                    $field['attributes']['value'] = $columnDefaultValue;
+                }
 
                 $formField = new InputField($field['label'], FormHelper::getInputFieldAttributes($field['attributes']['name'], $field['attributes']), FormHelper::getFieldError($field['attributes']['name']));
                 break;
@@ -139,6 +141,7 @@ class DatabaseTableForm
             case 'integer':
                 $field['tag'] = 'input';
                 $field['attributes']['type'] = 'number';
+                $formField = new InputField($field['label'], FormHelper::getInputFieldAttributes($field['attributes']['name'], $field['attributes']), FormHelper::getFieldError($field['attributes']['name']));
                 break;
 
             default:

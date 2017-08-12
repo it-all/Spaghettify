@@ -221,16 +221,16 @@
         },
         {
             "name": "it-all/form-former",
-            "version": "v1.1",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/it-all/FormFormer.git",
-                "reference": "4d2dfcea3732cbe6632e3d672da0d14feacb17ee"
+                "reference": "7c8301665da497db5af5beb3d074ff488aa0992d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/it-all/FormFormer/zipball/4d2dfcea3732cbe6632e3d672da0d14feacb17ee",
-                "reference": "4d2dfcea3732cbe6632e3d672da0d14feacb17ee",
+                "url": "https://api.github.com/repos/it-all/FormFormer/zipball/7c8301665da497db5af5beb3d074ff488aa0992d",
+                "reference": "7c8301665da497db5af5beb3d074ff488aa0992d",
                 "shasum": ""
             },
             "require": {
@@ -248,7 +248,7 @@
                 "MIT"
             ],
             "description": "HTML5 Form Creation Tool in PHP (7+) and Twig",
-            "time": "2017-08-08 13:49:00"
+            "time": "2017-08-12 13:15:46"
         },
         {
             "name": "league/oauth2-client",

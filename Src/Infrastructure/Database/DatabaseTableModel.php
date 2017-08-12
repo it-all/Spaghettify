@@ -26,24 +26,21 @@ class DatabaseTableModel
      */
     private $uniqueColumns;
 
-    /**
-     * @var array. the form fields can vary based on whether the action is insert or update
-     * every page will not use a form, so they are not constructed upon instantiation
-     */
-    protected $formFields;
-
-    protected $defaultFormFieldValues;
 
     public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
         $this->primaryKeyColumnName = false; // default
         $this->uniqueColumns = [];
+
+        // $this->primaryKeyColumnName will be updated if exists
+        // $this->uniqueColumns added (then used to set $column->isUnique
+        $this->setConstraints();
+
         $this->setColumns();
-        $this->setConstraints(); // $this->primaryKeyColumnName will be updated if exists
     }
 
-    /** note this will correctly set uniqueColumns whether they are set as a constraint or an index */
+    /** note this will set uniqueColumns whether they are set as a constraint or an index */
     private function setConstraints()
     {
         $q = new QueryBuilder("SELECT ccu.column_name, tc.constraint_type FROM INFORMATION_SCHEMA.constraint_column_usage ccu JOIN information_schema.table_constraints tc ON ccu.constraint_name = tc.constraint_name WHERE tc.table_name = ccu.table_name AND ccu.table_name = $1", $this->tableName);
@@ -67,6 +64,17 @@ class DatabaseTableModel
             $c = new DatabaseColumnModel($this, $columnInfo);
             $this->columns[] = $c;
         }
+    }
+
+    // make protected since ORM does not sniff out every constraint, some must be added manually when table model is extended
+    protected function addColumnConstraint(DatabaseColumnModel $column, string $constraint)
+    {
+        $column->addConstraint($constraint);
+    }
+
+    protected function addColumnNameConstraint(string $columName, string $constraint)
+    {
+        $this->addColumnConstraint($this->getColumnByName($columName), $constraint);
     }
 
     public function select(string $columns = '*', string $orderByColumn = null, bool $orderByAsc = true)
@@ -172,50 +180,6 @@ class DatabaseTableModel
         return '';
     }
 
-    protected function validateDatabaseActionString(string $databaseAction)
-    {
-        if ($databaseAction != 'insert' && $databaseAction != 'update') {
-            throw new \Exception("databaseAction must be insert or update ".$databaseAction);
-        }
-    }
-
-    /**
-     * conditions for returning false:
-     * - primary column and skip
-     */
-    protected function includeFormFieldForColumn(DatabaseColumnModel $column): bool
-    {
-        if ($column->isPrimaryKey()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /** also sets $this->>defaultFormFieldValues */
-    protected function setFormFields(string $databaseAction = 'insert')
-    {
-        $this->validateDatabaseActionString($databaseAction);
-
-        $this->formFields = [];
-        $this->defaultFormFieldValues = [];
-
-        foreach ($this->getColumns() as $column) {
-            if ($this->includeFormFieldForColumn($column)) {
-                $this->formFields[$column->getName()] = DatabaseTableForm::getFieldFromDatabaseColumn($column);
-                $this->defaultFormFieldValues[$column->getName()] = $column->getDefaultValue();
-            }
-        }
-
-        if ($databaseAction == 'update') {
-            // override post method
-            $this->formFields['_METHOD'] = DatabaseTableForm::getPutMethodField();
-        }
-
-        $this->formFields['submit'] = DatabaseTableForm::getSubmitField();
-    }
-
-
     // getters
 
     /**
@@ -260,24 +224,6 @@ class DatabaseTableModel
             }
         }
 
-        return false;
-    }
-
-    public function getFormFields(string $databaseAction = 'insert', array $fieldData = null)
-    {
-        if (!isset($this->formFields)) {
-            $this->setFormFields($databaseAction, $fieldData);
-        }
-
-        return $this->formFields;
-    }
-
-    public function getDefaultFormFieldValues()
-    {
-        if (!isset($this->defaultFormFieldValues)) {
-            throw new \Exception('formFields property not set');
-        }
-
-        return $this->defaultFormFieldValues;
+        throw new \Exception("Column $columnName not found in $this->tableName");
     }
 }
