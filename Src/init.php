@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 /** note: this can also be called for cli scripts.*/
 define('APP_ROOT', __DIR__ . '/' );
+define('SESSION_REQUEST_INPUT_KEY', 'requestInput');
 
 require APP_ROOT . '/../vendor/autoload.php';
 require APP_ROOT . 'Infrastructure/Utilities/functions.php';

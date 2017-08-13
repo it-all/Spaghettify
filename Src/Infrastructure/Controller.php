@@ -24,11 +24,11 @@ abstract class Controller
     }
 
     /** may want a config var bool trimAllInputs */
-    protected function setFormInput(Request $request)
+    protected function setRequestInput(Request $request)
     {
-        $_SESSION['formInput'] = [];
+        $_SESSION[SESSION_REQUEST_INPUT_KEY] = [];
         foreach ($request->getParsedBody() as $key => $value) {
-            $_SESSION['formInput'][$key] = trim($value);
+            $_SESSION[SESSION_REQUEST_INPUT_KEY][$key] = trim($value);
         }
     }
 }

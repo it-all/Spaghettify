@@ -16,7 +16,7 @@ class CrudController extends Controller
     public function postInsert(Request $request, Response $response, $args)
     {
         $form = new DatabaseTableForm($this->model);
-        $this->setFormInput($request, $form);
+        $this->setRequestInput($request);
 
         if (!$this->insert($form)) {
             // redisplay form with errors and input values
@@ -29,7 +29,7 @@ class CrudController extends Controller
     public function putUpdate(Request $request, Response $response, $args)
     {
         $form = new DatabaseTableForm($this->model);
-        $this->setFormInput($request, $form);
+        $this->setRequestInput($request);
 
         if (!$updateResponse = $this->update($response, $args, $form)) {
             // redisplay form with errors and input values
@@ -42,13 +42,6 @@ class CrudController extends Controller
     public function getDelete(Request $request, Response $response, $args)
     {
         return $this->delete($response, $args);
-    }
-
-    protected function setFormInput(Request $request, DatabaseTableForm $form)
-    {
-        foreach ($form->getFields() as $fieldName => $fieldInfo) {
-            $_SESSION['formInput'][$fieldName] = ($request->getParam($fieldName) !== null) ? trim($request->getParam($fieldName)) : '';
-        }
     }
 
     /**
@@ -74,13 +67,13 @@ class CrudController extends Controller
             throw new \Exception('No permission.');
         }
 
-        if (!$this->validator->validate($_SESSION['formInput'], $form->getValidationRules())) {
+        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $form->getValidationRules())) {
             return false;
         }
 
         // attempt insert
-        if ($res = $this->model->insert($_SESSION['formInput'])) {
-            unset($_SESSION['formInput']);
+        if ($res = $this->model->insert($_SESSION[SESSION_REQUEST_INPUT_KEY])) {
+            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             $returned = pg_fetch_all($res);
             $message = 'Inserted record '.$returned[0][$this->model->getPrimaryKeyColumnName()].
                 ' into '.$this->model->getTableName();
@@ -121,20 +114,20 @@ class CrudController extends Controller
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
 
-        if (!$this->validator->validate($_SESSION['formInput'], $form->getValidationRules())) {
+        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $form->getValidationRules())) {
             return false;
         }
 
         // if no changes made, redirect
-        if (!$this->haveAnyFieldsChanged($_SESSION['formInput'], $record)) {
+        if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
             $_SESSION['adminNotice'] = ["No changes made", 'adminNoticeFailure'];
-            unset($_SESSION['formInput']);
+            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
 
         // attempt to update the model
-        if ($this->model->updateByPrimaryKey($_SESSION['formInput'], $primaryKey)) {
-            unset($_SESSION['formInput']);
+        if ($this->model->updateByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $primaryKey)) {
+            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             $message = 'Updated record '.$primaryKey;
             $this->logger->addInfo($message . ' in '. $this->model->getTableName());
             $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];

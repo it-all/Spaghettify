@@ -59,5 +59,5 @@ return [
 
     ],
 
-    'maxFailedLogins' => 500
+    'maxFailedLogins' => 5
 ];

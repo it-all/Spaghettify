@@ -27,10 +27,10 @@ class AdminsController extends CrudController
      */
     public function postInsert(Request $request, Response $response, $args)
     {
-        $this->setFormInput($request, $this->model);
+        $this->setRequestInput($request);
 
         // custom validation
-        if ($this->model->checkRecordExistsForUsername($_SESSION['formInput']['username'])) {
+        if ($this->model->checkRecordExistsForUsername($_SESSION[SESSION_REQUEST_INPUT_KEY]['username'])) {
             $_SESSION['generalFormError'] = 'Username already exists';
             $error = true;
         } elseif (!$this->insert()) {

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
-use It_All\Spaghettify\Src\Infrastructure\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;

@@ -8,7 +8,6 @@ use It_All\FormFormer\Fields\InputField;
 class FormHelper
 {
     const SESSION_ERRORS_KEY = 'formErrors';
-    const SESSION_INPUT_KEY = 'formInput';
     const FIELD_ERROR_CLASS = 'formFieldError';
 
     public static function setGeneralError(string $errorMessage)
@@ -33,7 +32,7 @@ class FormHelper
 
     public static function getFieldValue(string $fieldName): string
     {
-        return (isset($_SESSION[self::SESSION_INPUT_KEY][$fieldName])) ? $_SESSION['formInput'][$fieldName] : '';
+        return (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$fieldName])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY][$fieldName] : '';
     }
 
     public static function getInputFieldAttributes(string $fieldName = '', array $addAttributes = []): array
@@ -86,7 +85,7 @@ class FormHelper
 
     public static function unsetSessionVars()
     {
-        unset($_SESSION[self::SESSION_INPUT_KEY]);
+        unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
         unset($_SESSION[self::SESSION_ERRORS_KEY]);
     }
 }

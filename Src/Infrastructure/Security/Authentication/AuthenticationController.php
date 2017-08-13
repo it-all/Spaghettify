@@ -12,7 +12,7 @@ class AuthenticationController extends Controller
 {
     function postLogin(Request $request, Response $response, $args)
     {
-        $this->setFormInput($request);
+        $this->setRequestInput($request);
 
         if (!$this->validator->validate($request->getParsedBody(), $this->authentication->getLoginFieldValidationRules())) {
             FormHelper::setFieldErrors($this->validator->getErrors());
