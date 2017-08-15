@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-/** note: this can also be called for cli scripts.*/
+/** note: this file can also be called for cli scripts.*/
+
+// GLOBAL CONSTANTS
 define('APP_ROOT', __DIR__ . '/' );
 define('SESSION_REQUEST_INPUT_KEY', 'requestInput');
 

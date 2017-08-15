@@ -59,6 +59,9 @@ class AuthenticationController extends Controller
 
     public function getLogout(Request $request, Response $response)
     {
+        if (!isset($_SESSION['user'])) {
+            $this->logger->addWarning('Attempted logout for non-logged-in visitor from IP: '. $_SERVER['REMOTE_ADDR']);
+        }
         $this->logger->addInfo($_SESSION['user']['username'].' logged out');
         $this->authentication->logout();
         return $response->withRedirect($this->router->pathFor('home'));

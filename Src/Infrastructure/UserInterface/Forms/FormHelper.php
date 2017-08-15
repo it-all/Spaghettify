@@ -88,4 +88,9 @@ class FormHelper
         unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
         unset($_SESSION[self::SESSION_ERRORS_KEY]);
     }
+
+    public static function isFieldRequired(array $fieldValidationRules): bool
+    {
+        return isset($fieldValidationRules['required']) && $fieldValidationRules['required'];
+    }
 }

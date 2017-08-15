@@ -15,10 +15,21 @@ class CrudController extends Controller
 
     public function postInsert(Request $request, Response $response, $args)
     {
-        $form = new DatabaseTableForm($this->model);
+        if (!$this->authorization->checkFunctionality($this->routePrefix.'.insert')) {
+            throw new \Exception('No permission.');
+        }
+
         $this->setRequestInput($request);
 
-        if (!$this->insert($form)) {
+        var_dump($this->model->getValidation());
+        var_dump($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+        die();
+        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->model->getValidation())) {
+            return false;
+        }
+
+
+        if (!$this->insert()) {
             // redisplay form with errors and input values
             return ($this->view->getInsert($request, $response, $args));
         } else {
@@ -61,16 +72,8 @@ class CrudController extends Controller
         return false;
     }
 
-    protected function insert(DatabaseTableForm $form, bool $sendEmail = false)
+    protected function insert(bool $sendEmail = false)
     {
-        if (!$this->authorization->checkFunctionality($this->routePrefix.'.insert')) {
-            throw new \Exception('No permission.');
-        }
-
-        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $form->getValidationRules())) {
-            return false;
-        }
-
         // attempt insert
         if ($res = $this->model->insert($_SESSION[SESSION_REQUEST_INPUT_KEY])) {
             unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);

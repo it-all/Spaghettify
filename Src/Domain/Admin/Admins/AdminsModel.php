@@ -15,8 +15,28 @@ class AdminsModel extends DatabaseTableModel
     public function __construct()
     {
         parent::__construct('admins');
+        $this->setColumnConstraints();
         $this->roles = ['owner'];
 //        $this->getColumnByName('role')->getEnumOptions();
+    }
+
+    private function setColumnConstraints()
+    {
+        $this->setUsernameConstraints();
+        $this->setPasswordConstraints();
+    }
+
+    private function setUsernameConstraints()
+    {
+        $u = $this->getColumnByName('username');
+        $this->addColumnConstraint($u, 'required');
+        $this->addColumnConstraint($u, 'alpha');
+        $this->addColumnConstraint($u, 'minlength', 4);
+    }
+
+    private function setPasswordConstraints()
+    {
+        $this->addColumnNameConstraint('password_hash', 'required');
     }
 
     private function getConfirmPasswordHashField(string $label, array $validation): array

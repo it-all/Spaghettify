@@ -30,7 +30,7 @@ class DatabaseColumnModel
     /** @var string */
     private $defaultValue;
 
-    /** @var string */
+    /** @var string|null (if does not apply) */
     private $characterMaximumLength;
 
     /** @var string */
@@ -44,25 +44,27 @@ class DatabaseColumnModel
 
     function __construct(DatabaseTableModel $dbTableModel,  array $columnInfo)
     {
+        $this->constraints = []; // initialize
+        $this->enumOptions = []; // initialize
         $this->dbTableModel = $dbTableModel;
         $this->name = $columnInfo['column_name'];
         $this->type = $columnInfo['data_type'];
         $this->isNullable = $columnInfo['is_nullable'] == 'YES';
-        $this->characterMaximumLength = $columnInfo['character_maximum_length'];
         $this->udtName = $columnInfo['udt_name'];
         $this->isUnique = $columnInfo['is_unique'];
-        $this->setEnumOptions();
-        $this->setDefaultValue($columnInfo['column_default']);
-        $this->constraints = [];
-        if ($columnInfo['is_unique']) {
+        if ($this->isUnique) {
             $this->addConstraint('unique');
         }
+        $this->setEnumOptions();
+        $this->setDefaultValue($columnInfo['column_default']);
+        $this->characterMaximumLength = $columnInfo['character_maximum_length'];
     }
 
     // make public since ORM does not sniff out every constraint, some must be added manually when table model is extended
-    public function addConstraint(string $constraint)
+    // context can be bool or particular string/value related to constraint
+    public function addConstraint(string $constraint, $context = true)
     {
-        $this->constraints[] = $constraint;
+        $this->constraints[$constraint] = $context;
     }
 
     /** input can be null */
@@ -96,10 +98,7 @@ class DatabaseColumnModel
 
     public function setEnumOptions()
     {
-        if ($this->type != 'USER-DEFINED') {
-            $this->enumOptions = [];
-        } else {
-            $this->enumOptions = [];
+        if ($this->type == 'USER-DEFINED') {
             $q = new QueryBuilder("SELECT e.enumlabel as enum_value FROM pg_type t JOIN pg_enum e on t.oid = e.enumtypid JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE t.typname = $1", $this->udtName);
             $qResult = $q->execute();
             if (pg_num_rows($qResult) == 0) {
@@ -147,9 +146,9 @@ class DatabaseColumnModel
         return $this->isNullable;
     }
 
-    public function getConstraint(string $constraint): bool
+    public function getConstraints(): array
     {
-        return in_array($constraint, $this->constraints);
+        return $this->constraints;
     }
 
     public function getIsUnique(): bool
@@ -172,11 +171,28 @@ class DatabaseColumnModel
         return $this->defaultValue;
     }
 
+    public function getEnumOptions(): array
+    {
+        return $this->enumOptions;
+    }
+
+    public function getConstraint(string $constraint): bool
+    {
+        return in_array($constraint, $this->constraints);
+    }
+
     /**
      * @return array
      */
-    public function getEnumOptions()
+    public function getValidation(): array
     {
-        return $this->enumOptions;
+        $validation = [];
+        if (!$this->isNullable) {
+            $validation['required'] = true;
+        }
+        if ($this->characterMaximumLength != null) {
+            $validation['maxlength'] = $this->characterMaximumLength;
+        }
+        return $validation;
     }
 }

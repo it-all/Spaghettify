@@ -18,7 +18,6 @@ class DatabaseTableForm extends Form
         $this->validateDatabaseActionString($databaseAction);
 
         $fields = [];
-//        $defaultValues = [];
 
         foreach ($databaseTableModel->getColumns() as $column) {
             if ($this->includeFieldForColumn($column, $databaseAction)) {
@@ -38,6 +37,7 @@ class DatabaseTableForm extends Form
 
         parent::__construct($fields, ['method' => 'post', 'action' => $formAction, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
 
+//        $defaultValues = [];
 //        $fieldValues = ($databaseAction == 'insert') ? $defaultValues : $fieldData;
 //        $this->insertValuesErrors($fieldValues);
 
@@ -65,7 +65,7 @@ class DatabaseTableForm extends Form
 
     public static function getFieldFromDatabaseColumn(
         DatabaseColumnModel $column,
-        bool $addRequiredAttribute = false,
+        array $validationOverride = null,
         string $labelOverride = '',
         string $inputTypeOverride = '',
         string $nameOverride = '',
@@ -74,6 +74,7 @@ class DatabaseTableForm extends Form
     {
         $columnName = $column->getName();
         $columnDefaultValue = $column->getDefaultValue();
+        $columnValidationRules = (is_array($validationOverride)) ? $validationOverride : $column->getValidation();
 
         // set label
         if ($inputTypeOverride == 'hidden') {
@@ -91,7 +92,7 @@ class DatabaseTableForm extends Form
                 'id' => ($idOverride) ? $idOverride : $columnName
             ]
         ];
-        if ($addRequiredAttribute) {
+        if (FormHelper::isFieldRequired($columnValidationRules)) {
             $field['attributes']['required'] = 'required';
         }
 

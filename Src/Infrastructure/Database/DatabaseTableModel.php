@@ -67,14 +67,23 @@ class DatabaseTableModel
     }
 
     // make protected since ORM does not sniff out every constraint, some must be added manually when table model is extended
-    protected function addColumnConstraint(DatabaseColumnModel $column, string $constraint)
+    protected function addColumnConstraint(DatabaseColumnModel $column, string $constraint, $context = true)
     {
-        $column->addConstraint($constraint);
+        $column->addConstraint($constraint, $context);
     }
 
     protected function addColumnNameConstraint(string $columName, string $constraint)
     {
         $this->addColumnConstraint($this->getColumnByName($columName), $constraint);
+    }
+
+    public function getColumnConstraints(): array
+    {
+        $constraints = [];
+        foreach($this->columns as $column) {
+            $constraints[$column->getName()] = $column->getConstraints();
+        }
+        return $constraints;
     }
 
     public function select(string $columns = '*', string $orderByColumn = null, bool $orderByAsc = true)
@@ -225,5 +234,17 @@ class DatabaseTableModel
         }
 
         throw new \Exception("Column $columnName not found in $this->tableName");
+    }
+
+    public function getValidation(): array
+    {
+        $validation = [];
+        foreach ($this->columns as $column) {
+            $columnValidation = $column->getValidation();
+            if (count($columnValidation) > 0) {
+                $validation[$column->getName()] = $columnValidation;
+            }
+        }
+        return $validation;
     }
 }
