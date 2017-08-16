@@ -233,18 +233,6 @@ class DatabaseTableModel
             }
         }
 
-        throw new \Exception("Column $columnName not found in $this->tableName");
-    }
-
-    public function getValidation(): array
-    {
-        $validation = [];
-        foreach ($this->columns as $column) {
-            $columnValidation = $column->getValidation();
-            if (count($columnValidation) > 0) {
-                $validation[$column->getName()] = $columnValidation;
-            }
-        }
-        return $validation;
+        return false;
     }
 }

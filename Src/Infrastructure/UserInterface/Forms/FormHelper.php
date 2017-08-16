@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
 use It_All\FormFormer\Fields\InputField;
+use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 
 class FormHelper
 {
@@ -92,5 +94,34 @@ class FormHelper
     public static function isFieldRequired(array $fieldValidationRules): bool
     {
         return isset($fieldValidationRules['required']) && $fieldValidationRules['required'];
+    }
+
+    public static function getDatabaseColumnValidation(DatabaseColumnModel $databaseColumnModel): array
+    {
+        $columnValidation = [];
+
+        if ($databaseColumnModel->isPrimaryKey()) {
+            return $columnValidation; // no validation for primary key as it is not a form field
+        }
+        if (!$databaseColumnModel->getIsNullable()) {
+            $columnValidation['required'] = true;
+        }
+        if ($databaseColumnModel->getCharacterMaximumLength() != null) {
+            $columnValidation['maxlength'] = $databaseColumnModel->getCharacterMaximumLength();
+        }
+
+        return $columnValidation;
+    }
+
+    public static function getDatabaseTableValidation(DatabaseTableModel $databaseTableModel): array
+    {
+        $validation = [];
+        foreach ($databaseTableModel->getColumns() as $column) {
+            $columnValidation = self::getDatabaseColumnValidation($column);
+        }
+        if (count($columnValidation) > 0) {
+            $validation[$column->getName()] = $columnValidation;
+        }
+        return $validation;
     }
 }

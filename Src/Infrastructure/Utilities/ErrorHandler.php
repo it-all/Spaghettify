@@ -100,7 +100,6 @@ class ErrorHandler
         }
 
         $message .= "\nStack Trace:\n".str_replace('/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify', '', $traceString);
-
         $this->handleError($message, $exitPage);
     }
 

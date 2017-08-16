@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -21,11 +22,10 @@ class CrudController extends Controller
 
         $this->setRequestInput($request);
 
-        var_dump($this->model->getValidation());
-        var_dump($_SESSION[SESSION_REQUEST_INPUT_KEY]);
-        die();
-        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->model->getValidation())) {
-            return false;
+        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
+            // redisplay form with errors and input values
+            FormHelper::setFieldErrors($this->validator->getErrors());
+            return ($this->view->getInsert($request, $response, $args));
         }
 
 
@@ -76,7 +76,7 @@ class CrudController extends Controller
     {
         // attempt insert
         if ($res = $this->model->insert($_SESSION[SESSION_REQUEST_INPUT_KEY])) {
-            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+            FormHelper::unsetSessionVars();
             $returned = pg_fetch_all($res);
             $message = 'Inserted record '.$returned[0][$this->model->getPrimaryKeyColumnName()].
                 ' into '.$this->model->getTableName();
@@ -92,11 +92,7 @@ class CrudController extends Controller
             $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
 
             return true;
-
-        } else {
-            $_SESSION['generalFormError'] = 'Query Failure';
-            return false;
-        }
+        } // exception will be thrown if query fails
     }
 
     protected function update(Response $response, $args, DatabaseTableForm $form)
@@ -137,10 +133,7 @@ class CrudController extends Controller
 
             return $response->withRedirect($this->router->pathFor($redirectRoute));
 
-        } else {
-            $_SESSION['generalFormError'] = 'Query Failure';
-            return false;
-        }
+        } // exception will be thrown if query failse
     }
 
     protected function delete(Response $response, $args, string $returnColumn = null, bool $sendEmail = false)

@@ -74,7 +74,7 @@ class DatabaseTableForm extends Form
     {
         $columnName = $column->getName();
         $columnDefaultValue = $column->getDefaultValue();
-        $columnValidationRules = (is_array($validationOverride)) ? $validationOverride : $column->getValidation();
+        $columnValidationRules = (is_array($validationOverride)) ? $validationOverride : FormHelper::getDatabaseColumnValidation($column);
 
         // set label
         if ($inputTypeOverride == 'hidden') {

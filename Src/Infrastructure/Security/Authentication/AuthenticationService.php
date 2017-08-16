@@ -32,32 +32,38 @@ class AuthenticationService
 
     public function attemptLogin(string $username, string $password): bool
     {
-        $admins = new AdminsModel('admins');
+        $admins = new AdminsModel();
         $rs = $admins->selectForUsername($username);
-        $user = pg_fetch_assoc($rs);
+        $userRecord = pg_fetch_assoc($rs);
 
         // check if user exists
-        if (!$user) {
-            $this->failedLogin();
+        if (!$userRecord) {
+            $this->loginFailed();
             return false;
         }
 
         // verify password for that user
-        if (password_verify($password, $user['password_hash'])) {
-            // set session for user
-            $_SESSION['user'] = [
-                'id' => $user['id'],
-                'username' => $username,
-                'role' => $user['role']
-            ];
+        if (password_verify($password, $userRecord['password_hash'])) {
+            $this->loginSucceeded($username, $userRecord);
             return true;
         } else {
-            $this->failedLogin();
+            $this->loginFailed();
             return false;
         }
     }
 
-    private function failedLogin()
+    private function loginSucceeded(string $username, array $userRecord)
+    {
+        // set session for user
+        $_SESSION['user'] = [
+            'id' => $userRecord['id'],
+            'username' => $username,
+            'role' => $userRecord['role']
+        ];
+        unset($_SESSION['numFailedLogins']);
+    }
+
+    private function loginFailed()
     {
         if (isset($_SESSION['numFailedLogins'])) {
             $_SESSION['numFailedLogins']++;

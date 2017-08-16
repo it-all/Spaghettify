@@ -180,19 +180,4 @@ class DatabaseColumnModel
     {
         return in_array($constraint, $this->constraints);
     }
-
-    /**
-     * @return array
-     */
-    public function getValidation(): array
-    {
-        $validation = [];
-        if (!$this->isNullable) {
-            $validation['required'] = true;
-        }
-        if ($this->characterMaximumLength != null) {
-            $validation['maxlength'] = $this->characterMaximumLength;
-        }
-        return $validation;
-    }
 }

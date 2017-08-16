@@ -14,7 +14,7 @@ class AuthenticationController extends Controller
     {
         $this->setRequestInput($request);
 
-        if (!$this->validator->validate($request->getParsedBody(), $this->authentication->getLoginFieldValidationRules())) {
+        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->authentication->getLoginFieldValidationRules())) {
             FormHelper::setFieldErrors($this->validator->getErrors());
 
             // redisplay the form with input values and error(s)
