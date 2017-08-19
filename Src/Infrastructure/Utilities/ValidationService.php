@@ -201,7 +201,16 @@ class ValidationService
                 break;
 
             default:
-                throw new \Exception("Undefined rule $rule");
+                if(is_object($context) && get_class($context) == 'Closure') {
+                    $refl_func = new \ReflectionFunction($context);
+//                    die('here');
+                    if (!$refl_func->invokeArgs([1])) {
+                        $this->setError($fieldName, 'fn', 'fail');
+                        return false;
+                    }
+                } else {
+                    throw new \Exception('Unknown rule '.$rule);
+                }
         }
         return true;
     }

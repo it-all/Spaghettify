@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use It_All\Spaghettify\Src\Infrastructure\Utilities\SimpleValidatorExtension;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -14,10 +15,10 @@ class AuthenticationController extends Controller
     {
         $this->setRequestInput($request);
 
-        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->authentication->getLoginFieldValidationRules())) {
-            FormHelper::setFieldErrors($this->validator->getErrors());
-
+        $validationResult = SimpleValidatorExtension::validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->authentication->getLoginFieldValidationRules());
+        if (!$validationResult->isSuccess()) {
             // redisplay the form with input values and error(s)
+            FormHelper::setFieldErrors($validationResult->getErrors());
             $av = new AuthenticationView($this->container);
             return $av->getLogin($request, $response, $args);
         }

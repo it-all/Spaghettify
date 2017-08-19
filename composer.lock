@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f26c1942e3fcf92befe6ec089e7a39b1",
-    "content-hash": "7b5f9df0ed93cb73b1184d9cffe63c2c",
+    "hash": "4efcbf0caca9415b1f2dd8328cd4889e",
+    "content-hash": "a22e01430bc0201fe9fc45d4fc18b547",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -811,6 +811,42 @@
             "time": "2016-10-10 12:19:37"
         },
         {
+            "name": "simple-validator/simple-validator",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cangelis/simple-validator.git",
+                "reference": "87aabf6a667cbea92efc2f88e2eea2a4121a6472"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cangelis/simple-validator/zipball/87aabf6a667cbea92efc2f88e2eea2a4121a6472",
+                "reference": "87aabf6a667cbea92efc2f88e2eea2a4121a6472",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SimpleValidator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Can Gelis",
+                    "email": "geliscan@gmail.com"
+                }
+            ],
+            "description": "Yet another validation class for PHP",
+            "time": "2017-06-29 10:09:43"
+        },
+        {
             "name": "slim/csrf",
             "version": "0.8.1",
             "source": {
@@ -983,16 +1019,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "f29dca382a6485c3cbe6379f0c61230167681937"
+                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/f29dca382a6485c3cbe6379f0c61230167681937",
-                "reference": "f29dca382a6485c3cbe6379f0c61230167681937",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
                 "shasum": ""
             },
             "require": {
@@ -1004,7 +1040,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -1038,7 +1074,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-09 14:24:12"
+            "time": "2017-06-14 15:44:48"
         },
         {
             "name": "twig/twig",

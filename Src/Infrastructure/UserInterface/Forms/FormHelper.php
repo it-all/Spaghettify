@@ -91,11 +91,6 @@ class FormHelper
         unset($_SESSION[self::SESSION_ERRORS_KEY]);
     }
 
-    public static function isFieldRequired(array $fieldValidationRules): bool
-    {
-        return isset($fieldValidationRules['required']) && $fieldValidationRules['required'];
-    }
-
     public static function getDatabaseColumnValidation(DatabaseColumnModel $databaseColumnModel): array
     {
         $columnValidation = [];
@@ -103,11 +98,24 @@ class FormHelper
         if ($databaseColumnModel->isPrimaryKey()) {
             return $columnValidation; // no validation for primary key as it is not a form field
         }
+
         if (!$databaseColumnModel->getIsNullable()) {
-            $columnValidation['required'] = true;
+            $columnValidation[] = 'required';
         }
+
         if ($databaseColumnModel->getCharacterMaximumLength() != null) {
-            $columnValidation['maxlength'] = $databaseColumnModel->getCharacterMaximumLength();
+            $columnValidation[] = 'max_length('.$databaseColumnModel->getCharacterMaximumLength().')';
+        }
+
+        if ($databaseColumnModel->getIsUnique()) {
+//            $columnValidation['unique'] = function($input) {
+//                return 1 == 2;
+//            };
+            $compare = 'abc';
+            $columnValidation['unique'] = function($input) use ($databaseColumnModel) {
+                return !$databaseColumnModel->recordExistsForValue($input);
+//                return $compare != $input;
+            };
         }
 
         return $columnValidation;
@@ -118,9 +126,9 @@ class FormHelper
         $validation = [];
         foreach ($databaseTableModel->getColumns() as $column) {
             $columnValidation = self::getDatabaseColumnValidation($column);
-        }
-        if (count($columnValidation) > 0) {
-            $validation[$column->getName()] = $columnValidation;
+            if (count($columnValidation) > 0) {
+                $validation[$column->getName()] = $columnValidation;
+            }
         }
         return $validation;
     }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
-use It_All\Spaghettify\Src\Infrastructure\AdminCrudView;
+use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;

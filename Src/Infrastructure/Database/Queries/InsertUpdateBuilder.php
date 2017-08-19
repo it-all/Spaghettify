@@ -27,7 +27,11 @@ abstract class InsertUpdateBuilder extends QueryBuilder
         if (!isset($this->sql)) {
             $this->setSql();
         }
-        return parent::execute();
+        try {
+            return parent::execute();
+        } catch(\Exception $exception) {
+            throw $exception;
+        }
     }
 
     public function setPrimaryKeyName(string $name)

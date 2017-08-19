@@ -6,6 +6,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -47,11 +48,13 @@ abstract class AdminCrudView extends AdminView
             return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
         }
 
+        // todo remove comment?
         /**
          * data to send to FormHelper - either from the model or from prior input. Note that when sending null FormHelper defaults to using $_SESSION[SESSION_REQUEST_INPUT_KEY]. It's important to send null, not $_SESSION['formInput'], because FormHelper unsets $_SESSION[SESSION_REQUEST_INPUT_KEY] after using it.
          * note, this works for post/put because controller calls this method directly in case of errors instead of redirecting
          */
-        $fieldData = ($request->isGet()) ? $record : null;
+
+        $fieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
 
         return $this->updateView($request, $response, $args, $fieldData);
     }
@@ -90,6 +93,7 @@ abstract class AdminCrudView extends AdminView
     protected function insertView(Response $response)
     {
         $form = new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.post.insert'), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue());
+        FormHelper::unsetSessionVars();
 
         return $this->view->render(
             $response,
@@ -102,20 +106,15 @@ abstract class AdminCrudView extends AdminView
         );
     }
 
-    protected function updateView(Request $request, Response $response, $args, $fieldData = null)
+    protected function updateView(Request $request, Response $response, $args, array $fieldData)
     {
-        $form = new DatabaseTableForm($this->model, 'update', $fieldData);
-
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
                 'title' => 'Update ' . $this->model->getFormalTableName(false),
-                'formActionRoute' => $this->routePrefix.'.put.update',
+                'form' => new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.put.update', ['primaryKey' => $args['primaryKey']]), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'update', $fieldData),
                 'primaryKey' => $args['primaryKey'],
-                'formFields' => $form->getFields(),
-                'focusField' => $form->getFocusField(),
-                'generalFormError' => $form->getGeneralError(),
                 'navigationItems' => $this->navigationItems
             ]
         );

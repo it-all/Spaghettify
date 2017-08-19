@@ -105,6 +105,12 @@ class DatabaseTableModel
         return $q->execute();
     }
 
+    public function hasColumnValue(DatabaseColumnModel $databaseColumnModel, $value): bool
+    {
+        $q = new QueryBuilder("SELECT ".$this->getPrimaryKeyColumnName()." FROM $this->tableName WHERE ".$databaseColumnModel->getName()." = $1", [$value]);
+        return $q->getOne();
+    }
+
     public function selectForPrimaryKey($primaryKeyValue)
     {
         $primaryKeyName = $this->getPrimaryKeyColumnName();
@@ -135,7 +141,11 @@ class DatabaseTableModel
         $ib = new InsertBuilder($this->tableName);
         $ib->setPrimaryKeyName($this->getPrimaryKeyColumnName());
         $this->addColumnsToBuilder($ib, $columnValues);
-        return $ib->execute();
+        try {
+            return $ib->execute();
+        } catch(\Exception $exception) {
+            throw $exception;
+        }
     }
 
     public function deleteByPrimaryKey($primaryKeyValue, string $returning = null)

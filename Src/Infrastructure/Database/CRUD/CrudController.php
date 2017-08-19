@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use It_All\Spaghettify\Src\Infrastructure\Utilities\SimpleValidatorExtension;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -22,31 +22,61 @@ class CrudController extends Controller
 
         $this->setRequestInput($request);
 
-        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
+        // todo validate unique columns
+        $validationResult = SimpleValidatorExtension::validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model));
+        if (!$validationResult->isSuccess()) {
+
+//
+//            if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
             // redisplay form with errors and input values
-            FormHelper::setFieldErrors($this->validator->getErrors());
+//            FormHelper::setFieldErrors($this->validator->getErrors());
+            FormHelper::setFieldErrors($validationResult->getErrors());
             return ($this->view->getInsert($request, $response, $args));
         }
 
-
-        if (!$this->insert()) {
-            // redisplay form with errors and input values
-            return ($this->view->getInsert($request, $response, $args));
-        } else {
+        if ($this->insert()) {
             return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
         }
     }
 
     public function putUpdate(Request $request, Response $response, $args)
     {
-        $form = new DatabaseTableForm($this->model);
+        if (!$this->authorization->checkFunctionality($this->routePrefix.'.update')) {
+            throw new \Exception('No permission.');
+        }
+
         $this->setRequestInput($request);
 
-        if (!$updateResponse = $this->update($response, $args, $form)) {
+        $redirectRoute = $this->routePrefix.'.index';
+
+        // todo put the following 2 validations into validator using model fn calls?
+
+        // make sure there is a record for the primary key in the model
+        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
+            $_SESSION['adminNotice'] = [
+                "Record ".$args['primaryKey']." Not Found",
+                'adminNoticeFailure'
+            ];
+            return $response->withRedirect($this->router->pathFor($redirectRoute));
+        }
+
+        // if no changes made, redirect
+        if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
+            $_SESSION['adminNotice'] = ["No changes made", 'adminNoticeFailure'];
+            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+            return $response->withRedirect($this->router->pathFor($redirectRoute));
+        }
+
+        // todo validate unique columns
+
+        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
             // redisplay form with errors and input values
-            return $this->view->getUpdate($request, $response, $args);
-        } else {
-            return $updateResponse;
+            FormHelper::setFieldErrors($this->validator->getErrors());
+            return ($this->view->getUpdate($request, $response, $args));
+        }
+
+        if ($this->update($response, $args)) {
+            return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
     }
 
@@ -75,7 +105,8 @@ class CrudController extends Controller
     protected function insert(bool $sendEmail = false)
     {
         // attempt insert
-        if ($res = $this->model->insert($_SESSION[SESSION_REQUEST_INPUT_KEY])) {
+        try {
+            $res = $this->model->insert($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             FormHelper::unsetSessionVars();
             $returned = pg_fetch_all($res);
             $message = 'Inserted record '.$returned[0][$this->model->getPrimaryKeyColumnName()].
@@ -92,48 +123,27 @@ class CrudController extends Controller
             $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
 
             return true;
-        } // exception will be thrown if query fails
+
+        } catch(\Exception $exception) {
+            throw $exception;
+        }
     }
 
-    protected function update(Response $response, $args, DatabaseTableForm $form)
+    protected function update(Response $response, $args)
     {
-        if (!$this->authorization->checkFunctionality($this->routePrefix.'.update')) {
-            throw new \Exception('No permission.');
-        }
-
-        $primaryKey = $args['primaryKey'];
-        $redirectRoute = $this->routePrefix.'.index';
-
-        // make sure there is a record for the primary key in the model
-        if (!$record = $this->model->selectForPrimaryKey($primaryKey)) {
-            $_SESSION['adminNotice'] = [
-                "Record $primaryKey Not Found",
-                'adminNoticeFailure'
-            ];
-            return $response->withRedirect($this->router->pathFor($redirectRoute));
-        }
-
-        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], $form->getValidationRules())) {
-            return false;
-        }
-
-        // if no changes made, redirect
-        if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
-            $_SESSION['adminNotice'] = ["No changes made", 'adminNoticeFailure'];
-            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
-            return $response->withRedirect($this->router->pathFor($redirectRoute));
-        }
-
         // attempt to update the model
-        if ($this->model->updateByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $primaryKey)) {
-            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
-            $message = 'Updated record '.$primaryKey;
+        try {
+            $this->model->updateByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
+            FormHelper::unsetSessionVars();
+            $message = 'Updated record '.$args['primaryKey'];
             $this->logger->addInfo($message . ' in '. $this->model->getTableName());
             $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
 
-            return $response->withRedirect($this->router->pathFor($redirectRoute));
+            return true;
 
-        } // exception will be thrown if query failse
+        } catch(\Exception $exception) {
+            throw $exception;
+        }
     }
 
     protected function delete(Response $response, $args, string $returnColumn = null, bool $sendEmail = false)

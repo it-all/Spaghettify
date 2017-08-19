@@ -180,4 +180,11 @@ class DatabaseColumnModel
     {
         return in_array($constraint, $this->constraints);
     }
+
+    public function recordExistsForValue($value): bool
+    {
+        $q = new QueryBuilder("SELECT ".$this->dbTableModel->getPrimaryKeyColumnName()." FROM ".$this->dbTableModel->getTableName()." WHERE $this->name = $1", $value);
+        return ($q->getOne()) ? true : false;
+    }
+
 }

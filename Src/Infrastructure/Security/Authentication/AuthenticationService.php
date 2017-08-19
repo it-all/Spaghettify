@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
+use It_All\FormFormer\Fields\InputField;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
@@ -95,12 +96,20 @@ class AuthenticationService
     {
         return [
             'username' => [
-                'required' => true
+                'required'
             ],
             'password_hash' => [
-                'required' => true
+                'required'
             ],
         ];
+//        return [
+//            'username' => [
+//                'required' => true
+//            ],
+//            'password_hash' => [
+//                'required' => true
+//            ],
+//        ];
     }
 
     public function getForm(string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $action)
@@ -110,11 +119,11 @@ class AuthenticationService
 
         $fields = [];
         $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('username'), $validation['username']);
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('password_hash'), $validation['password_hash'], 'Password');
+        $fields[] = new InputField('Password', ['id' => 'password_hash', 'name' => 'password_hash', 'type' => 'password', 'required' => 'required'], FormHelper::getFieldError('password_hash'));
         $fields[] = FormHelper::getCsrfNameField($csrfNameKey, $csrfNameValue);
         $fields[] = FormHelper::getCsrfValueField($csrfValueKey, $csrfValueValue);
         $fields[] = FormHelper::getSubmitField();
 
-        return new Form($fields, ['method' => 'post', 'action' => $action], FormHelper::getGeneralError());
+        return new Form($fields, ['method' => 'post', 'action' => $action, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
     }
 }
