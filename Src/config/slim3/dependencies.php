@@ -100,7 +100,7 @@ $container['logger'] = function($container) {
 
 // Form Validation
 $container['validator'] = function ($container) {
-    return new \It_All\Spaghettify\Src\Infrastructure\Utilities\ValidationService();
+    return new \It_All\Spaghettify\Src\Infrastructure\Utilities\ValitronValidatorExtension();
 };
 
 // CSRF

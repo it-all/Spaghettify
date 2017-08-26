@@ -62,7 +62,7 @@ class DatabaseTableForm extends Form
 
     public static function getFieldFromDatabaseColumn(
         DatabaseColumnModel $column,
-        array $validationOverride = null,
+        bool $isRequiredOverride = null,
         string $valueOverride = null,
         string $labelOverride = '',
         string $inputTypeOverride = '',
@@ -72,7 +72,6 @@ class DatabaseTableForm extends Form
     {
         $columnName = $column->getName();
         $value = ($valueOverride !== null) ? $valueOverride : $column->getDefaultValue();
-        $columnValidationRules = (is_array($validationOverride)) ? $validationOverride : FormHelper::getDatabaseColumnValidation($column);
 
         // set label
         if ($inputTypeOverride == 'hidden') {
@@ -91,7 +90,7 @@ class DatabaseTableForm extends Form
             ]
         ];
 
-        if (in_array('required', $columnValidationRules)) {
+        if ( ($isRequiredOverride !== null && $isRequiredOverride) || in_array('required', FormHelper::getDatabaseColumnValidation($column))) {
             $fieldInfo['attributes']['required'] = 'required';
         }
 

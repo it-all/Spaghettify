@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
-use It_All\FormFormer\Fields\InputField;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
@@ -89,37 +88,28 @@ class AuthenticationService
         unset($_SESSION['user']);
     }
 
+    public function getLoginFields(): array
+    {
+        return ['username', 'password_hash'];
+    }
+
     /** note there should be different validation rules for logging in than creating users.
      * ie no minlength or character rules on password here
      */
     public function getLoginFieldValidationRules(): array
     {
         return [
-            'username' => [
-                'required'
-            ],
-            'password_hash' => [
-                'required'
-            ],
+            'required' => [['username'], ['password_hash']]
         ];
-//        return [
-//            'username' => [
-//                'required' => true
-//            ],
-//            'password_hash' => [
-//                'required' => true
-//            ],
-//        ];
     }
 
     public function getForm(string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $action)
     {
         $adminsModel = new AdminsModel();
-        $validation = $this->getLoginFieldValidationRules();
 
         $fields = [];
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('username'), $validation['username']);
-        $fields[] = new InputField('Password', ['id' => 'password_hash', 'name' => 'password_hash', 'type' => 'password', 'required' => 'required'], FormHelper::getFieldError('password_hash'));
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('username'));
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('password_hash'), null, null, 'Password', 'password');
         $fields[] = FormHelper::getCsrfNameField($csrfNameKey, $csrfNameValue);
         $fields[] = FormHelper::getCsrfValueField($csrfValueKey, $csrfValueValue);
         $fields[] = FormHelper::getSubmitField();

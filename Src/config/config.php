@@ -59,5 +59,7 @@ return [
 
     ],
 
-    'maxFailedLogins' => 500
+    'maxFailedLogins' => 500,
+
+    'trimAllUserInput' => true
 ];

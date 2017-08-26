@@ -22,14 +22,8 @@ class CrudController extends Controller
 
         $this->setRequestInput($request);
 
-        // todo validate unique columns
         $validationResult = SimpleValidatorExtension::validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model));
         if (!$validationResult->isSuccess()) {
-
-//
-//            if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
-            // redisplay form with errors and input values
-//            FormHelper::setFieldErrors($this->validator->getErrors());
             FormHelper::setFieldErrors($validationResult->getErrors());
             return ($this->view->getInsert($request, $response, $args));
         }

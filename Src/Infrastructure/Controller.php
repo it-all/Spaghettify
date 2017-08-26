@@ -28,7 +28,7 @@ abstract class Controller
     {
         $_SESSION[SESSION_REQUEST_INPUT_KEY] = [];
         foreach ($request->getParsedBody() as $key => $value) {
-            $_SESSION[SESSION_REQUEST_INPUT_KEY][$key] = trim($value);
+            $_SESSION[SESSION_REQUEST_INPUT_KEY][$key] = ($this->settings['trimAllUserInput']) ? trim($value) : $value;
         }
     }
 }

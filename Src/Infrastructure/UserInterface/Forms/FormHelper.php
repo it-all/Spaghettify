@@ -95,9 +95,9 @@ class FormHelper
     {
         $columnValidation = [];
 
-        if ($databaseColumnModel->isPrimaryKey()) {
-            return $columnValidation; // no validation for primary key as it is not a form field
-        }
+//        if ($databaseColumnModel->isPrimaryKey()) {
+//            return $columnValidation; // no validation for primary key as it is not a form field
+//        }
 
         if (!$databaseColumnModel->getIsNullable()) {
             $columnValidation[] = 'required';
@@ -108,13 +108,8 @@ class FormHelper
         }
 
         if ($databaseColumnModel->getIsUnique()) {
-//            $columnValidation['unique'] = function($input) {
-//                return 1 == 2;
-//            };
-            $compare = 'abc';
             $columnValidation['unique'] = function($input) use ($databaseColumnModel) {
                 return !$databaseColumnModel->recordExistsForValue($input);
-//                return $compare != $input;
             };
         }
 

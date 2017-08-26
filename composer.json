@@ -6,12 +6,11 @@
     "php": "^7",
     "slim/slim": "^3.0",
     "monolog/monolog": "^1.22",
-    "league/oauth2-google": "^2.0",
     "phpmailer/phpmailer": "^5.2",
     "slim/twig-view": "^2.2",
     "slim/csrf": "^0.8.1",
     "it-all/form-former": "^1.1",
-    "simple-validator/simple-validator": "1.0.*"
+    "vlucas/valitron": "^1.4"
   },
   "autoload": {
     "psr-4": {

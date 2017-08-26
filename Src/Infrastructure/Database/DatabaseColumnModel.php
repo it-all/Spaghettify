@@ -186,5 +186,4 @@ class DatabaseColumnModel
         $q = new QueryBuilder("SELECT ".$this->dbTableModel->getPrimaryKeyColumnName()." FROM ".$this->dbTableModel->getTableName()." WHERE $this->name = $1", $value);
         return ($q->getOne()) ? true : false;
     }
-
 }
