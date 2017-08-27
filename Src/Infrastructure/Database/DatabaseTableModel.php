@@ -24,6 +24,8 @@ class DatabaseTableModel
      * @var array of columnNames with UNIQUE constraint or index
      * NOTE this does not handle multi-column unique constraints
      */
+    private $uniqueColumnNames;
+
     private $uniqueColumns;
 
 
@@ -32,15 +34,17 @@ class DatabaseTableModel
         $this->tableName = $tableName;
         $this->primaryKeyColumnName = false; // default
         $this->uniqueColumns = [];
+        $this->uniqueColumnNames = [];
 
         // $this->primaryKeyColumnName will be updated if exists
-        // $this->uniqueColumns added (then used to set $column->isUnique
+        // $this->uniqueColumnNames added (then used to set $column->isUnique
         $this->setConstraints();
 
+        // $this->uniqueColumns added
         $this->setColumns();
     }
 
-    /** note this will set uniqueColumns whether they are set as a constraint or an index */
+    /** note this will set uniqueColumnNames whether they are set as a constraint or an index */
     private function setConstraints()
     {
         $q = new QueryBuilder("SELECT ccu.column_name, tc.constraint_type FROM INFORMATION_SCHEMA.constraint_column_usage ccu JOIN information_schema.table_constraints tc ON ccu.constraint_name = tc.constraint_name WHERE tc.table_name = ccu.table_name AND ccu.table_name = $1", $this->tableName);
@@ -51,7 +55,7 @@ class DatabaseTableModel
                     $this->primaryKeyColumnName = $qRow['column_name'];
                     break;
                 case 'UNIQUE':
-                    $this->uniqueColumns[] = $qRow['column_name'];
+                    $this->uniqueColumnNames[] = $qRow['column_name'];
             }
         }
     }
@@ -60,9 +64,12 @@ class DatabaseTableModel
     {
         $rs = Postgres::getTableMetaData($this->tableName);
         while ($columnInfo = pg_fetch_assoc($rs)) {
-            $columnInfo['is_unique'] = in_array($columnInfo['column_name'], $this->uniqueColumns);
+            $columnInfo['is_unique'] = in_array($columnInfo['column_name'], $this->uniqueColumnNames);
             $c = new DatabaseColumnModel($this, $columnInfo);
             $this->columns[] = $c;
+            if ($columnInfo['is_unique']) {
+                $this->uniqueColumns[] = $c;
+            }
         }
     }
 
@@ -244,5 +251,15 @@ class DatabaseTableModel
         }
 
         return false;
+    }
+
+    public function getUniqueColumnNames(): array
+    {
+        return $this->uniqueColumnNames;
+    }
+
+    public function getUniqueColumns(): array
+    {
+        return $this->uniqueColumns;
     }
 }

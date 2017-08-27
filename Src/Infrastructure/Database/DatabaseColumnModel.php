@@ -39,9 +39,6 @@ class DatabaseColumnModel
     /** @var  array only applies to enum (USER-DEFINED) types */
     private $enumOptions;
 
-    /** @var array http://www.postgresql.org/docs/9.4/static/datatype-numeric.html */
-    private $numericTypes = array('smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'smallserial', 'serial', 'bigserial');
-
     function __construct(DatabaseTableModel $dbTableModel,  array $columnInfo)
     {
         $this->constraints = []; // initialize
@@ -116,7 +113,15 @@ class DatabaseColumnModel
      */
     public function isNumericType(): bool
     {
-        return in_array($this->type, $this->numericTypes);
+        return in_array($this->type, Postgres::NUMERIC_TYPES);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIntegerType(): bool
+    {
+        return in_array($this->type, Postgres::INTEGER_TYPES);
     }
 
     public function isPrimaryKey()

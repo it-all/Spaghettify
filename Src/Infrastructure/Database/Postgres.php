@@ -12,6 +12,29 @@ use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
  */
 Class Postgres
 {
+    /** @var array http://www.postgresql.org/docs/9.4/static/datatype-numeric.html */
+    const NUMERIC_TYPES = array('smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'double precision', 'smallserial', 'serial', 'bigserial');
+
+    const INTEGER_TYPES = array('smallint', 'integer', 'bigint', 'smallserial', 'serial', 'bigserial');
+
+    const SMALLINT_MIN = -32768;
+    const SMALLINT_MAX = 32767;
+
+    const INTEGER_MIN = -2147483648;
+    const INTEGER_MAX = 2147483647;
+
+    const BIGINT_MIN = -9223372036854775808;
+    const BIGINT_MAX = 9223372036854775807;
+
+    const SMALLSERIAL_MIN = 1;
+    const SMALLSERIAL_MAX = self::SMALLINT_MAX;
+
+    const SERIAL_MIN = self::SMALLSERIAL_MIN;
+    const SERIAL_MAX = self::INTEGER_MAX;
+
+    const BIGSERIAL_MIN = self::SMALLSERIAL_MIN;
+    const BIGSERIAL_MAX = self::BIGINT_MAX;
+
     private $pgConn;
 
     /** host and password may not be necessary depending on hba.conf */

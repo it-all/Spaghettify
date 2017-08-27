@@ -22,11 +22,39 @@ class CrudController extends Controller
 
         $this->setRequestInput($request);
 
-        $validationResult = SimpleValidatorExtension::validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model));
-        if (!$validationResult->isSuccess()) {
-            FormHelper::setFieldErrors($validationResult->getErrors());
-            return ($this->view->getInsert($request, $response, $args));
+        $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
+
+        $this->validator->mapFieldsRules(FormHelper::getDatabaseTableValidation($this->model));
+//
+        if (count($this->model->getUniqueColumns()) > 0) {
+            $this->validator::addRule('unique', function($field, $value, array $params, array $fields = []) {
+//                var_dump($params);
+                echo $params[0]['column']->getName();
+                echo $value;
+                return !$params[0]['column']->recordExistsForValue($value);
+            }, 'Must be unique');
         }
+
+        foreach ($this->model->getUniqueColumns() as $databaseColumnModel) {
+            $test = 'abc';
+            $this->validator->rule('unique', $databaseColumnModel->getName(), ['column' => $databaseColumnModel]);
+        }
+
+        //        FormHelper::setDatabaseTableValidation($this->validator, $this->model);
+
+//        $this->validator->rule(function($field, $value, $params, $fields) {
+//            return false;
+//        }, "level")->message("{field} failed...");
+
+        if (!$this->validator->validate()) {
+//            var_dump($this->validator->errors());
+//            echo 'invalid';
+//            // redisplay the form with input values and error(s)
+            FormHelper::setFieldErrors($this->validator->getFirstErrors());
+            return $this->view->getInsert($request, $response, $args);
+        }
+
+        die('valid');
 
         if ($this->insert()) {
             return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));

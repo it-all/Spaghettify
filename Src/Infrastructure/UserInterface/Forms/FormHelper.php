@@ -6,6 +6,8 @@ namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 use It_All\FormFormer\Fields\InputField;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
+use It_All\Spaghettify\Src\Infrastructure\Utilities\ValitronValidatorExtension;
 
 class FormHelper
 {
@@ -95,22 +97,54 @@ class FormHelper
     {
         $columnValidation = [];
 
-//        if ($databaseColumnModel->isPrimaryKey()) {
-//            return $columnValidation; // no validation for primary key as it is not a form field
-//        }
-
         if (!$databaseColumnModel->getIsNullable()) {
             $columnValidation[] = 'required';
         }
 
         if ($databaseColumnModel->getCharacterMaximumLength() != null) {
-            $columnValidation[] = 'max_length('.$databaseColumnModel->getCharacterMaximumLength().')';
+            $columnValidation[] = ['lengthMax', $databaseColumnModel->getCharacterMaximumLength()];
         }
 
-        if ($databaseColumnModel->getIsUnique()) {
-            $columnValidation['unique'] = function($input) use ($databaseColumnModel) {
-                return !$databaseColumnModel->recordExistsForValue($input);
-            };
+        if ($databaseColumnModel->isNumericType()) {
+            if ($databaseColumnModel->isIntegerType()) {
+                $columnValidation[] = 'integer';
+                switch ($databaseColumnModel->getType()) {
+                    case 'smallint':
+                        $columnValidation[] = ['min', Postgres::SMALLINT_MIN];
+                        $columnValidation[] = ['max', Postgres::SMALLINT_MAX];
+                        break;
+
+                    case 'integer':
+                        $columnValidation[] = ['min', Postgres::INTEGER_MIN];
+                        $columnValidation[] = ['max', Postgres::INTEGER_MAX];
+                        break;
+
+                    case 'bigint':
+                        $columnValidation[] = ['min', Postgres::BIGINT_MIN];
+                        $columnValidation[] = ['max', Postgres::BIGINT_MAX];
+                        break;
+
+                    case 'smallserial':
+                        $columnValidation[] = ['min', Postgres::SMALLSERIAL_MIN];
+                        $columnValidation[] = ['max', Postgres::SMALLSERIAL_MAX];
+                        break;
+
+                    case 'serial':
+                        $columnValidation[] = ['min', Postgres::SERIAL_MIN];
+                        $columnValidation[] = ['max', Postgres::SERIAL_MAX];
+                        break;
+
+                    case 'bigserial':
+                        $columnValidation[] = ['min', Postgres::BIGSERIAL_MIN];
+                        $columnValidation[] = ['max', Postgres::BIGSERIAL_MAX];
+                        break;
+
+                    default:
+                        throw new \Exception("Undefined postgres integer type ".$column->getType());
+                }
+            } else {
+                $columnValidation[] = 'numeric';
+            }
         }
 
         return $columnValidation;
@@ -120,11 +154,41 @@ class FormHelper
     {
         $validation = [];
         foreach ($databaseTableModel->getColumns() as $column) {
-            $columnValidation = self::getDatabaseColumnValidation($column);
+            // primary key does not have validation
+            $columnValidation = ($column->isPrimaryKey()) ? [] : self::getDatabaseColumnValidation($column);
             if (count($columnValidation) > 0) {
                 $validation[$column->getName()] = $columnValidation;
             }
         }
+
         return $validation;
+    }
+
+    public static function getDatabaseTableValidationFields(DatabaseTableModel $databaseTableModel): array
+    {
+        $fields = [];
+        foreach ($databaseTableModel->getColumns() as $column) {
+            // primary key does not have validation
+            if (!($column->isPrimaryKey())) {
+                $fields[] = $column->getName();
+            }
+        }
+
+        return $fields;
+    }
+
+    private static function setUniqueDatabaseColumnValidation(ValitronValidatorExtension $v, DatabaseTableModel $databaseTableModel) {
+        foreach ($databaseTableModel->getUniqueColumns() as $databaseColumnModel) {
+            $v->rule(function($field, $value, $params, $fields) {
+                return $databaseColumnModel->recordExistsForValue($value);
+            }, $databaseColumnModel->getName())->message("{field} must be unique");
+        }
+    }
+
+    public static function setDatabaseTableValidation(ValitronValidatorExtension $v, DatabaseTableModel $databaseTableModel)
+    {
+        $v->mapFieldsRules(self::getDatabaseTableValidation($databaseTableModel));
+        // unique rules is set after other rules
+        self::setUniqueDatabaseColumnValidation($v, $databaseTableModel);
     }
 }

@@ -7,6 +7,7 @@ use It_All\FormFormer\Fields\InputField;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
 
 class DatabaseTableForm extends Form
 {
@@ -94,63 +95,105 @@ class DatabaseTableForm extends Form
             $fieldInfo['attributes']['required'] = 'required';
         }
 
-        // the rest of $formField is derived in the switch statement
+        // the rest of $formField is derived below based on postgres column type
         // todo test all types
-        switch ($column->getType()) {
 
-            case 'text':
-                $fieldInfo['tag'] = 'textarea';
-                $fieldInfo['attributes']['cols'] = self::TEXTAREA_COLS;
-                $fieldInfo['attributes']['rows'] = self::TEXTAREA_ROWS;
-                break;
+        if ($column->isNumericType()) {
 
-            // input fields of various types
+            $fieldInfo['tag'] = 'input';
+            $fieldInfo['attributes']['type'] = 'number';
 
-            case 'date':
-                $fieldInfo['tag'] = 'input';
-                $fieldInfo['attributes']['type'] = 'date';
-                break;
+            if ($column->isIntegerType()) {
+                switch ($column->getType()) {
+                    case 'smallint':
+                        $fieldInfo['attributes']['min'] = Postgres::SMALLINT_MIN;
+                        $fieldInfo['attributes']['max'] = Postgres::SMALLINT_MAX;
+                        break;
 
+                    case 'integer':
+                        $fieldInfo['attributes']['min'] = Postgres::INTEGER_MIN;
+                        $fieldInfo['attributes']['max'] = Postgres::INTEGER_MAX;
+                        break;
 
-            case 'character varying':
-                $fieldInfo['tag'] = 'input';
-                $fieldInfo['attributes']['type'] = self::getInputType($inputTypeOverride);
-                // must have max defined
-                $fieldInfo['attributes']['maxlength'] = $column->getCharacterMaximumLength();
-                // value
-                if (strlen($value) > 0) {
-                    $fieldInfo['attributes']['value'] = $value;
+                    case 'bigint':
+                        $fieldInfo['attributes']['min'] = Postgres::BIGINT_MIN;
+                        $fieldInfo['attributes']['max'] = Postgres::BIGINT_MAX;
+                        break;
+
+                    case 'smallserial':
+                        $fieldInfo['attributes']['min'] = Postgres::SMALLSERIAL_MIN;
+                        $fieldInfo['attributes']['max'] = Postgres::SMALLSERIAL_MAX;
+                        break;
+
+                    case 'serial':
+                        $fieldInfo['attributes']['min'] = Postgres::SERIAL_MIN;
+                        $fieldInfo['attributes']['max'] = Postgres::SERIAL_MAX;
+                        break;
+
+                    case 'bigserial':
+                        $fieldInfo['attributes']['min'] = Postgres::BIGSERIAL_MIN;
+                        $fieldInfo['attributes']['max'] = Postgres::BIGSERIAL_MAX;
+                        break;
+
+                    default:
+                        throw new \Exception("Undefined postgres integer type ".$column->getType());
+
                 }
+            } else {
+                // default for the remaining numeric fields.
+                $fieldInfo['attributes']['step'] = '.01';
+            }
 
-                $formField = new InputField($fieldInfo['label'], FormHelper::getInputFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes']), FormHelper::getFieldError($fieldInfo['attributes']['name']));
-                break;
+            // value
+            if (strlen($value) > 0) {
+                $fieldInfo['attributes']['value'] = $value;
+            }
+            $formField = new InputField($fieldInfo['label'], FormHelper::getInputFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes']), FormHelper::getFieldError($fieldInfo['attributes']['name']));
 
-            case 'USER-DEFINED':
-                self::getSelectField($fieldInfo, $column->getEnumOptions(), $value);
-                break;
+        } else {
 
-            case 'boolean':
-                $fieldInfo['tag'] = 'input';
-                $fieldInfo['attributes']['type'] = 'checkbox';
-                $fieldInfo['isBoolean'] = true; // throw some column info for help with checking the box
-                break;
+            switch ($column->getType()) {
 
-            case 'numeric':
-            case 'smallint':
-            case 'bigint':
-            case 'integer':
-                $fieldInfo['tag'] = 'input';
-                $fieldInfo['attributes']['type'] = 'number';
-                // value
-                if (strlen($value) > 0) {
-                    $fieldInfo['attributes']['value'] = $value;
-                }
-                $formField = new InputField($fieldInfo['label'], FormHelper::getInputFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes']), FormHelper::getFieldError($fieldInfo['attributes']['name']));
-                break;
+                case 'text':
+                    $fieldInfo['tag'] = 'textarea';
+                    $fieldInfo['attributes']['cols'] = self::TEXTAREA_COLS;
+                    $fieldInfo['attributes']['rows'] = self::TEXTAREA_ROWS;
+                    break;
 
-            default:
-                $fieldInfo['tag'] = 'input';
-                $fieldInfo['attributes']['type'] = self::getInputType($inputTypeOverride);
+                // input fields of various types
+
+                case 'date':
+                    $fieldInfo['tag'] = 'input';
+                    $fieldInfo['attributes']['type'] = 'date';
+                    break;
+
+
+                case 'character varying':
+                    $fieldInfo['tag'] = 'input';
+                    $fieldInfo['attributes']['type'] = self::getInputType($inputTypeOverride);
+                    // must have max defined
+                    $fieldInfo['attributes']['maxlength'] = $column->getCharacterMaximumLength();
+                    // value
+                    if (strlen($value) > 0) {
+                        $fieldInfo['attributes']['value'] = $value;
+                    }
+
+                    $formField = new InputField($fieldInfo['label'], FormHelper::getInputFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes']), FormHelper::getFieldError($fieldInfo['attributes']['name']));
+                    break;
+
+                case 'USER-DEFINED':
+                    self::getSelectField($fieldInfo, $column->getEnumOptions(), $value);
+                    break;
+
+                case 'boolean':
+                    $fieldInfo['tag'] = 'input';
+                    $fieldInfo['attributes']['type'] = 'checkbox';
+                    $fieldInfo['isBoolean'] = true; // throw some column info for help with checking the box
+                    break;
+
+                default:
+                    throw new \Exception('Undefined form field for postgres column type '.$column->getType());
+            }
         }
 
         return $formField;
