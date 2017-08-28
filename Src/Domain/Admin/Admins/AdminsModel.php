@@ -156,7 +156,6 @@ class AdminsModel extends DatabaseTableModel
             throw new \Exception("Invalid $primaryKeyName $primaryKeyValue for $this->tableName");
         }
 
-        // todo update role if nec
         $q = new QueryBuilder("UPDATE admins SET name = $1, username = $2", $columnValues['name'], $columnValues['username']);
         $argNum = 3;
         if (strlen($columnValues['password_hash']) > 0) {

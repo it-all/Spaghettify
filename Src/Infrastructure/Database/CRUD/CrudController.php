@@ -25,36 +25,25 @@ class CrudController extends Controller
         $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
 
         $this->validator->mapFieldsRules(FormHelper::getDatabaseTableValidation($this->model));
-//
+
         if (count($this->model->getUniqueColumns()) > 0) {
-            $this->validator::addRule('unique', function($field, $value, array $params, array $fields = []) {
-//                var_dump($params);
-                echo $params[0]['column']->getName();
-                echo $value;
-                return !$params[0]['column']->recordExistsForValue($value);
-            }, 'Must be unique');
+            $this->validator::addRule('unique', function($field, $value, array $params = [], array $fields = []) {
+                if (!$params[1]->errors($field)) {
+                    return !$params[0]->recordExistsForValue($value);
+                }
+                return true; // skip validation if there is already an error for the field
+            }, 'Already exists.');
+
+            foreach ($this->model->getUniqueColumns() as $databaseColumnModel) {
+                $this->validator->rule('unique', $databaseColumnModel->getName(), $databaseColumnModel, $this->validator);
+            }
         }
-
-        foreach ($this->model->getUniqueColumns() as $databaseColumnModel) {
-            $test = 'abc';
-            $this->validator->rule('unique', $databaseColumnModel->getName(), ['column' => $databaseColumnModel]);
-        }
-
-        //        FormHelper::setDatabaseTableValidation($this->validator, $this->model);
-
-//        $this->validator->rule(function($field, $value, $params, $fields) {
-//            return false;
-//        }, "level")->message("{field} failed...");
 
         if (!$this->validator->validate()) {
-//            var_dump($this->validator->errors());
-//            echo 'invalid';
-//            // redisplay the form with input values and error(s)
+            // redisplay the form with input values and error(s)
             FormHelper::setFieldErrors($this->validator->getFirstErrors());
             return $this->view->getInsert($request, $response, $args);
         }
-
-        die('valid');
 
         if ($this->insert()) {
             return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
@@ -71,7 +60,6 @@ class CrudController extends Controller
 
         $redirectRoute = $this->routePrefix.'.index';
 
-        // todo put the following 2 validations into validator using model fn calls?
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
@@ -88,8 +76,6 @@ class CrudController extends Controller
             unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
-
-        // todo validate unique columns
 
         if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
             // redisplay form with errors and input values

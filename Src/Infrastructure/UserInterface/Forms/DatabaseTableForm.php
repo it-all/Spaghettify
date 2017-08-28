@@ -96,7 +96,6 @@ class DatabaseTableForm extends Form
         }
 
         // the rest of $formField is derived below based on postgres column type
-        // todo test all types
 
         if ($column->isNumericType()) {
 

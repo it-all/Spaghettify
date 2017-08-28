@@ -48,12 +48,6 @@ abstract class AdminCrudView extends AdminView
             return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
         }
 
-        // todo remove comment?
-        /**
-         * data to send to FormHelper - either from the model or from prior input. Note that when sending null FormHelper defaults to using $_SESSION[SESSION_REQUEST_INPUT_KEY]. It's important to send null, not $_SESSION['formInput'], because FormHelper unsets $_SESSION[SESSION_REQUEST_INPUT_KEY] after using it.
-         * note, this works for post/put because controller calls this method directly in case of errors instead of redirecting
-         */
-
         $fieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
 
         return $this->updateView($request, $response, $args, $fieldData);

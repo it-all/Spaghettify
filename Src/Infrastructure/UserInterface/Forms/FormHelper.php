@@ -176,19 +176,4 @@ class FormHelper
 
         return $fields;
     }
-
-    private static function setUniqueDatabaseColumnValidation(ValitronValidatorExtension $v, DatabaseTableModel $databaseTableModel) {
-        foreach ($databaseTableModel->getUniqueColumns() as $databaseColumnModel) {
-            $v->rule(function($field, $value, $params, $fields) {
-                return $databaseColumnModel->recordExistsForValue($value);
-            }, $databaseColumnModel->getName())->message("{field} must be unique");
-        }
-    }
-
-    public static function setDatabaseTableValidation(ValitronValidatorExtension $v, DatabaseTableModel $databaseTableModel)
-    {
-        $v->mapFieldsRules(self::getDatabaseTableValidation($databaseTableModel));
-        // unique rules is set after other rules
-        self::setUniqueDatabaseColumnValidation($v, $databaseTableModel);
-    }
 }

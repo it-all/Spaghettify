@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ba89baa162dabc3d55c673c52b33f405",
-    "content-hash": "b6af299d53fa37d62a60842debbda639",
+    "hash": "1a49e53a6ffdbd1f2c1fb4b72229128b",
+    "content-hash": "63a5c115037f5012489ee95ca0c6e97b",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -240,16 +240,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.24",
+            "version": "v5.2.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "22d04c6a58145a244696f3f254c1875aa653b26a"
+                "reference": "2baf20b01690fba8cf720c1ebcf9b988eda50915"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/22d04c6a58145a244696f3f254c1875aa653b26a",
-                "reference": "22d04c6a58145a244696f3f254c1875aa653b26a",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/2baf20b01690fba8cf720c1ebcf9b988eda50915",
+                "reference": "2baf20b01690fba8cf720c1ebcf9b988eda50915",
                 "shasum": ""
             },
             "require": {
@@ -313,7 +313,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-07-26 21:00:20"
+            "time": "2017-08-28 11:12:07"
         },
         {
             "name": "pimple/pimple",
@@ -809,16 +809,16 @@
         },
         {
             "name": "vlucas/valitron",
-            "version": "v1.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/valitron.git",
-                "reference": "b33c79116260637337187b7125f955ae26d306cc"
+                "reference": "db089ab2717cae93236c3ddeddabfd3a2f788bd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/valitron/zipball/b33c79116260637337187b7125f955ae26d306cc",
-                "reference": "b33c79116260637337187b7125f955ae26d306cc",
+                "url": "https://api.github.com/repos/vlucas/valitron/zipball/db089ab2717cae93236c3ddeddabfd3a2f788bd4",
+                "reference": "db089ab2717cae93236c3ddeddabfd3a2f788bd4",
                 "shasum": ""
             },
             "require": {
@@ -851,13 +851,15 @@
                 "validation",
                 "validator"
             ],
-            "time": "2017-02-23 08:31:59"
+            "time": "2017-08-28 06:50:38"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "vlucas/valitron": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
