@@ -37,7 +37,7 @@ class DatabaseTableModel
     public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
-        $this->primaryKeyColumnName = false; // initialize
+        $this->primaryKeyColumnName = null; // initialize
 
         $this->uniqueColumns = [];
         $this->uniqueColumnNames = [];
@@ -107,7 +107,7 @@ class DatabaseTableModel
         $q = new QueryBuilder("SELECT $columns FROM $this->tableName");
         if ($orderByColumn != null) {
             if ($orderByColumn == 'PRIMARYKEY') {
-                if ($this->primaryKeyColumnName === false) {
+                if ($this->primaryKeyColumnName === null) {
                     throw new \Exception("Cannot order by Primary Key since it does not exist for table ".$this->tableName);
                 }
                 $orderByColumn = $this->primaryKeyColumnName;
