@@ -11,6 +11,7 @@ class RolesModel extends DatabaseTableModel
     {
         parent::__construct('roles');
         $this->addColumnNameConstraint('level', 'positive');
+        $this->defaultOrderByColumnName = 'level';
     }
 
     public function getRoles(): array
