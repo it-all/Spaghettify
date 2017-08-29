@@ -26,7 +26,7 @@
                             {% set colCount = 0 %}
                             {% for key in row|keys %}
                                 {% if key == sortColumn %}
-                                    {% set thClass = ' sorttable_sorted_reverse' %}
+                                    {% set thClass = (sortByAsc) ? 'sorttable_sorted' : 'sorttable_sorted_reverse' %}
                                 {% else %}
                                     {% set thClass = '' %}
                                 {% endif %}

@@ -55,7 +55,7 @@ abstract class AdminCrudView extends AdminView
 
     protected function indexView(Response $response, string $columns = '*')
     {
-        if ($results = pg_fetch_all($this->model->select($columns, 'PRIMARYKEY', false))) {
+        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc()))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -77,8 +77,8 @@ abstract class AdminCrudView extends AdminView
                 'deleteRoute' => $this->routePrefix.'.delete',
                 'results' => $results,
                 'numResults' => $numResults,
-                'sortColumn' => $this->model->getPrimaryKeyColumnName(),
-                'sortByAsc' => false,
+                'sortColumn' => $this->model->getDefaultOrderByColumnName(),
+                'sortByAsc' => $this->model->getDefaultOrderByAsc(),
                 'navigationItems' => $this->navigationItems
             ]
         );

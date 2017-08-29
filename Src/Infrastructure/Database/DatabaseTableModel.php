@@ -7,7 +7,6 @@ use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertUpdateBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\UpdateBuilder;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 
 class DatabaseTableModel
 {
@@ -19,6 +18,12 @@ class DatabaseTableModel
 
     /** @var string or false if no primary key column exists */
     protected $primaryKeyColumnName;
+
+    /** @var bool|string  */
+    protected $defaultOrderByColumnName;
+
+    /** @var bool  */
+    protected $defaultOrderByAsc;
 
     /**
      * @var array of columnNames with UNIQUE constraint or index
@@ -32,13 +37,17 @@ class DatabaseTableModel
     public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
-        $this->primaryKeyColumnName = false; // default
+        $this->primaryKeyColumnName = false; // initialize
+
         $this->uniqueColumns = [];
         $this->uniqueColumnNames = [];
 
         // $this->primaryKeyColumnName will be updated if exists
         // $this->uniqueColumnNames added (then used to set $column->isUnique
         $this->setConstraints();
+
+        $this->defaultOrderByColumnName = $this->primaryKeyColumnName;
+        $this->defaultOrderByAsc = true;
 
         // $this->uniqueColumns added
         $this->setColumns();
@@ -232,6 +241,16 @@ class DatabaseTableModel
     public function getPrimaryKeyColumnName(): string
     {
         return $this->primaryKeyColumnName;
+    }
+
+    public function getDefaultOrderByColumnName(): string
+    {
+        return $this->defaultOrderByColumnName;
+    }
+
+    public function getDefaultOrderByAsc(): bool
+    {
+        return $this->defaultOrderByAsc;
     }
 
     public function getColumns(): array
