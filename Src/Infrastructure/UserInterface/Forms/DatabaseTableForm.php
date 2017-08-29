@@ -71,6 +71,7 @@ class DatabaseTableForm extends Form
         string $idOverride = ''
     )
     {
+        $columnValidation = FormHelper::getDatabaseColumnValidation($column);
         $columnName = $column->getName();
         $value = ($valueOverride !== null) ? $valueOverride : $column->getDefaultValue();
 
@@ -91,7 +92,7 @@ class DatabaseTableForm extends Form
             ]
         ];
 
-        if ( ($isRequiredOverride !== null && $isRequiredOverride) || in_array('required', FormHelper::getDatabaseColumnValidation($column))) {
+        if ( ($isRequiredOverride !== null && $isRequiredOverride) || FormHelper::getDatabaseColumnValidationValue($column, 'required')) {
             $fieldInfo['attributes']['required'] = 'required';
         }
 
@@ -105,33 +106,33 @@ class DatabaseTableForm extends Form
             if ($column->isIntegerType()) {
                 switch ($column->getType()) {
                     case 'smallint':
-                        $fieldInfo['attributes']['min'] = Postgres::SMALLINT_MIN;
-                        $fieldInfo['attributes']['max'] = Postgres::SMALLINT_MAX;
+                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
                         break;
 
                     case 'integer':
-                        $fieldInfo['attributes']['min'] = Postgres::INTEGER_MIN;
-                        $fieldInfo['attributes']['max'] = Postgres::INTEGER_MAX;
+                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
                         break;
 
                     case 'bigint':
-                        $fieldInfo['attributes']['min'] = Postgres::BIGINT_MIN;
-                        $fieldInfo['attributes']['max'] = Postgres::BIGINT_MAX;
+                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
                         break;
 
                     case 'smallserial':
-                        $fieldInfo['attributes']['min'] = Postgres::SMALLSERIAL_MIN;
-                        $fieldInfo['attributes']['max'] = Postgres::SMALLSERIAL_MAX;
+                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
                         break;
 
                     case 'serial':
-                        $fieldInfo['attributes']['min'] = Postgres::SERIAL_MIN;
-                        $fieldInfo['attributes']['max'] = Postgres::SERIAL_MAX;
+                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
                         break;
 
                     case 'bigserial':
-                        $fieldInfo['attributes']['min'] = Postgres::BIGSERIAL_MIN;
-                        $fieldInfo['attributes']['max'] = Postgres::BIGSERIAL_MAX;
+                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
                         break;
 
                     default:

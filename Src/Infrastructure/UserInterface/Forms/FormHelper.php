@@ -93,9 +93,23 @@ class FormHelper
         unset($_SESSION[self::SESSION_ERRORS_KEY]);
     }
 
+    public static function getDatabaseColumnValidationValue(DatabaseColumnModel $databaseColumnModel, string $validationType)
+    {
+        foreach (self::getDatabaseColumnValidation($databaseColumnModel) as $validation) {
+            if (!is_array($validation) && $validation == $validationType) {
+                return true;
+            } elseif (is_array($validation) && $validation[0] == $validationType) {
+                return $validation[1];
+            }
+        }
+
+        return false;
+    }
+
     public static function getDatabaseColumnValidation(DatabaseColumnModel $databaseColumnModel): array
     {
         $columnValidation = [];
+        $columnConstraints = $databaseColumnModel->getConstraints();
 
         if (!$databaseColumnModel->getIsNullable()) {
             $columnValidation[] = 'required';
@@ -110,32 +124,38 @@ class FormHelper
                 $columnValidation[] = 'integer';
                 switch ($databaseColumnModel->getType()) {
                     case 'smallint':
-                        $columnValidation[] = ['min', Postgres::SMALLINT_MIN];
+                        $minValue = (in_array('positve', $columnConstraints)) ? 1 : Postgres::SMALLINT_MIN;
+                        $columnValidation[] = ['min', $minValue];
                         $columnValidation[] = ['max', Postgres::SMALLINT_MAX];
                         break;
 
                     case 'integer':
-                        $columnValidation[] = ['min', Postgres::INTEGER_MIN];
+                        $minValue = (in_array('positve', $columnConstraints)) ? 1 : Postgres::INTEGER_MIN;
+                        $columnValidation[] = ['min', $minValue];
                         $columnValidation[] = ['max', Postgres::INTEGER_MAX];
                         break;
 
                     case 'bigint':
-                        $columnValidation[] = ['min', Postgres::BIGINT_MIN];
+                        $minValue = (in_array('positve', $columnConstraints)) ? 1 : Postgres::BIGINT_MIN;
+                        $columnValidation[] = ['min', $minValue];
                         $columnValidation[] = ['max', Postgres::BIGINT_MAX];
                         break;
 
                     case 'smallserial':
-                        $columnValidation[] = ['min', Postgres::SMALLSERIAL_MIN];
+                        $minValue = (in_array('positve', $columnConstraints)) ? 1 : Postgres::SMALLSERIAL_MIN;
+                        $columnValidation[] = ['min', $minValue];
                         $columnValidation[] = ['max', Postgres::SMALLSERIAL_MAX];
                         break;
 
                     case 'serial':
-                        $columnValidation[] = ['min', Postgres::SERIAL_MIN];
+                        $minValue = (in_array('positve', $columnConstraints)) ? 1 : Postgres::SERIAL_MIN;
+                        $columnValidation[] = ['min', $minValue];
                         $columnValidation[] = ['max', Postgres::SERIAL_MAX];
                         break;
 
                     case 'bigserial':
-                        $columnValidation[] = ['min', Postgres::BIGSERIAL_MIN];
+                        $minValue = (in_array('positve', $columnConstraints)) ? 1 : Postgres::BIGSERIAL_MIN;
+                        $columnValidation[] = ['min', $minValue];
                         $columnValidation[] = ['max', Postgres::BIGSERIAL_MAX];
                         break;
 
