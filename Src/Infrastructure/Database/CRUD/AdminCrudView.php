@@ -29,33 +29,7 @@ abstract class AdminCrudView extends AdminView
 
     public function index(Request $request, Response $response, $args)
     {
-        $this->indexView($response);
-    }
-
-    public function getInsert(Request $request, Response $response, $args)
-    {
-        return $this->insertView($response);
-    }
-
-    public function getUpdate(Request $request, Response $response, $args)
-    {
-        // make sure there is a record for the model
-        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            $_SESSION['adminNotice'] = [
-                "Record ".$args['primaryKey']." Not Found",
-                'adminNoticeFailure'
-            ];
-            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
-        }
-
-        $fieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
-
-        return $this->updateView($request, $response, $args, $fieldData);
-    }
-
-    protected function indexView(Response $response, string $columns = '*')
-    {
-        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc()))) {
+        if ($results = pg_fetch_all($this->model->select("*", $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc()))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -84,9 +58,11 @@ abstract class AdminCrudView extends AdminView
         );
     }
 
-    protected function insertView(Response $response)
+    public function getInsert(Request $request, Response $response, $args)
     {
-        $form = new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.post.insert'), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue());
+        $formFieldData = ($request->isGet()) ? null : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+
+        $form = new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.post.insert'), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'insert', $formFieldData);
         FormHelper::unsetSessionVars();
 
         return $this->view->render(
@@ -100,14 +76,28 @@ abstract class AdminCrudView extends AdminView
         );
     }
 
-    protected function updateView(Request $request, Response $response, $args, array $fieldData)
+    public function getUpdate(Request $request, Response $response, $args)
     {
+        // make sure there is a record for the model
+        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
+            $_SESSION['adminNotice'] = [
+                "Record ".$args['primaryKey']." Not Found",
+                'adminNoticeFailure'
+            ];
+            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
+        }
+
+        $formFieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+
+        $form = new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.put.update', ['primaryKey' => $args['primaryKey']]), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'update', $formFieldData);
+        FormHelper::unsetSessionVars();
+
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
                 'title' => 'Update ' . $this->model->getFormalTableName(false),
-                'form' => new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.put.update', ['primaryKey' => $args['primaryKey']]), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'update', $fieldData),
+                'form' => $form,
                 'primaryKey' => $args['primaryKey'],
                 'navigationItems' => $this->navigationItems
             ]

@@ -28,7 +28,7 @@ Logging Events with Monologger
 Error Logging
 CSRF Checking
 Twig Templates
-CRUD for Single Database Tables (In Development)
+CRUD for Single Database Tables (In Development) (NOTE: CRUD is like a quick and dirty ORM for single tables which is not meant to be complete, in that many data types and many constraints will not be mapped)
 Data Validation with [Valitron] (https://github.com/vlucas/valitron) (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the BCMath extension for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)
 Authentication
 Administrative Layout including Navigation

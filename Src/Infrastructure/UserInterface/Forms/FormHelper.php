@@ -39,7 +39,7 @@ class FormHelper
         return (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$fieldName])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY][$fieldName] : '';
     }
 
-    public static function getInputFieldAttributes(string $fieldName = '', array $addAttributes = []): array
+    private static function getCommonFieldAttributes(string $fieldName = '', array $addAttributes = []): array
     {
         $attributes = [];
 
@@ -47,11 +47,6 @@ class FormHelper
         if (strlen($fieldName) > 0) {
             $attributes['name'] = $fieldName;
             unset($addAttributes['name']);
-        }
-
-        // value - does not overwrite if in addAttributes
-        if (!array_key_exists('value', $addAttributes)) {
-            $attributes['value'] = self::getFieldValue($fieldName);
         }
 
         // error class
@@ -65,6 +60,22 @@ class FormHelper
         }
 
         return array_merge($attributes, $addAttributes);
+    }
+
+    public static function getInputFieldAttributes(string $fieldName = '', array $addAttributes = [], bool $insertValue = true): array
+    {
+        $attributes = [];
+
+        // value - does not overwrite if in addAttributes
+        if (!array_key_exists('value', $addAttributes) && $insertValue) {
+            $attributes['value'] = self::getFieldValue($fieldName);
+        }
+        return array_merge(self::getCommonFieldAttributes($fieldName, $addAttributes), $attributes);
+    }
+
+    public static function getTextareaFieldAttributes(string $fieldName = '', array $addAttributes = []): array
+    {
+        return self::getCommonFieldAttributes($fieldName, $addAttributes);
     }
 
     public static function getCsrfNameField(string $csrfNameKey, string $csrfNameValue)
@@ -175,11 +186,12 @@ class FormHelper
         $validation = [];
         foreach ($databaseTableModel->getColumns() as $column) {
             // primary key does not have validation
-            $columnValidation = ($column->isPrimaryKey()) ? [] : self::getDatabaseColumnValidation($column);
+            // do not impose required validation on boolean (checkbox) fields, even though the column may be not null, allowing 'f' (unchecked) is fine but doing required validation will cause an error for unchecked condition
+            $columnValidation = ($column->isPrimaryKey() || $column->isBoolean()) ? [] : self::getDatabaseColumnValidation($column);
             if (count($columnValidation) > 0) {
                 $validation[$column->getName()] = $columnValidation;
             }
-        }
+       }
 
         return $validation;
     }
@@ -189,7 +201,8 @@ class FormHelper
         $fields = [];
         foreach ($databaseTableModel->getColumns() as $column) {
             // primary key does not have validation
-            if (!($column->isPrimaryKey())) {
+            // do not impose required validation on boolean (checkbox) fields, even though the column may be not null, allowing 'f' (unchecked) is fine but doing required validation will cause an error for unchecked condition
+            if (!$column->isPrimaryKey() && !$column->isBoolean()) {
                 $fields[] = $column->getName();
             }
         }

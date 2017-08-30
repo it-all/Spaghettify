@@ -37,7 +37,7 @@ class DatabaseTableModel
     public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
-        $this->primaryKeyColumnName = null; // initialize
+        $this->primaryKeyColumnName = false; // initialize
 
         $this->uniqueColumns = [];
         $this->uniqueColumnNames = [];
@@ -107,7 +107,7 @@ class DatabaseTableModel
         $q = new QueryBuilder("SELECT $columns FROM $this->tableName");
         if ($orderByColumn != null) {
             if ($orderByColumn == 'PRIMARYKEY') {
-                if ($this->primaryKeyColumnName === null) {
+                if ($this->primaryKeyColumnName === false) {
                     throw new \Exception("Cannot order by Primary Key since it does not exist for table ".$this->tableName);
                 }
                 $orderByColumn = $this->primaryKeyColumnName;
@@ -139,21 +139,20 @@ class DatabaseTableModel
         return pg_fetch_assoc($res); // returns false if not records are found
     }
 
-    public function updateByPrimaryKey(array $columnValues, $primaryKeyValue, bool $validatePrimaryKeyValue = false)
+    protected function addBooleanColumnValues(array $columnValues): array
     {
-        $primaryKeyName = $this->getPrimaryKeyColumnName();
-
-        if ($validatePrimaryKeyValue && !$this->selectForPrimaryKey($primaryKeyValue)) {
-            throw new \Exception("Invalid $primaryKeyName $primaryKeyValue for $this->tableName");
+        foreach ($this->columns as $column) {
+            if ($column->isBoolean() && !isset($columnValues[$column->getName()])) {
+                $columnValues[$column->getName()] = 'f';
+            }
         }
 
-        $ub = new UpdateBuilder($this->tableName, $primaryKeyName, $primaryKeyValue);
-        $this->addColumnsToBuilder($ub, $columnValues);
-        return $ub->execute();
+        return $columnValues;
     }
 
     public function insert(array $columnValues)
     {
+        $columnValues = $this->addBooleanColumnValues($columnValues);
         $ib = new InsertBuilder($this->tableName);
         $ib->setPrimaryKeyName($this->getPrimaryKeyColumnName());
         $this->addColumnsToBuilder($ib, $columnValues);
@@ -162,6 +161,20 @@ class DatabaseTableModel
         } catch(\Exception $exception) {
             throw $exception;
         }
+    }
+
+    public function updateByPrimaryKey(array $columnValues, $primaryKeyValue, bool $validatePrimaryKeyValue = false)
+    {
+        $primaryKeyName = $this->getPrimaryKeyColumnName();
+
+        if ($validatePrimaryKeyValue && !$this->selectForPrimaryKey($primaryKeyValue)) {
+            throw new \Exception("Invalid $primaryKeyName $primaryKeyValue for $this->tableName");
+        }
+
+        $columnValues = $this->addBooleanColumnValues($columnValues);
+        $ub = new UpdateBuilder($this->tableName, $primaryKeyName, $primaryKeyValue);
+        $this->addColumnsToBuilder($ub, $columnValues);
+        return $ub->execute();
     }
 
     public function deleteByPrimaryKey($primaryKeyValue, string $returning = null)
@@ -182,14 +195,13 @@ class DatabaseTableModel
             // make sure this is truly a column
             if ($column = $this->getColumnByName($name)) {
 
-                if ($column->isBoolean() && $value == 'on') {
-                    $value = 't';
+                if ($column->isBoolean()) {
+                    $value = ($value == 'on') ? 't' : 'f';
                 }
 
                 if (strlen($value) == 0) {
                     $value = $this->handleBlankValue($column);
                 }
-
                 $builder->addColumn($name, $value);
             }
         }

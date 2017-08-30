@@ -21,6 +21,7 @@ class CrudController extends Controller
         }
 
         $this->setRequestInput($request);
+        $this->addBooleanFieldsToInput();
 
         $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
 
@@ -50,6 +51,15 @@ class CrudController extends Controller
         }
     }
 
+    private function addBooleanFieldsToInput()
+    {
+        foreach ($this->model->getColumns() as $databaseColumnModel) {
+            if ($databaseColumnModel->isBoolean() && !isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()])) {
+                $_SESSION[SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()] = 'f';
+            }
+        }
+    }
+
     public function putUpdate(Request $request, Response $response, $args)
     {
         if (!$this->authorization->checkFunctionality($this->routePrefix.'.update')) {
@@ -57,9 +67,9 @@ class CrudController extends Controller
         }
 
         $this->setRequestInput($request);
+        $this->addBooleanFieldsToInput();
 
         $redirectRoute = $this->routePrefix.'.index';
-
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
@@ -71,16 +81,37 @@ class CrudController extends Controller
         }
 
         // if no changes made, redirect
+        // debatable whether this should be part of validation and stay on page with error
         if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
-            $_SESSION['adminNotice'] = ["No changes made", 'adminNoticeFailure'];
+            $_SESSION['adminNotice'] = ["No changes made (Record ".$args['primaryKey'].")", 'adminNoticeFailure'];
             unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
 
-        if (!$this->validator->validate($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidation($this->model))) {
-            // redisplay form with errors and input values
-            FormHelper::setFieldErrors($this->validator->getErrors());
-            return ($this->view->getUpdate($request, $response, $args));
+        $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
+
+        $this->validator->mapFieldsRules(FormHelper::getDatabaseTableValidation($this->model));
+
+        if (count($this->model->getUniqueColumns()) > 0) {
+            $this->validator::addRule('unique', function($field, $value, array $params = [], array $fields = []) {
+                if (!$params[1]->errors($field)) {
+                    return !$params[0]->recordExistsForValue($value);
+                }
+                return true; // skip validation if there is already an error for the field
+            }, 'Already exists.');
+
+            foreach ($this->model->getUniqueColumns() as $databaseColumnModel) {
+                // only set rule for changed columns
+                if ($_SESSION[SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()] != $record[$databaseColumnModel->getName()]) {
+                    $this->validator->rule('unique', $databaseColumnModel->getName(), $databaseColumnModel, $this->validator);
+                }
+            }
+        }
+
+        if (!$this->validator->validate()) {
+            // redisplay the form with input values and error(s)
+            FormHelper::setFieldErrors($this->validator->getFirstErrors());
+            return $this->view->getUpdate($request, $response, $args);
         }
 
         if ($this->update($response, $args)) {

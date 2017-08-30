@@ -40,16 +40,16 @@
         },
         {
             "name": "it-all/form-former",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/it-all/FormFormer.git",
-                "reference": "7c8301665da497db5af5beb3d074ff488aa0992d"
+                "reference": "344a1af364301ffc88a2d9f830ff0c2a220e3454"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/it-all/FormFormer/zipball/7c8301665da497db5af5beb3d074ff488aa0992d",
-                "reference": "7c8301665da497db5af5beb3d074ff488aa0992d",
+                "url": "https://api.github.com/repos/it-all/FormFormer/zipball/344a1af364301ffc88a2d9f830ff0c2a220e3454",
+                "reference": "344a1af364301ffc88a2d9f830ff0c2a220e3454",
                 "shasum": ""
             },
             "require": {
@@ -67,7 +67,7 @@
                 "MIT"
             ],
             "description": "HTML5 Form Creation Tool in PHP (7+) and Twig",
-            "time": "2017-08-12 13:15:46"
+            "time": "2017-08-30 10:24:21"
         },
         {
             "name": "monolog/monolog",
@@ -813,12 +813,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/valitron.git",
-                "reference": "db089ab2717cae93236c3ddeddabfd3a2f788bd4"
+                "reference": "20a9c2d604b0932b2bd58fa32fbb2520616fef65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/valitron/zipball/db089ab2717cae93236c3ddeddabfd3a2f788bd4",
-                "reference": "db089ab2717cae93236c3ddeddabfd3a2f788bd4",
+                "url": "https://api.github.com/repos/vlucas/valitron/zipball/20a9c2d604b0932b2bd58fa32fbb2520616fef65",
+                "reference": "20a9c2d604b0932b2bd58fa32fbb2520616fef65",
                 "shasum": ""
             },
             "require": {
@@ -851,7 +851,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2017-08-28 06:50:38"
+            "time": "2017-08-28 20:06:05"
         }
     ],
     "packages-dev": [],

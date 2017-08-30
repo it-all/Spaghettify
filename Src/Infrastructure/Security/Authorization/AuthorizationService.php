@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
-use function It_All\Spaghettify\Src\Infrastructure\Utilities\printPreArray;
 use Psr\Log\InvalidArgumentException;
 
 class AuthorizationService

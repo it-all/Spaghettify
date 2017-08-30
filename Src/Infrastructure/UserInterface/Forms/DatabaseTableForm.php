@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
 use It_All\FormFormer\Fields\InputField;
+use It_All\FormFormer\Fields\InputFields\CheckboxRadioInputField;
+use It_All\FormFormer\Fields\SelectField;
+use It_All\FormFormer\Fields\SelectOption;
+use It_All\FormFormer\Fields\TextareaField;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
 
 class DatabaseTableForm extends Form
 {
@@ -22,7 +25,13 @@ class DatabaseTableForm extends Form
 
         foreach ($databaseTableModel->getColumns() as $column) {
             if ($this->includeFieldForColumn($column, $databaseAction)) {
-                $columnValue = (isset($fieldData[$column->getName()])) ? $fieldData[$column->getName()] : null;
+                // value
+                if (isset($fieldData)) {
+                    $columnValue = (isset($fieldData[$column->getName()])) ? $fieldData[$column->getName()] : ''; // sending '' instead of null takes care of checkbox fields where nothing is posted if unchecked
+                } else {
+                    $columnValue = null;
+                }
+
                 $fields[] = $this->getFieldFromDatabaseColumn($column, null, $columnValue);
             }
         }
@@ -71,7 +80,6 @@ class DatabaseTableForm extends Form
         string $idOverride = ''
     )
     {
-        $columnValidation = FormHelper::getDatabaseColumnValidation($column);
         $columnName = $column->getName();
         $value = ($valueOverride !== null) ? $valueOverride : $column->getDefaultValue();
 
@@ -158,6 +166,7 @@ class DatabaseTableForm extends Form
                     $fieldInfo['tag'] = 'textarea';
                     $fieldInfo['attributes']['cols'] = self::TEXTAREA_COLS;
                     $fieldInfo['attributes']['rows'] = self::TEXTAREA_ROWS;
+                    $formField = new TextareaField($value, $fieldInfo['label'], FormHelper::getTextareaFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes']), FormHelper::getFieldError($fieldInfo['attributes']['name']));
                     break;
 
                 // input fields of various types
@@ -165,6 +174,11 @@ class DatabaseTableForm extends Form
                 case 'date':
                     $fieldInfo['tag'] = 'input';
                     $fieldInfo['attributes']['type'] = 'date';
+                    // value
+                    if (strlen($value) > 0) {
+                        $fieldInfo['attributes']['value'] = $value;
+                    }
+                    $formField = new InputField($fieldInfo['label'], FormHelper::getInputFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes']), FormHelper::getFieldError($fieldInfo['attributes']['name']));
                     break;
 
 
@@ -182,13 +196,25 @@ class DatabaseTableForm extends Form
                     break;
 
                 case 'USER-DEFINED':
-                    self::getSelectField($fieldInfo, $column->getEnumOptions(), $value);
+                    $options = [];
+                    foreach ($column->getEnumOptions() as $option) {
+                        $options[] = new SelectOption($option, $option);
+                    }
+                    $formField = new SelectField($options, $value, $fieldInfo['label'], $fieldInfo['attributes'], FormHelper::getFieldError($fieldInfo['attributes']['name']));
                     break;
 
                 case 'boolean':
+                    // remove required attribute if it exists
+                    if (isset($fieldInfo['attributes']['required'])) {
+                        unset($fieldInfo['attributes']['required']);
+                    }
                     $fieldInfo['tag'] = 'input';
                     $fieldInfo['attributes']['type'] = 'checkbox';
-                    $fieldInfo['isBoolean'] = true; // throw some column info for help with checking the box
+                    if ($value == 't' || $value == 'on') {
+                        $fieldInfo['attributes']['checked'] = 'checked';
+                    }
+                    $formField = new CheckboxRadioInputField($fieldInfo['label'], FormHelper::getInputFieldAttributes($fieldInfo['attributes']['name'], $fieldInfo['attributes'], false), FormHelper::getFieldError($fieldInfo['attributes']['name']), true);
+
                     break;
 
                 default:

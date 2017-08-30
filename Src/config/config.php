@@ -43,6 +43,7 @@ return [
         'service' => "service@$domainName"
     ],
 
+    // these must be in the database: roles.role
     'adminMinimumPermissions' => [
         'admins.index' => 'manager',
         'admins.insert' => 'director',
