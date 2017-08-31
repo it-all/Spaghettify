@@ -46,7 +46,7 @@ class DatabaseTableForm extends Form
 
         $fields[] = FormHelper::getSubmitField();
 
-        parent::__construct($fields, ['method' => 'post', 'action' => $formAction, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
+        parent::__construct($fields, ['method' => 'post', 'action' => $formAction], FormHelper::getGeneralError());
 
     }
 
@@ -68,6 +68,48 @@ class DatabaseTableForm extends Form
         }
 
         return true;
+    }
+
+    protected static function getMinMaxForIntegerTypes(DatabaseColumnModel $column): array
+    {
+        switch ($column->getType()) {
+            case 'smallint':
+                $min = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                $max = FormHelper::getDatabaseColumnValidationValue($column,'max');
+                break;
+
+            case 'integer':
+                $min = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                $max = FormHelper::getDatabaseColumnValidationValue($column,'max');
+                break;
+
+            case 'bigint':
+                $min = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                $max = FormHelper::getDatabaseColumnValidationValue($column,'max');
+                break;
+
+            case 'smallserial':
+                $min = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                $max = FormHelper::getDatabaseColumnValidationValue($column,'max');
+                break;
+
+            case 'serial':
+                $min = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                $max = FormHelper::getDatabaseColumnValidationValue($column,'max');
+                break;
+
+            case 'bigserial':
+                $min = FormHelper::getDatabaseColumnValidationValue($column,'min');
+                $max = FormHelper::getDatabaseColumnValidationValue($column,'max');
+                break;
+
+            default:
+                throw new \Exception("Undefined postgres integer type ".$column->getType());
+
+        }
+
+        return [$min, $max];
+
     }
 
     public static function getFieldFromDatabaseColumn(
@@ -112,41 +154,7 @@ class DatabaseTableForm extends Form
             $fieldInfo['attributes']['type'] = 'number';
 
             if ($column->isIntegerType()) {
-                switch ($column->getType()) {
-                    case 'smallint':
-                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
-                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
-                        break;
-
-                    case 'integer':
-                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
-                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
-                        break;
-
-                    case 'bigint':
-                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
-                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
-                        break;
-
-                    case 'smallserial':
-                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
-                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
-                        break;
-
-                    case 'serial':
-                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
-                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
-                        break;
-
-                    case 'bigserial':
-                        $fieldInfo['attributes']['min'] = FormHelper::getDatabaseColumnValidationValue($column,'min');
-                        $fieldInfo['attributes']['max'] = FormHelper::getDatabaseColumnValidationValue($column,'max');
-                        break;
-
-                    default:
-                        throw new \Exception("Undefined postgres integer type ".$column->getType());
-
-                }
+                list($fieldInfo['attributes']['min'], $fieldInfo['attributes']['max']) = self::getMinMaxForIntegerTypes($column);
             } else {
                 // default for the remaining numeric fields.
                 $fieldInfo['attributes']['step'] = '.01';

@@ -29,7 +29,12 @@ abstract class AdminCrudView extends AdminView
 
     public function index(Request $request, Response $response, $args)
     {
-        if ($results = pg_fetch_all($this->model->select("*", $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc()))) {
+        return $this->indexView($response);
+    }
+
+    public function indexView(Response $response, string $columns = '*')
+    {
+        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc()))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -60,6 +65,12 @@ abstract class AdminCrudView extends AdminView
 
     public function getInsert(Request $request, Response $response, $args)
     {
+        return $this->insertView($request, $response, $args);
+    }
+
+    /** this can be called for both the initial get and the posted form if errors exist (from controller) */
+    public function insertView(Request $request, Response $response, $args)
+    {
         $formFieldData = ($request->isGet()) ? null : $_SESSION[SESSION_REQUEST_INPUT_KEY];
 
         $form = new DatabaseTableForm($this->model, $this->router->pathFor($this->routePrefix.'.post.insert'), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'insert', $formFieldData);
@@ -77,6 +88,12 @@ abstract class AdminCrudView extends AdminView
     }
 
     public function getUpdate(Request $request, Response $response, $args)
+    {
+        return $this->updateView($request, $response, $args);
+    }
+
+    /** this can be called for both the initial get and the posted form if errors exist (from controller) */
+    public function updateView(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {

@@ -46,16 +46,15 @@ class AuthorizationService
             return false;
         }
 
-        if (array_search($role, $this->roles) > array_search($minimumPermission, $this->roles)) {
-            return false;
+        if (array_search($role, $this->roles) <= array_search($minimumPermission, $this->roles)) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public function checkFunctionality(string $functionality): bool
     {
-        $minPer = $this->getMinimumPermission($functionality);
-        return $this->check($minPer);
+        return $this->check($this->getMinimumPermission($functionality));
     }
 }

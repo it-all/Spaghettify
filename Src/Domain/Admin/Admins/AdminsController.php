@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
-use It_All\Spaghettify\Src\Infrastructure\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -27,6 +28,42 @@ class AdminsController extends CrudController
      */
     public function postInsert(Request $request, Response $response, $args)
     {
+
+        if (!$this->authorization->checkFunctionality($this->routePrefix.'.insert')) {
+            throw new \Exception('No permission.');
+        }
+
+        $this->setRequestInput($request);
+        // no boolean fields to add
+
+        $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+
+        $this->validator->rule('required', 'name');
+
+        // unique column rule for username
+        $this->validator::addRule('unique', function($field, $value, array $params = [], array $fields = []) {
+            if (!$params[1]->errors($field)) {
+                return !$params[0]->recordExistsForValue($value);
+            }
+            return true; // skip validation if there is already an error for the field
+        }, 'Already exists.');
+
+        $this->validator->rule('unique', 'name', $this->model->getColumnByName('name'), $this->validator);
+
+
+
+        if (!$this->validator->validate()) {
+            // redisplay the form with input values and error(s)
+            FormHelper::setFieldErrors($this->validator->getFirstErrors());
+            return $this->view->getInsert($request, $response, $args);
+        }
+
+        die ('valid');
+        if ($this->insert()) {
+            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
+        }
+
+        /* old
         $this->setRequestInput($request);
 
         // custom validation
@@ -43,6 +80,7 @@ class AdminsController extends CrudController
             // redisplay form with errors and input values
             return ($this->view->getInsert($request, $response, $args));
         }
+        */
     }
 
     /**

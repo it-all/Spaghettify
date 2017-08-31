@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
+use It_All\FormFormer\Fields\InputField;
+use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -24,6 +28,39 @@ class AdminsView extends AdminCrudView
     public function index(Request $request, Response $response, $args)
     {
         $this->indexView($response, 'id, name, username');
+    }
+
+    public function insertView(Request $request, Response $response, $args)
+    {
+        $formFieldData = ($request->isGet()) ? null : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+
+        $fields = [];
+
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('name'));
+
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('username'));
+
+        $fields[] = new InputField('Password', ['name' => 'password_hash', 'id' => 'password_hash', 'required' => 'required']);
+
+        $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'required' => 'required']);
+
+        $fields[] = FormHelper::getCsrfNameField($this->csrf->getTokenNameKey(), $this->csrf->getTokenName());
+        $fields[] = FormHelper::getCsrfValueField($this->csrf->getTokenValueKey(), $this->csrf->getTokenValue());
+
+        $fields[] = FormHelper::getSubmitField();
+
+        $form = new Form($fields, ['method' => 'post', 'action' => $this->router->pathFor($this->routePrefix.'.post.insert'), 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
+        FormHelper::unsetSessionVars();
+
+        return $this->view->render(
+            $response,
+            'admin/form.twig',
+            [
+                'title' => 'Inserts '. $this->model->getFormalTableName(false),
+                'form' => $form,
+                'navigationItems' => $this->navigationItems
+            ]
+        );
     }
 
     /**

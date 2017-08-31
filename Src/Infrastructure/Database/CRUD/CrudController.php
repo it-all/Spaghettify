@@ -43,7 +43,7 @@ class CrudController extends Controller
         if (!$this->validator->validate()) {
             // redisplay the form with input values and error(s)
             FormHelper::setFieldErrors($this->validator->getFirstErrors());
-            return $this->view->getInsert($request, $response, $args);
+            return $this->view->insertView($request, $response, $args);
         }
 
         if ($this->insert()) {
@@ -111,7 +111,7 @@ class CrudController extends Controller
         if (!$this->validator->validate()) {
             // redisplay the form with input values and error(s)
             FormHelper::setFieldErrors($this->validator->getFirstErrors());
-            return $this->view->getUpdate($request, $response, $args);
+            return $this->view->updateView($request, $response, $args);
         }
 
         if ($this->update($response, $args)) {
