@@ -19,13 +19,6 @@ class AdminsController extends CrudController
         parent::__construct($container);
     }
 
-    /**
-     * override for custom validation
-     * @param $request
-     * @param $response
-     * @param $args
-     * @return mixed
-     */
     public function postInsert(Request $request, Response $response, $args)
     {
 
@@ -38,7 +31,12 @@ class AdminsController extends CrudController
 
         $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY]);
 
-        $this->validator->rule('required', 'name');
+        $rules = [
+            'required' => [['name'], ['username'], ['password'], ['password_confirm'], ['role_id']],
+            'alpha' => 'name',
+            'lengthMin' => ['username', 4]
+        ];
+        $this->validator->rules($rules);
 
         // unique column rule for username
         $this->validator::addRule('unique', function($field, $value, array $params = [], array $fields = []) {

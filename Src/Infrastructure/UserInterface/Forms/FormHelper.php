@@ -191,7 +191,7 @@ class FormHelper
             if (count($columnValidation) > 0) {
                 $validation[$column->getName()] = $columnValidation;
             }
-       }
+        }
 
         return $validation;
     }

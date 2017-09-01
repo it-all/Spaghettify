@@ -75,7 +75,6 @@ class QueryBuilder
      * or false if 0 or multiple records result
      */
     public function getOne() {
-        $return = array();
         if ($res = $this->execute()) {
             if (pg_num_rows($res) == 1) {
                 // make sure only 1 field in query

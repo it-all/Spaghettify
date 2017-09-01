@@ -42,7 +42,8 @@ return [
         'isLive' => $config['isLive'],
         'businessName' => $config['businessName'],
         'emails' => $config['emails'],
-        'trimAllUserInput' => $config['trimAllUserInput']
+        'trimAllUserInput' => $config['trimAllUserInput'],
+        'adminDefaultRole' => $config['adminDefaultRole']
     ],
 
     //Override the default Not Found Handler

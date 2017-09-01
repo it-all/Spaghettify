@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\FormFormer\Fields\InputField;
+use It_All\FormFormer\Fields\SelectField;
+use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
+use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
@@ -40,9 +43,17 @@ class AdminsView extends AdminCrudView
 
         $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('username'));
 
-        $fields[] = new InputField('Password', ['name' => 'password_hash', 'id' => 'password_hash', 'required' => 'required']);
+        $fields[] = new InputField('Password', ['name' => 'password', 'id' => 'password', 'type' => 'password', 'required' => 'required'], FormHelper::getFieldError('password'));
 
-        $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'required' => 'required']);
+        $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'type' => 'password', 'required' => 'required'], FormHelper::getFieldError('password_confirm'));
+
+        $rolesOptions = [];
+        $rolesModel = new RolesModel();
+        foreach ($rolesModel->getRoles() as $roleId => $role) {
+            $rolesOptions[] = new SelectOption($role, (string) $roleId);
+        }
+
+        $fields[] = new SelectField($rolesOptions, (string) $rolesModel->getDefaultRoleId($this->container->settings['adminDefaultRole']), 'Role', ['name' => 'role_id', 'id' => 'role_id', 'required' => 'required'], FormHelper::getFieldError('role_id'));
 
         $fields[] = FormHelper::getCsrfNameField($this->csrf->getTokenNameKey(), $this->csrf->getTokenName());
         $fields[] = FormHelper::getCsrfValueField($this->csrf->getTokenValueKey(), $this->csrf->getTokenValue());
@@ -56,7 +67,7 @@ class AdminsView extends AdminCrudView
             $response,
             'admin/form.twig',
             [
-                'title' => 'Inserts '. $this->model->getFormalTableName(false),
+                'title' => 'Insert '. $this->model->getFormalTableName(false),
                 'form' => $form,
                 'navigationItems' => $this->navigationItems
             ]
