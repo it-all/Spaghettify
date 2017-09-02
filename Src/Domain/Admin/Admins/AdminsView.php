@@ -38,7 +38,7 @@ class AdminsView extends AdminCrudView
         return strlen(FormHelper::getFieldError('password')) > 0 || strlen(FormHelper::getFieldError('password_confirm')) > 0;
     }
 
-    private function getForm(Request $request, string $action = 'insert', int $primaryKey,  array $fieldValues = null)
+    private function getForm(Request $request, string $action = 'insert', int $primaryKey = null,  array $record = null)
     {
         if ($action != 'insert' && $action != 'update') {
             throw new \Exception("Invalid action $action");
@@ -47,43 +47,54 @@ class AdminsView extends AdminCrudView
         $fields = [];
 
         if ($action == 'insert') {
+            $fieldValues = ($request->isGet()) ? [] : $_SESSION[SESSION_REQUEST_INPUT_KEY];
             $formAction = $this->router->pathFor($this->routePrefix.'.post.insert');
+            $passwordLabel = 'Password';
         } else {
+            $fieldValues = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
             $formAction = $this->router->pathFor($this->routePrefix.'.put.update', ['primaryKey' => $primaryKey]);
+            $passwordLabel = 'Password [leave blank to keep existing]';
             $fields[] = FormHelper::getPutMethodField();
         }
 
+        // Name Field
         $nameValue = (isset($fieldValues['name'])) ? $fieldValues['name'] : '';
         $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('name'), null, $nameValue);
 
-        $usernameValue = (isset($fieldValues['name'])) ? $fieldValues['name'] : '';
+        // Username Field
+        $usernameValue = (isset($fieldValues['username'])) ? $fieldValues['username'] : '';
         $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('username'), null, $usernameValue);
 
+        // Password Fields
         // determine values of pw and pw conf fields
         // values will persist if no errors in either field
         if ($request->isGet()) {
             $passwordValue = '';
             $passwordConfirmationValue = '';
         } else {
-            $passwordValue = ($this->pwFieldsHaveError()) ? '' : $_SESSION[SESSION_REQUEST_INPUT_KEY]['password'];
-            $passwordConfirmationValue = ($this->pwFieldsHaveError()) ? '' : $_SESSION[SESSION_REQUEST_INPUT_KEY]['password_confirm'];
+            $passwordValue = ($this->pwFieldsHaveError()) ? '' : $fieldValues['password'];
+            $passwordConfirmationValue = ($this->pwFieldsHaveError()) ? '' : $fieldValues['password_confirm'];
         }
 
-        $fields[] = new InputField('Password', ['name' => 'password', 'id' => 'password', 'type' => 'password', 'required' => 'required', 'value' => $passwordValue], FormHelper::getFieldError('password'));
+        $fields[] = new InputField($passwordLabel, ['name' => 'password', 'id' => 'password', 'type' => 'password', 'required' => 'required', 'value' => $passwordValue], FormHelper::getFieldError('password'));
 
         $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'type' => 'password', 'required' => 'required', 'value' => $passwordConfirmationValue], FormHelper::getFieldError('password_confirm'));
 
+        // Role Field
         $rolesOptions = [];
         $rolesModel = new RolesModel();
         foreach ($rolesModel->getRoles() as $roleId => $role) {
             $rolesOptions[] = new SelectOption($role, (string) $roleId);
         }
 
-        $fields[] = new SelectField($rolesOptions, (string) $rolesModel->getDefaultRoleId($this->container->settings['adminDefaultRole']), 'Role', ['name' => 'role_id', 'id' => 'role_id', 'required' => 'required'], FormHelper::getFieldError('role_id'));
+        $selectedOptionValue = (isset($fieldValues['role_id'])) ? $fieldValues['role_id'] : (string) $rolesModel->getDefaultRoleId($this->container->settings['adminDefaultRole']);
+        $fields[] = new SelectField($rolesOptions, $selectedOptionValue, 'Role', ['name' => 'role_id', 'id' => 'role_id', 'required' => 'required'], FormHelper::getFieldError('role_id'));
 
+        // CSRF Fields
         $fields[] = FormHelper::getCsrfNameField($this->csrf->getTokenNameKey(), $this->csrf->getTokenName());
         $fields[] = FormHelper::getCsrfValueField($this->csrf->getTokenValueKey(), $this->csrf->getTokenValue());
 
+        // Submit Field
         $fields[] = FormHelper::getSubmitField();
 
         $form = new Form($fields, ['method' => 'post', 'action' => $formAction, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());

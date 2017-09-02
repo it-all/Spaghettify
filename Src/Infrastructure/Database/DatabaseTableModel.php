@@ -199,7 +199,7 @@ class DatabaseTableModel
                     $value = ($value == 'on') ? 't' : 'f';
                 }
 
-                if (strlen($value) == 0) {
+                if (is_string($value) && strlen($value) == 0) {
                     $value = $this->handleBlankValue($column);
                 }
                 $builder->addColumn($name, $value);

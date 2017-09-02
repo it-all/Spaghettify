@@ -14,120 +14,51 @@ class AdminsModel extends DatabaseTableModel
     public function __construct()
     {
         parent::__construct('admins');
-//        $this->setColumnConstraints();
-//        $this->roles = ['owner'];
-//        $this->getColumnByName('role')->getEnumOptions();
     }
 
-
-    /**
-     * override for customization
-     * @param string $databaseAction
-     * @return array
-     */
-    public function setFormFields(string $databaseAction = 'insert')
+    public function insert(string $name, string $username, string $password, int $roleId)
     {
-        $this->validateDatabaseActionString($databaseAction);
-
-        $this->formFields = [];
-
-        if ($databaseAction == 'insert') {
-
-            $passwordHashLabel = 'Password';
-            $confirmPasswordHashLabel = 'Confirm Password';
-
-            // same validation for pw and conf pw
-            // note put required first so it's validated first
-            $passwordHashFieldValidation = [
-                'required' => true,
-                'minlength' => 12,
-                'maxlength' => 50
-            ];
-            $confirmPasswordHashFieldValidation = array_merge($passwordHashFieldValidation, ['confirm' => true]);
-
-
-        } else { //update
-
-            $passwordHashLabel = 'Change Password (leave blank to keep existing password)';
-            $confirmPasswordHashLabel = 'Confirm New Password';
-
-            // same validation for pw and conf pw
-            $passwordHashFieldValidation = [
-                'minlength' => 12,
-                'maxlength' => 50
-            ];
-            $confirmPasswordHashFieldValidation = array_merge($passwordHashFieldValidation, ['confirm' => true]);
-
-            // override post method
-            $this->formFields['_METHOD'] = Form::getPutMethodField();
-        }
-
-        foreach ($this->getColumns() as $databaseColumnModel) {
-            $name = $databaseColumnModel->getName();
-
-            // no need to have form field for primary key column
-            if (!$databaseColumnModel->isPrimaryKey() && $databaseColumnModel->getName() != 'employee_id') {
-
-                $labelOverride = null;
-                $inputTypeOverride = null;
-                $validationOverride = null;
-
-                if ($name == 'password_hash') {
-                    $labelOverride = $passwordHashLabel;
-                    $inputTypeOverride = 'password';
-                    $validationOverride = $passwordHashFieldValidation;
-                }
-
-                $this->formFields[$name] = DatabaseTableForm::getFieldFromDatabaseColumn(
-                    $databaseColumnModel,
-                    $labelOverride,
-                    $inputTypeOverride,
-                    $validationOverride
-                );
-
-                if ($name == 'password_hash') {
-                    $this->formFields['confirm_password_hash'] = $this->getConfirmPasswordHashField($confirmPasswordHashLabel, $confirmPasswordHashFieldValidation);
-                }
-            }
-        }
-
-        $this->formFields['submit'] = Form::getSubmitField();
-
-        $this->setPersistPasswords();
-    }
-
-    private function setPersistPasswords()
-    {
-        if (!isset($_SESSION['validationErrors']['password_hash']) && !isset($_SESSION['validationErrors']['confirm_password_hash'])) {
-            $this->formFields['password_hash']['persist'] = true;
-            $this->formFields['confirm_password_hash']['persist'] = true;
-        } else {
-            $this->formFields['password_hash']['persist'] = false;
-            $this->formFields['confirm_password_hash']['persist'] = false;
-        }
-    }
-
-    /**
-     * If a blank password is passed, the password field is not updated
-     * @param int $id
-     * @param array $columnValues
-     * @return resource
-     * @throws \Exception
-     */
-    public function updateByPrimaryKey(array $columnValues, $primaryKeyValue, bool $validatePrimaryKeyValue = false)
-    {
-        if ($validatePrimaryKeyValue && !$this->selectForPrimaryKey($primaryKeyValue)) {
-            throw new \Exception("Invalid $primaryKeyName $primaryKeyValue for $this->tableName");
-        }
-
-        $q = new QueryBuilder("UPDATE admins SET name = $1, username = $2", $columnValues['name'], $columnValues['username']);
-        $argNum = 3;
-        if (strlen($columnValues['password_hash']) > 0) {
-            $q->add(", password_hash = $$argNum", password_hash($columnValues['password_hash'], PASSWORD_DEFAULT));
-            $argNum++;
-        }
-        $q->add(" WHERE id = $$argNum RETURNING id", $primaryKeyValue);
+        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4)", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
         return $q->execute();
+    }
+
+    private function getChangedColumns(array $record, string $name, string $username, int $roleId, string $password_hash = ''): array
+    {
+        $changedColumns = [];
+        if ($name != $record['name']) {
+            $changedColumns['name'] = $name;
+        }
+        if ($username != $record['username']) {
+            $changedColumns['username'] = $username;
+        }
+        if ($roleId != $record['role_id']) {
+            $changedColumns['role_id'] = $roleId;
+        }
+        if (strlen($password_hash) > 0 && $password_hash != $record['password_hash']) {
+            $changedColumns['password_hash'] = $password_hash;
+        }
+        return $changedColumns;
+    }
+
+    // If a '' password is passed, the password field is not updated
+    public function updateByPrimaryKey(int $primaryKeyValue, string $name, string $username, int $roleId, string $password = '', array $record = null)
+    {
+        if ($record == null && !$record = $this->selectForPrimaryKey($primaryKeyValue)) {
+            throw new \Exception("Invalid Primary Key $primaryKeyValue for $this->tableName");
+        }
+
+        $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, $password);
+        return $this->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
+
+//
+//        $q = new QueryBuilder("UPDATE admins SET name = $1, username = $2", $columnValues['name'], $columnValues['username']);
+//        $argNum = 3;
+//        if (strlen($columnValues['password_hash']) > 0) {
+//            $q->add(", password_hash = $$argNum", password_hash($columnValues['password_hash'], PASSWORD_DEFAULT));
+//            $argNum++;
+//        }
+//        $q->add(" WHERE id = $$argNum RETURNING id", $primaryKeyValue);
+//        return $q->execute();
     }
 
     public function checkRecordExistsForUsername(string $username): bool
@@ -154,11 +85,5 @@ class AdminsModel extends DatabaseTableModel
         }
 
         return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
-    }
-
-    public function insert(string $name, string $username, string $password, int $roleId)
-    {
-        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4)", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
-        return $q->execute();
     }
 }

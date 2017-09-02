@@ -7,16 +7,16 @@ use It_All\FormFormer\Fields\InputField;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
-use It_All\Spaghettify\Src\Infrastructure\Utilities\ValitronValidatorExtension;
 
 class FormHelper
 {
     const SESSION_ERRORS_KEY = 'formErrors';
+    const GENERAL_ERROR_KEY = 'generalFormError';
     const FIELD_ERROR_CLASS = 'formFieldError';
 
     public static function setGeneralError(string $errorMessage)
     {
-        $_SESSION[self::SESSION_ERRORS_KEY]['generalFormError'] = $errorMessage;
+        $_SESSION[self::SESSION_ERRORS_KEY][self::GENERAL_ERROR_KEY] = $errorMessage;
     }
 
     public static function setFieldErrors(array $fieldErrors)
@@ -26,7 +26,7 @@ class FormHelper
 
     public static function getGeneralError(): string
     {
-        return (isset($_SESSION[self::SESSION_ERRORS_KEY]['generalFormError'])) ? $_SESSION[self::SESSION_ERRORS_KEY]['generalFormError'] : '';
+        return (isset($_SESSION[self::SESSION_ERRORS_KEY][self::GENERAL_ERROR_KEY])) ? $_SESSION[self::SESSION_ERRORS_KEY][self::GENERAL_ERROR_KEY] : '';
     }
 
     public static function getFieldError(string $fieldName): string

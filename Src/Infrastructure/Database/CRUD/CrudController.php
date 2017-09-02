@@ -84,7 +84,7 @@ class CrudController extends Controller
         // debatable whether this should be part of validation and stay on page with error
         if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
             $_SESSION['adminNotice'] = ["No changes made (Record ".$args['primaryKey'].")", 'adminNoticeFailure'];
-            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+            FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
 
