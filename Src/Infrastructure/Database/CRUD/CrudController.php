@@ -145,7 +145,7 @@ class CrudController extends Controller
     {
         // attempt insert
         try {
-            $res = $this->model->insert($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+            $res = $this->model->insertRecord($_SESSION[SESSION_REQUEST_INPUT_KEY]);
             FormHelper::unsetSessionVars();
             $returned = pg_fetch_all($res);
             $message = 'Inserted record '.$returned[0][$this->model->getPrimaryKeyColumnName()].
@@ -172,7 +172,7 @@ class CrudController extends Controller
     {
         // attempt to update the model
         try {
-            $this->model->updateByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
+            $this->model->updateRecordByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
             FormHelper::unsetSessionVars();
             $message = 'Updated record '.$args['primaryKey'];
             $this->logger->addInfo($message . ' in '. $this->model->getTableName());

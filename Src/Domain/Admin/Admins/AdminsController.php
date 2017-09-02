@@ -19,24 +19,21 @@ class AdminsController extends CrudController
         parent::__construct($container);
     }
 
-    public function postInsert(Request $request, Response $response, $args)
+    private function setValidation()
     {
-
-        if (!$this->authorization->checkFunctionality($this->routePrefix.'.insert')) {
-            throw new \Exception('No permission.');
-        }
-
-        $this->setRequestInput($request);
-        // no boolean fields to add
-
         $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY]);
 
         $rules = [
             'required' => [['name'], ['username'], ['password'], ['password_confirm'], ['role_id']],
-            'alpha' => 'name',
-            'lengthMin' => ['username', 4]
+            'lengthMin' => [
+                ['username', 4],
+                ['password', 12]
+            ],
+            'equals' => [['password', 'password_confirm']]
         ];
+
         $this->validator->rules($rules);
+        $this->validator->rule('regex', 'name', '%^[a-zA-Z\s]+$%')->message('must be letters and spaces only');
 
         // unique column rule for username
         $this->validator::addRule('unique', function($field, $value, array $params = [], array $fields = []) {
@@ -47,8 +44,18 @@ class AdminsController extends CrudController
         }, 'Already exists.');
 
         $this->validator->rule('unique', 'name', $this->model->getColumnByName('name'), $this->validator);
+    }
 
+    public function postInsert(Request $request, Response $response, $args)
+    {
+        if (!$this->authorization->checkFunctionality($this->routePrefix.'.insert')) {
+            throw new \Exception('No permission.');
+        }
 
+        $this->setRequestInput($request);
+        // no boolean fields to add
+
+        $this->setValidation();
 
         if (!$this->validator->validate()) {
             // redisplay the form with input values and error(s)
@@ -56,29 +63,47 @@ class AdminsController extends CrudController
             return $this->view->getInsert($request, $response, $args);
         }
 
-        die ('valid');
-        if ($this->insert()) {
-            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
-        }
-
-        /* old
-        $this->setRequestInput($request);
-
-        // custom validation
-        if ($this->model->checkRecordExistsForUsername($_SESSION[SESSION_REQUEST_INPUT_KEY]['username'])) {
-            $_SESSION['generalFormError'] = 'Username already exists';
-            $error = true;
-        } elseif (!$this->insert()) {
-            $error = true;
-        } else { // successful insert
-            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
-        }
-
-        if ($error) {
+        $values = $_SESSION[SESSION_REQUEST_INPUT_KEY];
+        if (!$this->model->insert($values['name'], $values['username'], $values['password'], (int) $values['role_id'])) {
             // redisplay form with errors and input values
             return ($this->view->getInsert($request, $response, $args));
         }
-        */
+
+        return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
+    }
+
+    public function putUpdate(Request $request, Response $response, $args)
+    {
+        if (!$this->authorization->checkFunctionality($this->routePrefix.'.update')) {
+            throw new \Exception('No permission.');
+        }
+
+        $this->setRequestInput($request);
+        // no boolean fields
+
+        $redirectRoute = $this->routePrefix.'.index';
+
+        // make sure there is a record for the primary key in the model
+        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
+            $_SESSION['adminNotice'] = [
+                "Record ".$args['primaryKey']." Not Found",
+                'adminNoticeFailure'
+            ];
+            return $response->withRedirect($this->router->pathFor($redirectRoute));
+        }
+
+        $this->setValidation();
+
+
+        if (!$this->validator->validate()) {
+            // redisplay the form with input values and error(s)
+            FormHelper::setFieldErrors($this->validator->getFirstErrors());
+            return $this->view->updateView($request, $response, $args);
+        }
+
+        if ($this->update($response, $args)) {
+            return $response->withRedirect($this->router->pathFor($redirectRoute));
+        }
     }
 
     /**

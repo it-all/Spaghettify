@@ -33,19 +33,45 @@ class AdminsView extends AdminCrudView
         $this->indexView($response, 'id, name, username');
     }
 
-    public function insertView(Request $request, Response $response, $args)
+    private function pwFieldsHaveError(): bool
     {
-        $formFieldData = ($request->isGet()) ? null : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+        return strlen(FormHelper::getFieldError('password')) > 0 || strlen(FormHelper::getFieldError('password_confirm')) > 0;
+    }
+
+    private function getForm(Request $request, string $action = 'insert', int $primaryKey,  array $fieldValues = null)
+    {
+        if ($action != 'insert' && $action != 'update') {
+            throw new \Exception("Invalid action $action");
+        }
 
         $fields = [];
 
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('name'));
+        if ($action == 'insert') {
+            $formAction = $this->router->pathFor($this->routePrefix.'.post.insert');
+        } else {
+            $formAction = $this->router->pathFor($this->routePrefix.'.put.update', ['primaryKey' => $primaryKey]);
+            $fields[] = FormHelper::getPutMethodField();
+        }
 
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('username'));
+        $nameValue = (isset($fieldValues['name'])) ? $fieldValues['name'] : '';
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('name'), null, $nameValue);
 
-        $fields[] = new InputField('Password', ['name' => 'password', 'id' => 'password', 'type' => 'password', 'required' => 'required'], FormHelper::getFieldError('password'));
+        $usernameValue = (isset($fieldValues['name'])) ? $fieldValues['name'] : '';
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('username'), null, $usernameValue);
 
-        $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'type' => 'password', 'required' => 'required'], FormHelper::getFieldError('password_confirm'));
+        // determine values of pw and pw conf fields
+        // values will persist if no errors in either field
+        if ($request->isGet()) {
+            $passwordValue = '';
+            $passwordConfirmationValue = '';
+        } else {
+            $passwordValue = ($this->pwFieldsHaveError()) ? '' : $_SESSION[SESSION_REQUEST_INPUT_KEY]['password'];
+            $passwordConfirmationValue = ($this->pwFieldsHaveError()) ? '' : $_SESSION[SESSION_REQUEST_INPUT_KEY]['password_confirm'];
+        }
+
+        $fields[] = new InputField('Password', ['name' => 'password', 'id' => 'password', 'type' => 'password', 'required' => 'required', 'value' => $passwordValue], FormHelper::getFieldError('password'));
+
+        $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'type' => 'password', 'required' => 'required', 'value' => $passwordConfirmationValue], FormHelper::getFieldError('password_confirm'));
 
         $rolesOptions = [];
         $rolesModel = new RolesModel();
@@ -60,28 +86,28 @@ class AdminsView extends AdminCrudView
 
         $fields[] = FormHelper::getSubmitField();
 
-        $form = new Form($fields, ['method' => 'post', 'action' => $this->router->pathFor($this->routePrefix.'.post.insert'), 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
+        $form = new Form($fields, ['method' => 'post', 'action' => $formAction, 'novalidate' => 'novalidate'], FormHelper::getGeneralError());
         FormHelper::unsetSessionVars();
 
+        return $form;
+    }
+
+    /** this can be called for both the initial get and the posted form if errors exist (from controller) */
+    public function insertView(Request $request, Response $response, $args)
+    {
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
                 'title' => 'Insert '. $this->model->getFormalTableName(false),
-                'form' => $form,
+                'form' => $this->getForm($request),
                 'navigationItems' => $this->navigationItems
             ]
         );
     }
 
-    /**
-     * override to leave pw field blank
-     * @param $request
-     * @param $response
-     * @param $args
-     * @return mixed
-     */
-    public function getUpdate(Request $request, Response $response, $args)
+    /** this can be called for both the initial get and the posted form if errors exist (from controller) */
+    public function updateView(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
@@ -92,14 +118,45 @@ class AdminsView extends AdminCrudView
             return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
         }
 
-        $record['password_hash'] = '';
-
-        /**
-         * data to send to FormHelper - either from the model or from prior input. Note that when sending null FormHelper defaults to using $_SESSION[SESSION_REQUEST_INPUT_KEY]. It's important to send null, not $_SESSION['formInput'], because FormHelper unsets $_SESSION[SESSION_REQUEST_INPUT_KEY] after using it.
-         * note, this works for post/put because controller calls this method directly in case of errors instead of redirecting
-         */
-        $fieldData = ($request->isGet()) ? $record : null;
-
-        return $this->updateView($request, $response, $args, $fieldData);
+        return $this->view->render(
+            $response,
+            'admin/form.twig',
+            [
+                'title' => 'Update ' . $this->model->getFormalTableName(false),
+                'form' => $this->getForm($request, 'update', (int) $args['primaryKey'], $record),
+                'primaryKey' => $args['primaryKey'],
+                'navigationItems' => $this->navigationItems
+            ]
+        );
     }
+
+
+//    /**
+//     * override to leave pw field blank
+//     * @param $request
+//     * @param $response
+//     * @param $args
+//     * @return mixed
+//     */
+//    public function getUpdate(Request $request, Response $response, $args)
+//    {
+//        // make sure there is a record for the model
+//        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
+//            $_SESSION['adminNotice'] = [
+//                "Record ".$args['primaryKey']." Not Found",
+//                'adminNoticeFailure'
+//            ];
+//            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
+//        }
+//
+//        $record['password_hash'] = '';
+//
+//        /**
+//         * data to send to FormHelper - either from the model or from prior input. Note that when sending null FormHelper defaults to using $_SESSION[SESSION_REQUEST_INPUT_KEY]. It's important to send null, not $_SESSION['formInput'], because FormHelper unsets $_SESSION[SESSION_REQUEST_INPUT_KEY] after using it.
+//         * note, this works for post/put because controller calls this method directly in case of errors instead of redirecting
+//         */
+//        $fieldData = ($request->isGet()) ? $record : null;
+//
+//        return $this->updateView($request, $response, $args, $fieldData);
+//    }
 }

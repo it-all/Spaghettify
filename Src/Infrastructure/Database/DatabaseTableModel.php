@@ -150,7 +150,7 @@ class DatabaseTableModel
         return $columnValues;
     }
 
-    public function insert(array $columnValues)
+    public function insertRecord(array $columnValues)
     {
         $columnValues = $this->addBooleanColumnValues($columnValues);
         $ib = new InsertBuilder($this->tableName);
@@ -163,7 +163,7 @@ class DatabaseTableModel
         }
     }
 
-    public function updateByPrimaryKey(array $columnValues, $primaryKeyValue, bool $validatePrimaryKeyValue = false)
+    public function updateRecordByPrimaryKey(array $columnValues, $primaryKeyValue, bool $validatePrimaryKeyValue = false)
     {
         $primaryKeyName = $this->getPrimaryKeyColumnName();
 

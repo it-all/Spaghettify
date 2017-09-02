@@ -6,55 +6,19 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\Form;
 
 class AdminsModel extends DatabaseTableModel
 {
-    private $roles; // array of existing roles
+//    private $roles; // array of existing roles
 
     public function __construct()
     {
         parent::__construct('admins');
-        $this->setColumnConstraints();
-        $this->roles = ['owner'];
+//        $this->setColumnConstraints();
+//        $this->roles = ['owner'];
 //        $this->getColumnByName('role')->getEnumOptions();
     }
 
-    private function setColumnConstraints()
-    {
-        $this->setUsernameConstraints();
-        $this->setPasswordConstraints();
-    }
-
-    private function setUsernameConstraints()
-    {
-        $u = $this->getColumnByName('username');
-        $this->addColumnConstraint($u, 'required');
-        $this->addColumnConstraint($u, 'alpha');
-        $this->addColumnConstraint($u, 'minlength', 4);
-    }
-
-    private function setPasswordConstraints()
-    {
-        $this->addColumnNameConstraint('password_hash', 'required');
-    }
-
-    private function getConfirmPasswordHashField(string $label, array $validation): array
-    {
-        $field = [
-            'label' => $label,
-            'tag' => 'input',
-            'attributes' => [
-                'name' => 'confirm_password_hash',
-                'id' => 'confirm_password_hash',
-                'type' => 'password',
-                'maxlength' => 50
-            ],
-            'validation' => $validation
-        ];
-
-        return $field;
-    }
 
     /**
      * override for customization
@@ -192,9 +156,9 @@ class AdminsModel extends DatabaseTableModel
         return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
     }
 
-    public function insert(array $columnValues)
+    public function insert(string $name, string $username, string $password, int $roleId)
     {
-        $columnValues['password_hash'] = password_hash($columnValues['password_hash'], PASSWORD_DEFAULT);
-        return parent::insert($columnValues);
+        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4)", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
+        return $q->execute();
     }
 }
