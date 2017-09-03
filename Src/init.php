@@ -13,7 +13,7 @@ require APP_ROOT . 'Infrastructure/Utilities/functions.php';
 use It_All\Spaghettify\Src\Infrastructure\Utilities;
 
 // in case of collision, env.php value overrides
-$config = array_merge(
+$config = array_replace_recursive(
     require APP_ROOT . 'config/config.php',
     require APP_ROOT . 'config/env.php'
 );
@@ -25,7 +25,9 @@ $mailer = new \It_All\Spaghettify\Src\Infrastructure\Utilities\PhpMailerService(
     $config['businessName'],
     $config['phpmailer']['protocol'],
     $config['phpmailer']['smtpHost'],
-    $config['phpmailer']['smtpPort']
+    $config['phpmailer']['smtpPort'],
+    $config['isLive'],
+    $config['errors']['emailDev']
 );
 
 // error handling
@@ -37,7 +39,6 @@ $errorHandler = new Utilities\ErrorHandler(
     $config['storage']['logs']['pathPhpErrors'],
     $config['hostName']."/",
     $config['isLive'],
-    $config['errors']['emailDev'],
     $mailer,
     $emailErrorsTo
 );

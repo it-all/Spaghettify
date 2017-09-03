@@ -8,7 +8,6 @@ class ErrorHandler
     private $logPath;
     private $redirectPage;
     private $isLiveServer;
-    private $emailDev;
     private $mailer;
     private $emailTo;
     private $fatalMessage;
@@ -17,7 +16,6 @@ class ErrorHandler
         string $logPath,
         string $redirectPage,
         bool $isLiveServer,
-        bool $emailDev,
         PhpMailerService $m,
         array $emailTo,
         $fatalMessage = 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.'
@@ -26,7 +24,6 @@ class ErrorHandler
         $this->logPath = $logPath;
         $this->redirectPage = $redirectPage;
         $this->isLiveServer = $isLiveServer;
-        $this->emailDev = $emailDev;
         $this->mailer = $m;
         $this->emailTo = $emailTo;
         $this->fatalMessage = $fatalMessage;

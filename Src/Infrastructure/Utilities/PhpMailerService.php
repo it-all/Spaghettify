@@ -15,8 +15,10 @@ class PhpMailerService {
     private $smtpHost;
     private $smtpPort;
     private $phpMailer;
+    private $isLiveServer;
+    private $emailDev;
 
-    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol, string $smtpHost = null, int $smtpPort = null)
+    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol, string $smtpHost = null, int $smtpPort = null, bool $isLiveServer = true, bool $emailDev = false)
     {
         $this->logPath = $logPath;
         $this->defaultFromEmail = $defaultFromEmail;
@@ -25,6 +27,8 @@ class PhpMailerService {
         $this->smtpHost = $smtpHost;
         $this->smtpPort = $smtpPort;
         $this->phpMailer = $this->create();
+        $this->isLiveServer = $isLiveServer;
+        $this->emailDev = $emailDev;
     }
 
     public function send(string $subject, string $body, array $toEmails, string $fromEmail = null, string $fromName = null)
