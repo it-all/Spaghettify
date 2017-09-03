@@ -33,6 +33,37 @@ class AdminsView extends AdminCrudView
         $this->indexView($response, 'id, name, username');
     }
 
+    public function indexView(Response $response, string $columns = '*')
+    {
+        if ($results = pg_fetch_all($this->model->getWithRoles())) {
+            $numResults = count($results);
+        } else {
+            $numResults = 0;
+        }
+
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][$this->routePrefix.'.insert'])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => $this->routePrefix.'.insert'] : false;
+
+        return $this->view->render(
+            $response,
+            'admin/list.twig',
+            [
+                'title' => $this->model->getFormalTableName(),
+                'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
+                'insertLink' => $insertLink,
+                'updatePermitted' => $this->authorization
+                    ->check($this->container->settings['authorization'][$this->routePrefix.'.update']),
+                'updateRoute' => $this->routePrefix.'.put.update',
+                'addDeleteColumn' => true,
+                'deleteRoute' => $this->routePrefix.'.delete',
+                'results' => $results,
+                'numResults' => $numResults,
+                'sortColumn' => 'level',
+                'sortByAsc' => $this->model->getDefaultOrderByAsc(),
+                'navigationItems' => $this->navigationItems
+            ]
+        );
+    }
+
     private function pwFieldsHaveError(): bool
     {
         return strlen(FormHelper::getFieldError('password')) > 0 || strlen(FormHelper::getFieldError('password_confirm')) > 0;

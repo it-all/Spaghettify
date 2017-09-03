@@ -5,7 +5,6 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 
 class AdminsModel extends DatabaseTableModel
 {
@@ -18,7 +17,7 @@ class AdminsModel extends DatabaseTableModel
 
     public function insert(string $name, string $username, string $password, int $roleId)
     {
-        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4)", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
+        $q = new QueryBuilder("INSERT INTO adminsx (name, username, password_hash, role_id) VALUES($1, $2, $3, $4)", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
         return $q->execute();
     }
 
@@ -47,18 +46,8 @@ class AdminsModel extends DatabaseTableModel
             throw new \Exception("Invalid Primary Key $primaryKeyValue for $this->tableName");
         }
 
-        $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, $password);
+        $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, password_hash($password, PASSWORD_DEFAULT));
         return $this->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
-
-//
-//        $q = new QueryBuilder("UPDATE admins SET name = $1, username = $2", $columnValues['name'], $columnValues['username']);
-//        $argNum = 3;
-//        if (strlen($columnValues['password_hash']) > 0) {
-//            $q->add(", password_hash = $$argNum", password_hash($columnValues['password_hash'], PASSWORD_DEFAULT));
-//            $argNum++;
-//        }
-//        $q->add(" WHERE id = $$argNum RETURNING id", $primaryKeyValue);
-//        return $q->execute();
     }
 
     public function checkRecordExistsForUsername(string $username): bool
@@ -85,5 +74,11 @@ class AdminsModel extends DatabaseTableModel
         }
 
         return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
+    }
+
+    public function getWithRoles()
+    {
+        $q = new QueryBuilder("SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id ORDER BY r.level");
+        return $q->execute();
     }
 }

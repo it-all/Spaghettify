@@ -24,16 +24,6 @@ class AdminsController extends CrudController
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
         $this->validator = $this->validator->withData($input);
 
-        $rules = [
-            'required' => [['name'], ['username'], ['password'], ['password_confirm'], ['role_id']],
-            'lengthMin' => [
-                ['username', 4],
-                ['password', 12]
-            ],
-            'equals' => [['password', 'password_confirm']]
-        ];
-
-//        $this->validator->rules($rules);
         $this->validator->rule('required', ['name', 'username', 'role_id']);
         $this->validator->rule('regex', 'name', '%^[a-zA-Z\s]+$%')->message('must be letters and spaces only');
         $this->validator->rule('lengthMin', 'username', 4);
