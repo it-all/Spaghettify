@@ -5,7 +5,6 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
-use Slim\Container;
 
 class RolesModel extends DatabaseTableModel
 {
@@ -13,9 +12,8 @@ class RolesModel extends DatabaseTableModel
 
     public function __construct()
     {
-        parent::__construct('roles');
+        parent::__construct('roles', 'level');
         $this->addColumnNameConstraint('level', 'positive');
-        $this->defaultOrderByColumnName = 'level';
     }
 
     /** pass in $defaultRole in order to set $defaultRoleId */

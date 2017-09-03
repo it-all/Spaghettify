@@ -12,10 +12,7 @@ class TestimonialsController extends CrudController
 {
     public function __construct(Container $container)
     {
-        $this->model = new TestimonialsModel();
-        $this->view = new TestimonialsView($container);
-        $this->routePrefix = 'testimonials';
-        parent::__construct($container);
+        parent::__construct($container, new TestimonialsModel(), new TestimonialsView($container), 'testimonials');
     }
 
     /**

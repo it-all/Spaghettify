@@ -9,6 +9,6 @@ class TestimonialsModel extends DatabaseTableModel
 {
     public function __construct()
     {
-        parent::__construct('testimonials');
+        parent::__construct('testimonials', 'receive_date', false);
     }
 }

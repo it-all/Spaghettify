@@ -12,7 +12,16 @@ use Slim\Http\Response;
 class CrudController extends Controller
 {
     protected $model;
+    protected $view;
     protected $routePrefix;
+
+    public function __construct(Container $container, $model, $view, $routePrefix)
+    {
+        $this->model = $model;
+        $this->view = $view;
+        $this->routePrefix = $routePrefix;
+        parent::__construct($container);
+    }
 
     public function postInsert(Request $request, Response $response, $args)
     {

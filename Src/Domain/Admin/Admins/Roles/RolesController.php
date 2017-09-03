@@ -12,10 +12,7 @@ class RolesController extends CrudController
 {
     public function __construct(Container $container)
     {
-        $this->model = new RolesModel();
-        $this->view = new RolesView($container);
-        $this->routePrefix = 'roles';
-        parent::__construct($container);
+        parent::__construct($container, new RolesModel(), new RolesView($container), 'roles');
     }
 
     /**

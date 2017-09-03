@@ -13,10 +13,7 @@ class AdminsController extends CrudController
 {
     public function __construct(Container $container)
     {
-        $this->model = new AdminsModel();
-        $this->view = new AdminsView($container);
-        $this->routePrefix = 'admins';
-        parent::__construct($container);
+        parent::__construct($container, new AdminsModel(), new AdminsView($container), 'admins');
     }
 
     private function setValidation(array $record = null)

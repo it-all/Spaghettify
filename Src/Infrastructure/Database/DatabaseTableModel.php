@@ -34,7 +34,7 @@ class DatabaseTableModel
     private $uniqueColumns;
 
 
-    public function __construct(string $tableName)
+    public function __construct(string $tableName, string $defaultOrderByColumnName = null, bool $defaultOrderByAsc = true)
     {
         $this->tableName = $tableName;
         $this->primaryKeyColumnName = false; // initialize
@@ -46,8 +46,8 @@ class DatabaseTableModel
         // $this->uniqueColumnNames added (then used to set $column->isUnique
         $this->setConstraints();
 
-        $this->defaultOrderByColumnName = $this->primaryKeyColumnName;
-        $this->defaultOrderByAsc = true;
+        $this->defaultOrderByColumnName = ($defaultOrderByColumnName != null) ? $defaultOrderByColumnName : $this->primaryKeyColumnName;
+        $this->defaultOrderByAsc = $defaultOrderByAsc;
 
         // $this->uniqueColumns added
         $this->setColumns();
