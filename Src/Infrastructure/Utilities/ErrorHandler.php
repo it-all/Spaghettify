@@ -51,9 +51,7 @@ class ErrorHandler
         error_log($errorMessage, 3, $this->logPath);
 
         // email
-        if ($this->isLiveServer || $this->emailDev) {
-            $this->email();
-        }
+        $this->mailer->send($_SERVER['SERVER_NAME'] . " Error", "Check log file for details.", $this->emailTo);
 
         // echo
         if (!$this->isLiveServer) {
@@ -189,10 +187,4 @@ class ErrorHandler
 
         return $message;
     }
-
-    private function email()
-    {
-        $this->mailer->send($_SERVER['SERVER_NAME'] . " Error", "Check log file for details.", $this->emailTo);
-    }
-
 }

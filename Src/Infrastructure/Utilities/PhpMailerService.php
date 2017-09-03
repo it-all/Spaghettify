@@ -29,6 +29,12 @@ class PhpMailerService {
 
     public function send(string $subject, string $body, array $toEmails, string $fromEmail = null, string $fromName = null)
     {
+        // doing this check here allows code everywhere else to not do it
+        if (!$this->isLiveServer && !$this->emailDev) {
+            // don't throw exception as could result in infinite loop for prior exception.
+            return false;
+        }
+
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->Body = $body;
         $toEmailsString = '';
