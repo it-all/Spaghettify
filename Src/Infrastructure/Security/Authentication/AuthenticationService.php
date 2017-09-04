@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
+use It_All\Spaghettify\Src\Domain\Admin\Admins\Logins\LoginsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 
@@ -38,7 +39,7 @@ class AuthenticationService
 
         // check if user exists
         if (!$userRecord) {
-            $this->loginFailed();
+            $this->loginFailed($username);
             return false;
         }
 
@@ -47,7 +48,7 @@ class AuthenticationService
             $this->loginSucceeded($username, $userRecord);
             return true;
         } else {
-            $this->loginFailed();
+            $this->loginFailed(null, (int) $userRecord['id']);
             return false;
         }
     }
@@ -61,15 +62,21 @@ class AuthenticationService
             'role' => $userRecord['role']
         ];
         unset($_SESSION['numFailedLogins']);
+
+        // insert login_attempts record
+        (new LoginsModel())->insertSuccessfulLogin((int) $userRecord['id']);
     }
 
-    private function loginFailed()
+    private function loginFailed(string $username = null, int $adminId = null)
     {
         if (isset($_SESSION['numFailedLogins'])) {
             $_SESSION['numFailedLogins']++;
         } else {
             $_SESSION['numFailedLogins'] = 1;
         }
+
+        // insert login_attempts record
+        (new LoginsModel())->insertFailedLogin($username, $adminId);
     }
 
     public function tooManyFailedLogins(): bool

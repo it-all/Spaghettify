@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Database\Queries;
 
-use function It_All\Spaghettify\Src\Infrastructure\Utilities\arrayWalkToStringRecursive;
-
 class QueryBuilder
 {
     public $sql;
@@ -13,7 +11,8 @@ class QueryBuilder
     /**
      * QueryBuilder constructor. like add, for convenience
      */
-    function __construct() {
+    function __construct()
+    {
         $args = func_get_args();
         // note func_num_args returns 0 if just 1 argument of null passed in
         if (count($args) > 0) {
@@ -26,7 +25,8 @@ class QueryBuilder
      * @param string $sql
      * @return $this
      */
-    public function add(string $sql) {
+    public function add(string $sql)
+    {
         $args = func_get_args();
         array_shift($args); // drop the first one (the sql string)
         $this->sql .= $sql;
@@ -40,7 +40,8 @@ class QueryBuilder
      * @param $arg
      * @return $this
      */
-    public function null_eq(string $name, $arg) {
+    public function null_eq(string $name, $arg)
+    {
         if ($arg === null) {
             $this->sql .= "$name is null";
         }
@@ -57,14 +58,16 @@ class QueryBuilder
      * @param string sql
      * @param $args
      */
-    public function set(string $sql, array $args) {
+    public function set(string $sql, array $args)
+    {
         $this->sql = $sql;
         $this->args = $args;
     }
 
-    public function execute() {
+    public function execute()
+    {
         if (!$res = pg_query_params($this->sql, $this->args)) {
-            $msg = $this->sql . " args: [" . arrayWalkToStringRecursive($this->args) . "]";
+            $msg = $this->sql . " \nArgs: " . var_export($this->args, true);
             throw new \Exception('Query Execution Failure: '.$msg);
         }
         return $res;
@@ -74,7 +77,8 @@ class QueryBuilder
      * returns the value of the one column in one record
      * or false if 0 or multiple records result
      */
-    public function getOne() {
+    public function getOne()
+    {
         if ($res = $this->execute()) {
             if (pg_num_rows($res) == 1) {
                 // make sure only 1 field in query
@@ -108,7 +112,8 @@ class QueryBuilder
      * @param string $msg
      * sends pertinent query values to error handler
      */
-    public function triggerError($msg = 'Query Failure') {
+    public function triggerError($msg = 'Query Failure')
+    {
         $errorMsg = "$msg: $this->sql";
         $errorMsg .= "\nArgs: ";
         $errorMsg .= var_export($this->args, true);
