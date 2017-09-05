@@ -48,7 +48,7 @@ class AuthenticationService
             $this->loginSucceeded($username, $userRecord);
             return true;
         } else {
-            $this->loginFailed(null, (int) $userRecord['id']);
+            $this->loginFailed($username, (int) $userRecord['id']);
             return false;
         }
     }
@@ -64,10 +64,10 @@ class AuthenticationService
         unset($_SESSION['numFailedLogins']);
 
         // insert login_attempts record
-        (new LoginsModel())->insertSuccessfulLogin((int) $userRecord['id']);
+        (new LoginsModel())->insertSuccessfulLogin($username, (int) $userRecord['id']);
     }
 
-    private function loginFailed(string $username = null, int $adminId = null)
+    private function loginFailed(string $username, int $adminId = null)
     {
         if (isset($_SESSION['numFailedLogins'])) {
             $_SESSION['numFailedLogins']++;

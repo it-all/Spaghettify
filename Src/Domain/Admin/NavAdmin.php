@@ -48,6 +48,11 @@ class NavAdmin
                         'link' => 'admins.insert',
                     ],
 
+                    'Logins' => [
+                        'minimumPermissions' => $container->authorization->getMinimumPermission('logins.index'),
+                        'link' => 'logins.index',
+                    ],
+
                     'Roles' => [
                         'minimumPermissions' => $container->authorization->getMinimumPermission('roles.index'),
                         'link' => 'roles.index',

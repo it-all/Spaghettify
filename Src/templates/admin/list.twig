@@ -62,10 +62,12 @@
 
                         {# add delete column if necessary #}
                         {# for admins table, do not admin to delete themself or non-owners to delete owners #}
-                        {% if addDeleteColumn and (title != 'Admins' or (attribute(row, 'username') != authentication.user.username and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner'))) %}
-                            <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, primaryKeyColumn) }}?');">X</a></td>
-                        {% else %}
-                            <td>&nbsp;</td>
+                        {% if addDeleteColumn %}
+                            {% if title != 'Admins' or (attribute(row, 'username') != authentication.user.username and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner')) %}
+                                <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, primaryKeyColumn) }}?');">X</a></td>
+                            {% else %}
+                                <td>&nbsp;</td>
+                            {% endif %}
                         {% endif %}
 
                     </tr>

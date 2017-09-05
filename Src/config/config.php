@@ -45,18 +45,19 @@ return [
 
     // these must be in the database: roles.role
     'adminMinimumPermissions' => [
+        'logins.index' => 'manager',
         'admins.index' => 'manager',
         'admins.insert' => 'director',
         'admins.update' => 'director',
         'admins.delete' => 'director',
-        'testimonials.index' => 'user',
-        'testimonials.insert' => 'user',
-        'testimonials.update' => 'user',
-        'testimonials.delete' => 'manager',
         'roles.index' => 'manager',
         'roles.insert' => 'director',
         'roles.update' => 'director',
         'roles.delete' => 'director',
+        'testimonials.index' => 'user',
+        'testimonials.insert' => 'user',
+        'testimonials.update' => 'user',
+        'testimonials.delete' => 'manager',
 
     ],
 

@@ -55,6 +55,14 @@ $slim->get('/' . $config['dirs']['admin'] . '/logout',
     ->add(new AuthenticationMiddleware($container))
     ->setName('authentication.logout');
 
+// logins
+$loginsPath = $domainAdminNs.'\Admins\Logins\\';
+$slim->get('/' . $config['dirs']['admin'] . '/logins',
+    $loginsPath . 'LoginsView:index')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions']['logins.index']))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName('logins.index');
+
 // admins
 $adminsPath = $domainAdminNs.'\Admins\\';
 $slim->get('/' . $config['dirs']['admin'] . '/admins',
