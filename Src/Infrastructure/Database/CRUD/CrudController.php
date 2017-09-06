@@ -6,6 +6,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use It_All\Spaghettify\Src\Infrastructure\Utilities\SimpleValidatorExtension;
+use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
