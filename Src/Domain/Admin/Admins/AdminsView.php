@@ -51,9 +51,10 @@ class AdminsView extends AdminCrudView
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
                 'insertLink' => $insertLink,
                 'updatePermitted' => $this->authorization
-                    ->check($this->container->settings['authorization'][$this->routePrefix.'.update']),
+                    ->check($this->getAuthorizationMinimumLevel('update')),
                 'updateRoute' => $this->routePrefix.'.put.update',
-                'addDeleteColumn' => true,
+                'addDeleteColumn' => $this->authorization
+                    ->check($this->getAuthorizationMinimumLevel('delete')),
                 'deleteRoute' => $this->routePrefix.'.delete',
                 'results' => $results,
                 'numResults' => $numResults,

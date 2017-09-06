@@ -18,11 +18,20 @@ class AuthorizationService
         $this->roles = $rolesModel->getRoles();
     }
 
+    // $functionality like 'marketing' or 'marketing.index'
     public function getMinimumPermission(string $functionality)
     {
         if (!isset($this->functionalityMinimumPermissions[$functionality])) {
+
+            // no exact match, so see if there are multiple terms and first term matches
+            $fParts = explode('.', $functionality);
+            if (count($fParts) > 1 && isset($this->functionalityMinimumPermissions[$fParts[0]])) {
+                return $this->functionalityMinimumPermissions[$fParts[0]];
+            }
+
             throw new InvalidArgumentException('Not found in functionalityMinimumPermissions: '.$functionality);
         }
+
         return $this->functionalityMinimumPermissions[$functionality];
     }
 
@@ -47,6 +56,7 @@ class AuthorizationService
         }
 
         if (array_search($role, $this->roles) <= array_search($minimumPermission, $this->roles)) {
+
             return true;
         }
 

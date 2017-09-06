@@ -40,7 +40,7 @@ abstract class AdminCrudView extends AdminView
             $numResults = 0;
         }
 
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][$this->routePrefix.'.insert'])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => $this->routePrefix.'.insert'] : false;
+        $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => $this->routePrefix.'.insert'] : false;
 
         return $this->view->render(
             $response,
@@ -50,9 +50,10 @@ abstract class AdminCrudView extends AdminView
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
                 'insertLink' => $insertLink,
                 'updatePermitted' => $this->authorization
-                    ->check($this->container->settings['authorization'][$this->routePrefix.'.update']),
+                    ->check($this->getAuthorizationMinimumLevel('update')),
                 'updateRoute' => $this->routePrefix.'.put.update',
-                'addDeleteColumn' => true,
+                'addDeleteColumn' => $this->authorization
+                    ->check($this->getAuthorizationMinimumLevel('delete')),
                 'deleteRoute' => $this->routePrefix.'.delete',
                 'results' => $results,
                 'numResults' => $numResults,

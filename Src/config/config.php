@@ -43,21 +43,25 @@ return [
         'service' => "service@$domainName"
     ],
 
-    // these must be in the database: roles.role
+    // either functionCategory => minimumRole or functionCategory.function => minimum role
+    // important to properly match the indexes to routes and nav authorization
+    // the role values must be in the database: roles.role
     'adminMinimumPermissions' => [
         'logins.index' => 'manager',
         'admins.index' => 'manager',
         'admins.insert' => 'director',
         'admins.update' => 'director',
-        'admins.delete' => 'director',
+        'admins.delete' => 'owner',
         'roles.index' => 'manager',
         'roles.insert' => 'director',
         'roles.update' => 'director',
         'roles.delete' => 'director',
+        'marketing' => 'user',
+        'testimonials' => 'user',
         'testimonials.index' => 'user',
-        'testimonials.insert' => 'user',
+        'testimonials.insert' => 'manager',
         'testimonials.update' => 'user',
-        'testimonials.delete' => 'manager',
+        'testimonials.delete' => 'user',
 
     ],
 
