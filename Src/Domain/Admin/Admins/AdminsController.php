@@ -65,6 +65,7 @@ class AdminsController extends CrudController
             throw new \Exception("Insert Failure");
         }
 
+        FormHelper::unsetSessionVars();
         return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
     }
 
@@ -122,6 +123,7 @@ class AdminsController extends CrudController
             throw new \Exception("Update Failure");
         }
 
+        FormHelper::unsetSessionVars();
         return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
     }
 

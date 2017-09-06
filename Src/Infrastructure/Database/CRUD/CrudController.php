@@ -56,9 +56,12 @@ class CrudController extends Controller
             return $this->view->insertView($request, $response, $args);
         }
 
-        if ($this->insert()) {
-            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
+        if (!$this->insert()) {
+            throw new \Exception("Insert Failure");
         }
+
+        FormHelper::unsetSessionVars();
+        return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
     }
 
     private function addBooleanFieldsToInput()
@@ -125,8 +128,11 @@ class CrudController extends Controller
         }
 
         if ($this->update($response, $args)) {
-            return $response->withRedirect($this->router->pathFor($redirectRoute));
+            throw new \Exception("Update Failure");
         }
+
+        FormHelper::unsetSessionVars();
+        return $response->withRedirect($this->router->pathFor($redirectRoute));
     }
 
     public function getDelete(Request $request, Response $response, $args)
@@ -156,7 +162,6 @@ class CrudController extends Controller
         // attempt insert
         try {
             $res = $this->model->insertRecord($_SESSION[SESSION_REQUEST_INPUT_KEY]);
-            FormHelper::unsetSessionVars();
             $returned = pg_fetch_all($res);
             $message = 'Inserted record '.$returned[0][$this->model->getPrimaryKeyColumnName()].
                 ' into '.$this->model->getTableName();
@@ -183,7 +188,6 @@ class CrudController extends Controller
         // attempt to update the model
         try {
             $this->model->updateRecordByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
-            FormHelper::unsetSessionVars();
             $message = 'Updated record '.$args['primaryKey'];
             $this->logger->addInfo($message . ' in '. $this->model->getTableName());
             $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
