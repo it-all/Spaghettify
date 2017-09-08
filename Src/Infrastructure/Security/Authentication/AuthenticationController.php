@@ -51,11 +51,21 @@ class AuthenticationController extends Controller
 
         // redirect to proper resource
         if (isset($_SESSION['gotoAdminPage'])) {
+
             $redirect = $_SESSION['gotoAdminPage'];
             unset($_SESSION['gotoAdminPage']);
+
         } else {
-            echo $this->authentication->getUserRole();
-            $homeRoute = (isset($this->settings['adminHomeRoute'][$this->authentication->getUserRole()])) ? $this->settings['adminHomeRoute'][$this->authentication->getUserRole()] : 'admin.home';
+
+            // determine home route: either by username, by role, or default
+            if (isset($this->settings['adminHomeRoute']['usernames'][$this->authentication->getUserUsername()])) {
+                $homeRoute = $this->settings['adminHomeRoute']['usernames'][$this->authentication->getUserUsername()];
+            } elseif (isset($this->settings['adminHomeRoute']['roles'][$this->authentication->getUserRole()])) {
+                $homeRoute = $this->settings['adminHomeRoute']['roles'][$this->authentication->getUserRole()];
+            } else {
+                $homeRoute = 'admin.home';
+            }
+
             $redirect = $this->router->pathFor($homeRoute);
         }
 
