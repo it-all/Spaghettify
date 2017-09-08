@@ -1,3 +1,4 @@
+{# only minor differences from list.twig in order to incorporate rules for allowing update and delete #}
 {% extends "base.twig" %}
 
 {% block htmlHeadCss %}
@@ -49,7 +50,8 @@
                     <script type="text/javascript"></script>
                     <tr id="row{{ rowId }}">
                         {% for key, value in row %}
-                            {% if key == primaryKeyColumn and updatePermitted %}
+                            {# for admins table, do not allow non-owners to edit owners #}
+                            {% if key == primaryKeyColumn and updatePermitted and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner') %}
 
                                 <td><a href="{{ path_for(updateRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="update">{{ value }}</a></td>
 
@@ -58,10 +60,14 @@
                             {% endif %}
                         {% endfor %}
 
-
                         {# add delete column if necessary #}
+                        {# for admins table, do not allow admin to delete themself or non-owners to delete owners #}
                         {% if addDeleteColumn %}
-                            <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, primaryKeyColumn) }}?');">X</a></td>
+                            {% if attribute(row, 'username') != authentication.user.username and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner') %}
+                                <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, primaryKeyColumn) }}?');">X</a></td>
+                            {% else %}
+                                <td>&nbsp;</td>
+                            {% endif %}
                         {% endif %}
 
                     </tr>

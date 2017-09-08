@@ -45,7 +45,7 @@ class AdminsView extends AdminCrudView
 
         return $this->view->render(
             $response,
-            'admin/list.twig',
+            'admin/adminsList.twig',
             [
                 'title' => $this->model->getFormalTableName(),
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
