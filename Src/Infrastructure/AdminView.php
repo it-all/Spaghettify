@@ -24,7 +24,7 @@ class AdminView extends View
         if (!isset($this->routePrefix)) {
             throw new \Exception("The routePrefix property must be set.");
         }
-        
+
         if ($type != 'index' && $type != 'insert' && $type != 'update' && $type != 'delete') {
             throw new \Exception("Invalid type $type");
         }

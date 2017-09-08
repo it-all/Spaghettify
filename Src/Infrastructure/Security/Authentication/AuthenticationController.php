@@ -54,7 +54,9 @@ class AuthenticationController extends Controller
             $redirect = $_SESSION['gotoAdminPage'];
             unset($_SESSION['gotoAdminPage']);
         } else {
-            $redirect = $this->router->pathFor('admin.home');
+            echo $this->authentication->getUserRole();
+            $homeRoute = (isset($this->settings['adminHomeRoute'][$this->authentication->getUserRole()])) ? $this->settings['adminHomeRoute'][$this->authentication->getUserRole()] : 'admin.home';
+            $redirect = $this->router->pathFor($homeRoute);
         }
 
         return $response->withRedirect($redirect);

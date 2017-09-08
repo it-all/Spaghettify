@@ -43,7 +43,8 @@ return [
         'businessName' => $config['businessName'],
         'emails' => $config['emails'],
         'trimAllUserInput' => $config['trimAllUserInput'],
-        'adminDefaultRole' => $config['adminDefaultRole']
+        'adminDefaultRole' => $config['adminDefaultRole'],
+        'adminHomeRoute' => $config['adminHomeRoute']
     ],
 
     //Override the default Not Found Handler

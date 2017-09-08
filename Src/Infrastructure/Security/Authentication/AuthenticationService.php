@@ -31,6 +31,38 @@ class AuthenticationService
         return isset($_SESSION['user']);
     }
 
+    public function getUserId()
+    {
+        if (isset($_SESSION['user']['id'])) {
+            return $_SESSION['user']['id'];
+        }
+        return false;
+    }
+
+    public function getUserName()
+    {
+        if (isset($_SESSION['user']['name'])) {
+            return $_SESSION['user']['name'];
+        }
+        return false;
+    }
+
+    public function getUserUsername()
+    {
+        if (isset($_SESSION['user']['username'])) {
+            return $_SESSION['user']['username'];
+        }
+        return false;
+    }
+
+    public function getUserRole()
+    {
+        if (isset($_SESSION['user']['role'])) {
+            return $_SESSION['user']['role'];
+        }
+        return false;
+    }
+
     public function attemptLogin(string $username, string $password): bool
     {
         $admins = new AdminsModel();
@@ -58,6 +90,7 @@ class AuthenticationService
         // set session for user
         $_SESSION['user'] = [
             'id' => $userRecord['id'],
+            'name' => $userRecord['name'],
             'username' => $username,
             'role' => $userRecord['role']
         ];

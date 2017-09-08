@@ -65,6 +65,12 @@ return [
 
     ],
 
+    'adminHomeRoute' => [
+        'owner' => 'logins.index',
+        'director' => 'admins.index',
+        'manager' => 'testimonials.index'
+    ],
+
     // when entering a new admin, role will default to this
     'adminDefaultRole' => 'user',
 
