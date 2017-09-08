@@ -11,7 +11,7 @@ class GuestMiddleware extends Middleware
     {
         // if user signed in redirect to admin home
         if ($this->container->authentication->check()) {
-            return $response->withRedirect($this->container->router->pathFor('admin.home'));
+            return $response->withRedirect($this->container->router->pathFor(ROUTE_ADMIN_HOME_DEFAULT));
         }
 
         $response = $next($request, $response);

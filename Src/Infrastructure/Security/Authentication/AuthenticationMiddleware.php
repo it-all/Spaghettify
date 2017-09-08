@@ -15,7 +15,7 @@ class AuthenticationMiddleware extends Middleware
                 $request->getUri()->getPath() . ' for IP: ' . $_SERVER['REMOTE_ADDR']);
             $_SESSION['adminNotice'] = ["Login required", 'adminNoticeFailure'];
             $_SESSION['gotoAdminPage'] = $request->getUri()->getPath();
-            return $response->withRedirect($this->container->router->pathFor('authentication.login'));
+            return $response->withRedirect($this->container->router->pathFor(ROUTE_LOGIN));
 		}
 
 		$response = $next($request, $response);

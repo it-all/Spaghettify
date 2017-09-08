@@ -25,7 +25,7 @@ class AuthorizationMiddleware extends Middleware
 
             $_SESSION['adminNotice'] = ['No permission', 'adminNoticeFailure'];
 
-            return $response->withRedirect($this->container->router->pathFor('admin.home'));
+            return $response->withRedirect($this->container->router->pathFor(ROUTE_ADMIN_HOME_DEFAULT));
         }
 
 		$response = $next($request, $response);

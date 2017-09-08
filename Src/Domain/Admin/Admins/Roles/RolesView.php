@@ -10,6 +10,6 @@ class RolesView extends AdminCrudView
 {
     public function __construct(Container $container)
     {
-        parent::__construct($container, new RolesModel(), 'roles');
+        parent::__construct($container, new RolesModel(), ROUTEPREFIX_ADMIN_ROLES);
     }
 }

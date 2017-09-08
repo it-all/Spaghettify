@@ -47,32 +47,32 @@ return [
     // important to properly match the indexes to routes and nav authorization
     // the role values must be in the database: roles.role
     'adminMinimumPermissions' => [
-        'logins.index' => 'manager',
-        'admins.index' => 'manager',
-        'admins.insert' => 'director',
-        'admins.update' => 'director',
-        'admins.delete' => 'owner',
-        'roles.index' => 'manager',
-        'roles.insert' => 'director',
-        'roles.update' => 'director',
-        'roles.delete' => 'director',
-        'marketing' => 'user',
-        'testimonials' => 'user',
-        'testimonials.index' => 'user',
-        'testimonials.insert' => 'manager',
-        'testimonials.update' => 'user',
-        'testimonials.delete' => 'user',
+        ROUTE_LOGIN_ATTEMPTS => 'manager',
+        ROUTE_ADMIN_ADMINS => 'manager',
+        ROUTE_ADMIN_ADMINS_INSERT => 'director',
+        ROUTE_ADMIN_ADMINS_UPDATE => 'director',
+        ROUTE_ADMIN_ADMINS_DELETE => 'owner',
+        ROUTE_ADMIN_ROLES => 'manager',
+        ROUTE_ADMIN_ROLES_INSERT => 'director',
+        ROUTE_ADMIN_ROLES_UPDATE => 'director',
+        ROUTE_ADMIN_ROLES_DELETE => 'director',
+        PERMISSION_ADMIN_MARKETING => 'user',
+        PERMISSION_ADMIN_TESTIMONIALS => 'user',
+        ROUTE_ADMIN_TESTIMONIALS => 'user',
+        ROUTE_ADMIN_TESTIMONIALS_INSERT => 'manager',
+        ROUTE_ADMIN_TESTIMONIALS_UPDATE => 'user',
+        ROUTE_ADMIN_TESTIMONIALS_DELETE => 'user',
 
     ],
 
-    'adminHomeRoute' => [
+    'adminHomeRoutes' => [
         'usernames' => [
-            '123456' => 'roles.index'
+            '123456' => ROUTE_ADMIN_ROLES
         ],
         'roles' => [
-            'owner' => 'logins.index',
-            'director' => 'admins.index',
-            'manager' => 'testimonials.index'
+            'owner' => ROUTE_LOGIN_ATTEMPTS,
+            'director' => ROUTE_ADMIN_ADMINS,
+            'manager' => ROUTE_ADMIN_TESTIMONIALS
         ]
     ],
 

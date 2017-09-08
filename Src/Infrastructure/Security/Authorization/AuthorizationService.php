@@ -25,8 +25,8 @@ class AuthorizationService
 
             // no exact match, so see if there are multiple terms and first term matches
             $fParts = explode('.', $functionality);
-            if (count($fParts) > 1 && isset($this->functionalityMinimumPermissions[$fParts[0]])) {
-                return $this->functionalityMinimumPermissions[$fParts[0]];
+            if (count($fParts) > 1 && isset($this->functionalityMinimumPermissions[getRouteName(true, $fParts[0])])) {
+                return $this->functionalityMinimumPermissions[getRouteName(true, $fParts[0])];
             }
 
             throw new InvalidArgumentException('Not found in functionalityMinimumPermissions: '.$functionality);

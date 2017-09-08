@@ -14,10 +14,10 @@ class AuthenticationView extends AdminView
     public function getLogin(Request $request, Response $response, $args)
     {
         if ($this->authentication->tooManyFailedLogins()) {
-            return $response->withRedirect($this->router->pathFor('home'));
+            return $response->withRedirect($this->router->pathFor(ROUTE_HOME));
         }
 
-        $form = $this->authentication->getForm($this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), $this->router->pathFor('authentication.post.login'));
+        $form = $this->authentication->getForm($this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), $this->router->pathFor(ROUTE_LOGIN_POST));
 
         FormHelper::unsetSessionVars();
 

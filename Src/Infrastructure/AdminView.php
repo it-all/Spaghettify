@@ -30,8 +30,8 @@ class AdminView extends View
         }
 
         // returns specific category.function if it exists or category if it exists
-        if (isset($this->container->settings['authorization'][$this->routePrefix.'.'.$type])) {
-            return $this->container->settings['authorization'][$this->routePrefix.'.'.$type];
+        if (isset($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, $type)])) {
+            return $this->container->settings['authorization'][getRouteName(true, $this->routePrefix, $type)];
         } elseif (isset($this->container->settings['authorization'][$this->routePrefix])) {
             return $this->container->settings['authorization'][$this->routePrefix];
         } else {

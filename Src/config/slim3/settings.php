@@ -44,7 +44,7 @@ return [
         'emails' => $config['emails'],
         'trimAllUserInput' => $config['trimAllUserInput'],
         'adminDefaultRole' => $config['adminDefaultRole'],
-        'adminHomeRoute' => $config['adminHomeRoute']
+        'adminHomeRoutes' => $config['adminHomeRoutes']
     ],
 
     //Override the default Not Found Handler
@@ -53,7 +53,7 @@ return [
             return $container['response']
                 ->withStatus(404)
                 ->withHeader('Content-Type', 'text/html')
-                ->withRedirect($container->router->pathFor('pageNotFound'));
+                ->withRedirect($container->router->pathFor(ROUTE_PAGE_NOT_FOUND));
         };
     }
 ];

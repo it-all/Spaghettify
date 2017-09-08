@@ -19,7 +19,7 @@ class AdminsView extends AdminCrudView
 {
     public function __construct(Container $container)
     {
-        parent::__construct($container, new AdminsModel(), 'admins');
+        parent::__construct($container, new AdminsModel(), ROUTEPREFIX_ADMIN_ADMINS);
     }
 
     /**
@@ -41,7 +41,7 @@ class AdminsView extends AdminCrudView
             $numResults = 0;
         }
 
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][$this->routePrefix.'.insert'])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => $this->routePrefix.'.insert'] : false;
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
         return $this->view->render(
             $response,
@@ -52,10 +52,10 @@ class AdminsView extends AdminCrudView
                 'insertLink' => $insertLink,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),
-                'updateRoute' => $this->routePrefix.'.put.update',
+                'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
                 'addDeleteColumn' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('delete')),
-                'deleteRoute' => $this->routePrefix.'.delete',
+                'deleteRoute' => getRouteName(true, $this->routePrefix, 'delete'),
                 'results' => $results,
                 'numResults' => $numResults,
                 'sortColumn' => 'level',
@@ -80,11 +80,11 @@ class AdminsView extends AdminCrudView
 
         if ($action == 'insert') {
             $fieldValues = ($request->isGet()) ? [] : $_SESSION[SESSION_REQUEST_INPUT_KEY];
-            $formAction = $this->router->pathFor($this->routePrefix.'.post.insert');
+            $formAction = $this->router->pathFor(getRouteName(true, $this->routePrefix, 'insert', 'post'));
             $passwordLabel = 'Password';
         } else {
             $fieldValues = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
-            $formAction = $this->router->pathFor($this->routePrefix.'.put.update', ['primaryKey' => $primaryKey]);
+            $formAction = $this->router->pathFor(getRouteName(true, $this->routePrefix, 'update', 'put'), ['primaryKey' => $primaryKey]);
             $passwordLabel = 'Password [leave blank to keep existing]';
             $fields[] = FormHelper::getPutMethodField();
         }
@@ -158,7 +158,7 @@ class AdminsView extends AdminCrudView
                 "Record ".$args['primaryKey']." Not Found",
                 'adminNoticeFailure'
             ];
-            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
+            return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
         }
 
         return $this->view->render(
@@ -172,34 +172,4 @@ class AdminsView extends AdminCrudView
             ]
         );
     }
-
-
-//    /**
-//     * override to leave pw field blank
-//     * @param $request
-//     * @param $response
-//     * @param $args
-//     * @return mixed
-//     */
-//    public function getUpdate(Request $request, Response $response, $args)
-//    {
-//        // make sure there is a record for the model
-//        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-//            $_SESSION['adminNotice'] = [
-//                "Record ".$args['primaryKey']." Not Found",
-//                'adminNoticeFailure'
-//            ];
-//            return $response->withRedirect($this->router->pathFor($this->routePrefix.'.index'));
-//        }
-//
-//        $record['password_hash'] = '';
-//
-//        /**
-//         * data to send to FormHelper - either from the model or from prior input. Note that when sending null FormHelper defaults to using $_SESSION[SESSION_REQUEST_INPUT_KEY]. It's important to send null, not $_SESSION['formInput'], because FormHelper unsets $_SESSION[SESSION_REQUEST_INPUT_KEY] after using it.
-//         * note, this works for post/put because controller calls this method directly in case of errors instead of redirecting
-//         */
-//        $fieldData = ($request->isGet()) ? $record : null;
-//
-//        return $this->updateView($request, $response, $args, $fieldData);
-//    }
 }

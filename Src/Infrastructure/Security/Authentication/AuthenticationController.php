@@ -41,7 +41,7 @@ class AuthenticationController extends Controller
             FormHelper::setGeneralError('Login Unsuccessful');
 
             // redisplay the form with input values and error(s)
-            return $response->withRedirect($this->router->pathFor('authentication.login'));
+            return $response->withRedirect($this->router->pathFor(ROUTE_LOGIN));
 
         }
 
@@ -58,12 +58,12 @@ class AuthenticationController extends Controller
         } else {
 
             // determine home route: either by username, by role, or default
-            if (isset($this->settings['adminHomeRoute']['usernames'][$this->authentication->getUserUsername()])) {
-                $homeRoute = $this->settings['adminHomeRoute']['usernames'][$this->authentication->getUserUsername()];
-            } elseif (isset($this->settings['adminHomeRoute']['roles'][$this->authentication->getUserRole()])) {
-                $homeRoute = $this->settings['adminHomeRoute']['roles'][$this->authentication->getUserRole()];
+            if (isset($this->settings['adminHomeRoutes']['usernames'][$this->authentication->getUserUsername()])) {
+                $homeRoute = $this->settings['adminHomeRoutes']['usernames'][$this->authentication->getUserUsername()];
+            } elseif (isset($this->settings['adminHomeRoutes']['roles'][$this->authentication->getUserRole()])) {
+                $homeRoute = $this->settings['adminHomeRoutes']['roles'][$this->authentication->getUserRole()];
             } else {
-                $homeRoute = 'admin.home';
+                $homeRoute = ROUTE_ADMIN_HOME_DEFAULT;
             }
 
             $redirect = $this->router->pathFor($homeRoute);
@@ -79,6 +79,6 @@ class AuthenticationController extends Controller
         }
         $this->logger->addInfo($_SESSION['user']['username'].' logged out');
         $this->authentication->logout();
-        return $response->withRedirect($this->router->pathFor('home'));
+        return $response->withRedirect($this->router->pathFor(ROUTE_HOME));
     }
 }
