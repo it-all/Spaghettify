@@ -51,22 +51,10 @@ class AuthenticationController extends Controller
 
         // redirect to proper resource
         if (isset($_SESSION['gotoAdminPage'])) {
-
             $redirect = $_SESSION['gotoAdminPage'];
             unset($_SESSION['gotoAdminPage']);
-
         } else {
-
-            // determine home route: either by username, by role, or default
-            if (isset($this->settings['adminHomeRoutes']['usernames'][$this->authentication->getUserUsername()])) {
-                $homeRoute = $this->settings['adminHomeRoutes']['usernames'][$this->authentication->getUserUsername()];
-            } elseif (isset($this->settings['adminHomeRoutes']['roles'][$this->authentication->getUserRole()])) {
-                $homeRoute = $this->settings['adminHomeRoutes']['roles'][$this->authentication->getUserRole()];
-            } else {
-                $homeRoute = ROUTE_ADMIN_HOME_DEFAULT;
-            }
-
-            $redirect = $this->router->pathFor($homeRoute);
+            $redirect = $this->router->pathFor($this->authentication->getAdminHomeRouteForUser());
         }
 
         return $response->withRedirect($redirect);
@@ -75,10 +63,15 @@ class AuthenticationController extends Controller
     public function getLogout(Request $request, Response $response)
     {
         if (!isset($_SESSION['user'])) {
+
             $this->logger->addWarning('Attempted logout for non-logged-in visitor from IP: '. $_SERVER['REMOTE_ADDR']);
+
+        } else {
+
+            $this->logger->addInfo($_SESSION['user']['username'].' logged out');
+            $this->authentication->logout();
         }
-        $this->logger->addInfo($_SESSION['user']['username'].' logged out');
-        $this->authentication->logout();
+
         return $response->withRedirect($this->router->pathFor(ROUTE_HOME));
     }
 }

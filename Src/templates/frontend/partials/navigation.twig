@@ -8,7 +8,7 @@
 	{% if not authentication.check %}
 			<li><a href="{{ path_for(constant('ROUTE_LOGIN'))}}">Login</a></li>
     {% else %}
-            <li><a href="{{ path_for(constant('ROUTE_ADMIN_HOME_DEFAULT')) }}">Admin</a></li>
+            <li><a href="{{ path_for(adminLinkRoute) }}">Admin</a></li>
 	{% endif %}
 
 		</nav>

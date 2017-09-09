@@ -24,7 +24,7 @@ $container['database'] = function($container) use ($database) {
 // Authentication
 $container['authentication'] = function($container) {
     $settings = $container->get('settings');
-    return new It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationService($settings['authentication']);
+    return new It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationService($settings['authentication']['maxFailedLogins'], $settings['authentication']['adminHomeRoutes']);
 };
 
 // Authorization

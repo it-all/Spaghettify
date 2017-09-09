@@ -11,7 +11,10 @@ return [
 
 //        'routerCacheFile' => $config['storage']['pathCache'].'router.txt',
 
-        'authentication' => $config['maxFailedLogins'],
+        'authentication' => [
+            'maxFailedLogins' => $config['maxFailedLogins'],
+            'adminHomeRoutes' => $config['adminHomeRoutes']
+        ],
 
         'authorization' => $config['adminMinimumPermissions'],
 

@@ -12,10 +12,12 @@ use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 class AuthenticationService
 {
     private $maxFailedLogins;
+    private $adminHomeRoutes;
 
-    public function __construct(int $maxFailedLogins)
+    public function __construct(int $maxFailedLogins, array $adminHomeRoutes)
     {
         $this->maxFailedLogins = $maxFailedLogins;
+        $this->adminHomeRoutes = $adminHomeRoutes;
     }
 
     public function user()
@@ -61,6 +63,24 @@ class AuthenticationService
             return $_SESSION['user']['role'];
         }
         return false;
+    }
+
+    public function getAdminHomeRouteForUser(): string
+    {
+        if (!isset($_SESSION['user'])) {
+            throw new \Exception("Called for non-logged-in visitor");
+        }
+
+        // determine home route: either by username, by role, or default
+        if (isset($this->adminHomeRoutes['usernames'][$this->getUserUsername()])) {
+            $homeRoute = $this->adminHomeRoutes['usernames'][$this->getUserUsername()];
+        } elseif (isset($this->adminHomeRoutes['roles'][$this->getUserRole()])) {
+            $homeRoute = $this->adminHomeRoutes['roles'][$this->getUserRole()];
+        } else {
+            $homeRoute = ROUTE_ADMIN_HOME_DEFAULT;
+        }
+
+        return $homeRoute;
     }
 
     public function attemptLogin(string $username, string $password): bool
