@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
 use It_All\Spaghettify\Src\Infrastructure\Middleware;
+use Slim\Container;
 
 class AuthorizationMiddleware extends Middleware
 {
     private $minimumRole;
 
-    public function __construct($container, string $minimumRole)
+    public function __construct(Container $container, string $minimumRole)
     {
         $this->minimumRole = $minimumRole;
         parent::__construct($container);
@@ -21,9 +22,9 @@ class AuthorizationMiddleware extends Middleware
         if (!$this->container->authorization->check($this->minimumRole)) {
 
             $this->container->logger->addWarning('No authorization for: ' .
-                $request->getUri()->getPath() . ' for user: ' . $_SESSION['user']['username']);
+                $request->getUri()->getPath() . ' for user: ' . $this->container->authentication->getUserUsername());
 
-            $_SESSION['adminNotice'] = ['No permission', 'adminNoticeFailure'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = ['No permission', 'adminNoticeFailure'];
 
             return $response->withRedirect($this->container->router->pathFor(ROUTE_ADMIN_HOME_DEFAULT));
         }

@@ -13,8 +13,8 @@ class AuthenticationMiddleware extends Middleware
 		if (!$this->container->authentication->check()) {
             $this->container->logger->addWarning('Login required to access resource: ' .
                 $request->getUri()->getPath() . ' for IP: ' . $_SERVER['REMOTE_ADDR']);
-            $_SESSION['adminNotice'] = ["Login required", 'adminNoticeFailure'];
-            $_SESSION['gotoAdminPage'] = $request->getUri()->getPath();
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["Login required", 'adminNoticeFailure'];
+            $_SESSION[SESSION_GOTO_ADMIN_PATH] = $request->getUri()->getPath();
             return $response->withRedirect($this->container->router->pathFor(ROUTE_LOGIN));
 		}
 

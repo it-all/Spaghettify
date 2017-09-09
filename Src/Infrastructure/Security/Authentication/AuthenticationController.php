@@ -50,9 +50,9 @@ class AuthenticationController extends Controller
         $this->logger->addInfo($request->getParam('username').' logged in');
 
         // redirect to proper resource
-        if (isset($_SESSION['gotoAdminPage'])) {
-            $redirect = $_SESSION['gotoAdminPage'];
-            unset($_SESSION['gotoAdminPage']);
+        if (isset($_SESSION[SESSION_GOTO_ADMIN_PATH])) {
+            $redirect = $_SESSION[SESSION_GOTO_ADMIN_PATH];
+            unset($_SESSION[SESSION_GOTO_ADMIN_PATH]);
         } else {
             $redirect = $this->router->pathFor($this->authentication->getAdminHomeRouteForUser());
         }
@@ -62,13 +62,13 @@ class AuthenticationController extends Controller
 
     public function getLogout(Request $request, Response $response)
     {
-        if (!isset($_SESSION['user'])) {
+        if (!$username = $this->authentication->getUserUsername()) {
 
             $this->logger->addWarning('Attempted logout for non-logged-in visitor from IP: '. $_SERVER['REMOTE_ADDR']);
 
         } else {
 
-            $this->logger->addInfo($_SESSION['user']['username'].' logged out');
+            $this->logger->addInfo($username.' logged out');
             $this->authentication->logout();
         }
 

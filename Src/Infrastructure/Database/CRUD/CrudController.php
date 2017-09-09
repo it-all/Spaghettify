@@ -87,7 +87,7 @@ class CrudController extends Controller
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            $_SESSION['adminNotice'] = [
+            $_SESSION[SESSION_ADMIN_NOTICE] = [
                 "Record ".$args['primaryKey']." Not Found",
                 'adminNoticeFailure'
             ];
@@ -97,7 +97,7 @@ class CrudController extends Controller
         // if no changes made, redirect
         // debatable whether this should be part of validation and stay on page with error
         if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
-            $_SESSION['adminNotice'] = ["No changes made (Record ".$args['primaryKey'].")", 'adminNoticeFailure'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["No changes made (Record ".$args['primaryKey'].")", 'adminNoticeFailure'];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
@@ -175,7 +175,7 @@ class CrudController extends Controller
                     [$settings['emails']['owner']]
                 );
             }
-            $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = [$message, 'adminNoticeSuccess'];
 
             return true;
 
@@ -191,7 +191,7 @@ class CrudController extends Controller
             $this->model->updateRecordByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
             $message = 'Updated record '.$args['primaryKey'];
             $this->logger->addInfo($message . ' in '. $this->model->getTableName());
-            $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = [$message, 'adminNoticeSuccess'];
 
             return true;
 
@@ -224,7 +224,7 @@ class CrudController extends Controller
                     [$settings['emails']['owner']]
                 );
             }
-            $_SESSION['adminNotice'] = [$message, 'adminNoticeSuccess'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = [$message, 'adminNoticeSuccess'];
 
             return $response->withRedirect($this->router->pathFor($redirectRoute));
 
@@ -235,7 +235,7 @@ class CrudController extends Controller
             $settings = $this->container->get('settings');
             $this->mailer->send($_SERVER['SERVER_NAME'] . " Event", "primary key $primaryKey not found for deletion. Check event log for details.", [$settings['emails']['programmer']]);
 
-            $_SESSION['adminNotice'] = [$primaryKey.' not found', 'adminNoticeFailure'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = [$primaryKey.' not found', 'adminNoticeFailure'];
 
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }

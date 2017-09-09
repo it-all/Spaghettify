@@ -85,7 +85,7 @@ class AdminsController extends CrudController
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($primaryKey)) {
-            $_SESSION['adminNotice'] = [
+            $_SESSION[SESSION_ADMIN_NOTICE] = [
                 "Record $primaryKey Not Found",
                 'adminNoticeFailure'
             ];
@@ -107,7 +107,7 @@ class AdminsController extends CrudController
             $checkChangedFields['password_hash'] = password_hash($input['password'], PASSWORD_DEFAULT);
         }
         if (!$this->haveAnyFieldsChanged($checkChangedFields, $record)) {
-            $_SESSION['adminNotice'] = ["No changes made (Record $primaryKey)", 'adminNoticeFailure'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["No changes made (Record $primaryKey)", 'adminNoticeFailure'];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }

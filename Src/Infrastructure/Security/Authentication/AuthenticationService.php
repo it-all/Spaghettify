@@ -22,52 +22,52 @@ class AuthenticationService
 
     public function user()
     {
-        if (isset($_SESSION['user'])) {
-            return $_SESSION['user'];
+        if (isset($_SESSION[SESSION_USER])) {
+            return $_SESSION[SESSION_USER];
         }
         return false;
     }
 
     public function check(): bool
     {
-        return isset($_SESSION['user']);
+        return isset($_SESSION[SESSION_USER]);
     }
 
     public function getUserId()
     {
-        if (isset($_SESSION['user']['id'])) {
-            return $_SESSION['user']['id'];
+        if (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) {
+            return $_SESSION[SESSION_USER][SESSION_USER_ID];
         }
         return false;
     }
 
     public function getUserName()
     {
-        if (isset($_SESSION['user']['name'])) {
-            return $_SESSION['user']['name'];
+        if (isset($_SESSION[SESSION_USER][SESSION_USER_NAME])) {
+            return $_SESSION[SESSION_USER][SESSION_USER_NAME];
         }
         return false;
     }
 
     public function getUserUsername()
     {
-        if (isset($_SESSION['user']['username'])) {
-            return $_SESSION['user']['username'];
+        if (isset($_SESSION[SESSION_USER][SESSION_USER_USERNAME])) {
+            return $_SESSION[SESSION_USER][SESSION_USER_USERNAME];
         }
         return false;
     }
 
     public function getUserRole()
     {
-        if (isset($_SESSION['user']['role'])) {
-            return $_SESSION['user']['role'];
+        if (isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
+            return $_SESSION[SESSION_USER][SESSION_USER_ROLE];
         }
         return false;
     }
 
     public function getAdminHomeRouteForUser(): string
     {
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION[SESSION_USER])) {
             throw new \Exception("Called for non-logged-in visitor");
         }
 
@@ -108,13 +108,13 @@ class AuthenticationService
     private function loginSucceeded(string $username, array $userRecord)
     {
         // set session for user
-        $_SESSION['user'] = [
-            'id' => $userRecord['id'],
-            'name' => $userRecord['name'],
-            'username' => $username,
-            'role' => $userRecord['role']
+        $_SESSION[SESSION_USER] = [
+            SESSION_USER_ID => $userRecord['id'],
+            SESSION_USER_NAME => $userRecord['name'],
+            SESSION_USER_USERNAME => $username,
+            SESSION_USER_ROLE => $userRecord['role']
         ];
-        unset($_SESSION['numFailedLogins']);
+        unset($_SESSION[SESSION_NUMBER_FAILED_LOGINS]);
 
         // insert login_attempts record
         (new LoginsModel())->insertSuccessfulLogin($username, (int) $userRecord['id']);
@@ -122,10 +122,10 @@ class AuthenticationService
 
     private function loginFailed(string $username, int $adminId = null)
     {
-        if (isset($_SESSION['numFailedLogins'])) {
-            $_SESSION['numFailedLogins']++;
+        if (isset($_SESSION[SESSION_NUMBER_FAILED_LOGINS])) {
+            $_SESSION[SESSION_NUMBER_FAILED_LOGINS]++;
         } else {
-            $_SESSION['numFailedLogins'] = 1;
+            $_SESSION[SESSION_NUMBER_FAILED_LOGINS] = 1;
         }
 
         // insert login_attempts record
@@ -134,18 +134,18 @@ class AuthenticationService
 
     public function tooManyFailedLogins(): bool
     {
-        return isset($_SESSION['numFailedLogins']) &&
-            $_SESSION['numFailedLogins'] > $this->maxFailedLogins;
+        return isset($_SESSION[SESSION_NUMBER_FAILED_LOGINS]) &&
+            $_SESSION[SESSION_NUMBER_FAILED_LOGINS] > $this->maxFailedLogins;
     }
 
     public function getNumFailedLogins(): int
     {
-        return (isset($_SESSION['numFailedLogins'])) ? $_SESSION['numFailedLogins'] : 0;
+        return (isset($_SESSION[SESSION_NUMBER_FAILED_LOGINS])) ? $_SESSION[SESSION_NUMBER_FAILED_LOGINS] : 0;
     }
 
     public function logout()
     {
-        unset($_SESSION['user']);
+        unset($_SESSION[SESSION_USER]);
     }
 
     public function getLoginFields(): array

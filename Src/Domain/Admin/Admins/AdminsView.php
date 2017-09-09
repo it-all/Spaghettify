@@ -155,7 +155,7 @@ class AdminsView extends AdminCrudView
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            $_SESSION['adminNotice'] = [
+            $_SESSION[SESSION_ADMIN_NOTICE] = [
                 "Record ".$args['primaryKey']." Not Found",
                 'adminNoticeFailure'
             ];

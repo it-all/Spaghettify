@@ -11,6 +11,7 @@ class AuthorizationService
 {
     private $roles;
     private $functionalityMinimumPermissions;
+    private $authentication;
 
     public function __construct(array $functionalityMinimumPermissions = [])
     {
@@ -45,14 +46,15 @@ class AuthorizationService
         if (!in_array($minimumPermission, $this->roles)) {
             throw new InvalidArgumentException("minimumRole $minimumPermission must be a valid role");
         }
-        if (!isset($_SESSION['user']['role'])) {
+        if (!isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
             return false;
         }
 
-        $role = $_SESSION['user']['role'];
+        $role = $_SESSION[SESSION_USER][SESSION_USER_ROLE];
 
         if (!in_array($role, $this->roles)) {
-            unset($_SESSION['user']); // force logout
+            // database this event
+            unset($_SESSION[SESSION_USER]); // force logout
             return false;
         }
 

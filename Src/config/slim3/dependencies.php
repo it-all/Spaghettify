@@ -62,15 +62,15 @@ $container['view'] = function ($container) {
         'check' => $container->authorization->check()
     ]);
 
-    if (isset($_SESSION['adminNotice'])) {
-        $view->getEnvironment()->addGlobal('adminNotice', $_SESSION['adminNotice']);
-        unset($_SESSION['adminNotice']);
+    if (isset($_SESSION[SESSION_ADMIN_NOTICE])) {
+        $view->getEnvironment()->addGlobal('adminNotice', $_SESSION[SESSION_ADMIN_NOTICE]);
+        unset($_SESSION[SESSION_ADMIN_NOTICE]);
     }
 
     // frontend
-    if (isset($_SESSION['notice'])) {
-        $view->getEnvironment()->addGlobal('notice', $_SESSION['notice']);
-        unset($_SESSION['notice']);
+    if (isset($_SESSION[SESSION_NOTICE])) {
+        $view->getEnvironment()->addGlobal('notice', $_SESSION[SESSION_NOTICE]);
+        unset($_SESSION[SESSION_NOTICE]);
     }
 
     // make some config setting available inside templates

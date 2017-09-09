@@ -59,7 +59,7 @@ class ErrorHandler
         }
 
         if ($die) {
-            $_SESSION['notice'] = [$this->fatalMessage, 'error'];
+            $_SESSION[SESSION_NOTICE] = [$this->fatalMessage, 'error'];
             header("Location: https://$this->redirectPage");
             exit();
         }

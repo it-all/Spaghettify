@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 // GLOBAL CONSTANTS
 define('APP_ROOT', __DIR__ . '/' );
-define('SESSION_REQUEST_INPUT_KEY', 'requestInput');
+
 // routes
 // KISS - don't use array constants because may be tricky to access in twig
 define('ROUTE_HOME', 'home');
@@ -45,10 +45,25 @@ define('ROUTE_ADMIN_TESTIMONIALS_UPDATE_PUT', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_
 define('ROUTE_ADMIN_TESTIMONIALS_DELETE', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_TESTIMONIALS.'.delete');
 // login attempts
 define('ROUTE_LOGIN_ATTEMPTS', 'admin.logins.index');
+// end routes
 
 // nav / permission options without routes
 define('PERMISSION_ADMIN_MARKETING', ROUTEPREFIX_ADMIN.'.'.'marketing');
 define('PERMISSION_ADMIN_TESTIMONIALS', ROUTEPREFIX_ADMIN.'.'.'testimonials');
+
+// $_SESSION var keys
+define('SESSION_REQUEST_INPUT_KEY', 'requestInput');
+define('SESSION_NUMBER_FAILED_LOGINS', 'numFailedLogins');
+define('SESSION_LAST_ACTIVITY', 'lastActivity');
+define('SESSION_USER', 'user');
+define('SESSION_USER_ID', 'id');
+define('SESSION_USER_NAME', 'name');
+define('SESSION_USER_USERNAME', 'username');
+define('SESSION_USER_ROLE', 'role');
+define('SESSION_ADMIN_NOTICE', 'adminNotice');
+define('SESSION_NOTICE', 'notice');
+define('SESSION_GOTO_ADMIN_PATH', 'gotoAdminPath');
+
 // END GLOBAL CONSTANTS
 
 require APP_ROOT . '/../vendor/autoload.php';
@@ -119,5 +134,5 @@ if (!Utilities\isRunningFromCommandLine()) {
     }
     session_save_path($config['session']['savePath']);
     session_start();
-    $_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
+    $_SESSION[SESSION_LAST_ACTIVITY] = time(); // update last activity time stamp
 }
