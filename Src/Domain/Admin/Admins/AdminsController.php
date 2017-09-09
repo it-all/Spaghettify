@@ -85,10 +85,7 @@ class AdminsController extends CrudController
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($primaryKey)) {
-            $_SESSION[SESSION_ADMIN_NOTICE] = [
-                "Record $primaryKey Not Found",
-                'adminNoticeFailure'
-            ];
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["Record $primaryKey Not Found", 'adminNoticeFailure'];
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
 
