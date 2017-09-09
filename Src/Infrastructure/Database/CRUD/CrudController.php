@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use It_All\Spaghettify\Src\Infrastructure\Utilities\SimpleValidatorExtension;
 use Slim\Container;
 use Slim\Http\Request;
@@ -26,7 +27,7 @@ class CrudController extends Controller
 
     public function postInsert(Request $request, Response $response, $args)
     {
-        if (!$this->authorization->checkFunctionality(CrudHelper::getRouteName($this->routePrefix, 'insert'))) {
+        if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'insert'))) {
             throw new \Exception('No permission.');
         }
 
@@ -61,7 +62,7 @@ class CrudController extends Controller
         }
 
         FormHelper::unsetSessionVars();
-        return $response->withRedirect($this->router->pathFor(CrudHelper::getRouteName($this->routePrefix, 'index')));
+        return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
     }
 
     private function addBooleanFieldsToInput()
@@ -75,14 +76,14 @@ class CrudController extends Controller
 
     public function putUpdate(Request $request, Response $response, $args)
     {
-        if (!$this->authorization->checkFunctionality(CrudHelper::getRouteName($this->routePrefix, 'update'))) {
+        if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'update'))) {
             throw new \Exception('No permission.');
         }
 
         $this->setRequestInput($request);
         $this->addBooleanFieldsToInput();
 
-        $redirectRoute = CrudHelper::getRouteName($this->routePrefix, 'index');
+        $redirectRoute = getRouteName(true, $this->routePrefix, 'index');
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
@@ -201,12 +202,12 @@ class CrudController extends Controller
 
     protected function delete(Response $response, $args, string $returnColumn = null, bool $sendEmail = false)
     {
-        if (!$this->authorization->checkFunctionality(CrudHelper::getRouteName($this->routePrefix, 'delete'))) {
+        if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'delete'))) {
             throw new \Exception('No permission.');
         }
 
         $primaryKey = $args['primaryKey'];
-        $redirectRoute = CrudHelper::getRouteName($this->routePrefix, 'index');
+        $redirectRoute = getRouteName(true, $this->routePrefix, 'index');
 
         if ($res = $this->model->deleteByPrimaryKey($primaryKey, $returnColumn)) {
             $message = 'Deleted record '.$primaryKey;

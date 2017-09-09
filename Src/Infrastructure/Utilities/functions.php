@@ -3,6 +3,39 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Utilities;
 
+function getRouteName(bool $isAdmin = true, string $routePrefix = null, string $routeType = null, string $resourceType = null)
+{
+    $routeName = '';
+
+    if ($isAdmin) {
+        $routeName .= ROUTEPREFIX_ADMIN;
+    }
+
+    if ($routePrefix !== null) {
+        $routeName .= '.' . $routePrefix;
+    }
+
+    if ($resourceType != null) {
+        $validActionTypes = ['put', 'post'];
+        if (!in_array($resourceType, $validActionTypes)) {
+            throw new \Exception("Invalid resource type $resourceType");
+        }
+
+        $routeName .= '.' . $resourceType;
+    }
+
+    if ($routeType !== null) {
+        $validRouteTypes = ['index', 'insert', 'update', 'delete'];
+        if (!in_array($routeType, $validRouteTypes)) {
+            throw new \Exception("Invalid route type $routeType");
+        }
+
+        $routeName .= '.' . $routeType;
+    }
+
+    return $routeName;
+}
+
 function getBaseUrl()
 {
     global $config;

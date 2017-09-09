@@ -7,6 +7,7 @@ use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -40,7 +41,9 @@ abstract class AdminCrudView extends AdminView
             $numResults = 0;
         }
 
-        $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => CrudHelper::getRouteName($this->routePrefix, 'insert')] : false;
+        // bool $isAdmin = true, string $routePrefix = null, string $routeType = null, string $resourceType = null
+
+        $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
         return $this->view->render(
             $response,
@@ -51,10 +54,10 @@ abstract class AdminCrudView extends AdminView
                 'insertLink' => $insertLink,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),
-                'updateRoute' => CrudHelper::getRouteName($this->routePrefix, 'update', 'put'),
+                'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
                 'addDeleteColumn' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('delete')),
-                'deleteRoute' => CrudHelper::getRouteName($this->routePrefix, 'delete'),
+                'deleteRoute' => getRouteName(true, $this->routePrefix, 'delete'),
                 'results' => $results,
                 'numResults' => $numResults,
                 'sortColumn' => $this->model->getDefaultOrderByColumnName(),
@@ -74,7 +77,7 @@ abstract class AdminCrudView extends AdminView
     {
         $formFieldData = ($request->isGet()) ? null : $_SESSION[SESSION_REQUEST_INPUT_KEY];
 
-        $form = new DatabaseTableForm($this->model, $this->router->pathFor(CrudHelper::getRouteName($this->routePrefix, 'insert', 'post')), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'insert', $formFieldData);
+        $form = new DatabaseTableForm($this->model, $this->router->pathFor(getRouteName(true, $this->routePrefix, 'insert', 'post')), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'insert', $formFieldData);
         FormHelper::unsetSessionVars();
 
         return $this->view->render(
@@ -102,12 +105,12 @@ abstract class AdminCrudView extends AdminView
                 "Record ".$args['primaryKey']." Not Found",
                 'adminNoticeFailure'
             ];
-            return $response->withRedirect($this->router->pathFor(CrudHelper::getRouteName($this->routePrefix, 'index')));
+            return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
         }
 
         $formFieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
 
-        $form = new DatabaseTableForm($this->model, $this->router->pathFor(CrudHelper::getRouteName($this->routePrefix, 'update', 'put'), ['primaryKey' => $args['primaryKey']]), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'update', $formFieldData);
+        $form = new DatabaseTableForm($this->model, $this->router->pathFor(getRouteName(true, $this->routePrefix, 'update', 'put'), ['primaryKey' => $args['primaryKey']]), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'update', $formFieldData);
         FormHelper::unsetSessionVars();
 
         return $this->view->render(

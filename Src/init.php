@@ -51,39 +51,6 @@ define('PERMISSION_ADMIN_MARKETING', ROUTEPREFIX_ADMIN.'.'.'marketing');
 define('PERMISSION_ADMIN_TESTIMONIALS', ROUTEPREFIX_ADMIN.'.'.'testimonials');
 // END GLOBAL CONSTANTS
 
-function getRouteName(bool $isAdmin = true, string $routePrefix = null, string $routeType = null, string $resourceType = null)
-{
-    $routeName = '';
-
-    if ($isAdmin) {
-        $routeName .= ROUTEPREFIX_ADMIN;
-    }
-
-    if ($routePrefix !== null) {
-        $routeName .= '.' . $routePrefix;
-    }
-
-    if ($resourceType != null) {
-        $validActionTypes = ['put', 'post'];
-        if (!in_array($resourceType, $validActionTypes)) {
-            throw new \Exception("Invalid resource type $resourceType");
-        }
-
-        $routeName .= '.' . $resourceType;
-    }
-
-    if ($routeType !== null) {
-        $validRouteTypes = ['index', 'insert', 'update', 'delete'];
-        if (!in_array($routeType, $validRouteTypes)) {
-            throw new \Exception("Invalid route type $routeType");
-        }
-
-        $routeName .= '.' . $routeType;
-    }
-
-    return $routeName;
-}
-
 require APP_ROOT . '/../vendor/autoload.php';
 require APP_ROOT . 'Infrastructure/Utilities/functions.php';
 

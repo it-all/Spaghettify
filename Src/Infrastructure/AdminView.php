@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure;
 
 use It_All\Spaghettify\Src\Domain\Admin\NavAdmin;
 use Slim\Container;
+use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 
 class AdminView extends View
 {
