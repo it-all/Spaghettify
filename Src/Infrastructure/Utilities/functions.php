@@ -36,49 +36,6 @@ function getRouteName(bool $isAdmin = true, string $routePrefix = null, string $
     return $routeName;
 }
 
-function getBaseUrl()
-{
-    global $config;
-    $baseUrl = "https://";
-    if ($config['domainUseWww']) {
-        $baseUrl .= "www.";
-    }
-    $baseUrl .= $_SERVER['SERVER_NAME'];
-    return $baseUrl;
-}
-
-function getCurrentPage($includeQueryString = true, $includeIndex = true): string
-{
-    $page = (!$includeIndex && $_SERVER['SCRIPT_NAME'] == '/index.php') ? "/" : $_SERVER['SCRIPT_NAME'];
-    if ($includeQueryString && isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
-        $page .= "?" . $_SERVER['QUERY_STRING'];
-    }
-    return $page;
-}
-
-/**
- * @param string $toPage page and query string only.
- * @param bool $addAdminDir
- * if called with no args, redirects to current page with proper protocol, www or not based on config, and query string
- * suppress redirect if on dev server and there's a page error and we're in debug mode so any errors can be echoed
- */
-function redirect($toPage = null, $addAdminDir = false)
-{
-    global $config;
-    if (is_null($toPage)) {
-        $toPage = getCurrentPage(true, false);
-    }
-    // add / if nec
-    if (substr($toPage, 0, 1) != "/") {
-        $toPage = "/" . $toPage;
-    }
-    if ($addAdminDir) {
-        $toPage = "/" . $config['dirs']['admin'] . $toPage;
-    }
-    $to = getBaseUrl() . $toPage;
-    header("Location: $to");
-    exit();
-}
 
 /**
  * protects array from xss by changing actual array values to escaped characters
@@ -258,15 +215,6 @@ function dbDateCompare($d1, $d2 = null): int
 function convertDateMktime($dbDate): int
 {
     return mktime(0, 0, 0, substr($dbDate, 5, 2), substr($dbDate, 8, 2), substr($dbDate, 0, 4));
-}
-
-/**
- * @param string $number
- * if number is an integer with .00 it will be cropped and just the int returned. otherwise the original arg will be returned
- */
-function crop00FromInt($check)
-{
-    return (substr($check, strlen($check) - 3, 3) == '.00') ? substr($check, 0, strlen($check) - 3) : $check;
 }
 
 function convertDbDateDbTimestamp($dbDate, $time = 'end')
