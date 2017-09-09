@@ -38,34 +38,46 @@ class NavAdmin
                 ]
             ],
 
-            'Admins' => [
-                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ADMINS),
-                'link' => ROUTE_ADMIN_ADMINS,
+            'System' => [
+                'minimumPermissions' => $container->authorization->getMinimumPermission(PERMISSION_ADMIN_MARKETING),
                 'subSections' => [
-
-                    'Insert' => [
-                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ADMINS_INSERT),
-                        'link' => ROUTE_ADMIN_ADMINS_INSERT,
+                    'Events' => [
+                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_SYSTEM_EVENTS),
+                        'link' => ROUTE_SYSTEM_EVENTS,
                     ],
 
-                    'Roles' => [
-                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ROLES),
-                        'link' => ROUTE_ADMIN_ROLES,
+                    'Admins' => [
+                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ADMINS),
+                        'link' => ROUTE_ADMIN_ADMINS,
                         'subSections' => [
+
                             'Insert' => [
-                            'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ROLES_INSERT),
-                            'link' => ROUTE_ADMIN_ROLES_INSERT,
-                            ]
-                        ],
-                    ],
+                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ADMINS_INSERT),
+                                'link' => ROUTE_ADMIN_ADMINS_INSERT,
+                            ],
 
-                    'Login Attempts' => [
-                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_LOGIN_ATTEMPTS),
-                        'link' => ROUTE_LOGIN_ATTEMPTS,
-                    ],
+                            'Roles' => [
+                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ROLES),
+                                'link' => ROUTE_ADMIN_ROLES,
+                                'subSections' => [
+                                    'Insert' => [
+                                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ROLES_INSERT),
+                                        'link' => ROUTE_ADMIN_ROLES_INSERT,
+                                    ]
+                                ],
+                            ],
 
+                            'Login Attempts' => [
+                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_LOGIN_ATTEMPTS),
+                                'link' => ROUTE_LOGIN_ATTEMPTS,
+                            ],
+
+                        ]
+                    ]
                 ]
             ]
+
+
         ];
     }
 

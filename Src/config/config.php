@@ -48,11 +48,13 @@ return [
     // the role values must be in the database: roles.role
     'adminMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
-        ROUTE_ADMIN_ADMINS => 'manager',
+        PERMISSION_ADMIN_SYSTEM => 'director',
+        ROUTE_SYSTEM_EVENTS => 'owner',
+        ROUTE_ADMIN_ADMINS => 'director',
         ROUTE_ADMIN_ADMINS_INSERT => 'director',
         ROUTE_ADMIN_ADMINS_UPDATE => 'director',
         ROUTE_ADMIN_ADMINS_DELETE => 'owner',
-        ROUTE_ADMIN_ROLES => 'manager',
+        ROUTE_ADMIN_ROLES => 'director',
         ROUTE_ADMIN_ROLES_INSERT => 'director',
         ROUTE_ADMIN_ROLES_UPDATE => 'director',
         ROUTE_ADMIN_ROLES_DELETE => 'director',

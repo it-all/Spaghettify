@@ -67,10 +67,6 @@ class AuthenticationService
 
     public function getAdminHomeRouteForUser(): string
     {
-        if (!isset($_SESSION[SESSION_USER])) {
-            throw new \Exception("Called for non-logged-in visitor");
-        }
-
         // determine home route: either by username, by role, or default
         if (isset($this->adminHomeRoutes['usernames'][$this->getUserUsername()])) {
             $homeRoute = $this->adminHomeRoutes['usernames'][$this->getUserUsername()];

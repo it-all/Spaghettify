@@ -9,15 +9,17 @@ use It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMi
 // https://github.com/slimphp/Slim/issues/2165
 
 // use as shortcuts for callables in routes
-$securityNs = 'It_All\Spaghettify\Src\Infrastructure\Security';
-$domainFrontendNs = 'It_All\Spaghettify\Src\Domain\Frontend';
-$domainAdminNs = 'It_All\Spaghettify\Src\Domain\Admin';
+
+define('NAMESPACE_INFRASTRUCTURE', 'It_All\Spaghettify\Src\Infrastructure');
+define('NAMESPACE_SECURITY', NAMESPACE_INFRASTRUCTURE. '\Security');
+define('NAMESPACE_DOMAIN_FRONTEND', 'It_All\Spaghettify\Src\Domain\Frontend');
+define('NAMESPACE_DOMAIN_ADMIN', 'It_All\Spaghettify\Src\Domain\Admin');
 
 /////////////////////////////////////////
 // Routes that anyone can access
 
 $slim->get('/',
-    $domainFrontendNs . '\HomeView:index')
+    NAMESPACE_DOMAIN_FRONTEND . '\HomeView:index')
     ->setName(ROUTE_HOME);
 
 // remainder of front end pages to go here
@@ -32,12 +34,12 @@ $slim->get('/notFound',
 // Routes that only non-authenticated users (Guests) can access
 
 $slim->get('/' . $config['dirs']['admin'],
-    $securityNs.'\Authentication\AuthenticationView:getLogin')
+    NAMESPACE_SECURITY.'\Authentication\AuthenticationView:getLogin')
     ->add(new GuestMiddleware($container))
     ->setName(ROUTE_LOGIN);
 
 $slim->post('/' . $config['dirs']['admin'],
-    $securityNs.'\Authentication\AuthenticationController:postLogin')
+    NAMESPACE_SECURITY.'\Authentication\AuthenticationController:postLogin')
     ->add(new GuestMiddleware($container))
     ->setName(ROUTE_LOGIN_POST);
 /////////////////////////////////////////
@@ -46,25 +48,31 @@ $slim->post('/' . $config['dirs']['admin'],
 // Note, if route needs authorization as well, the authorization is added prior to authentication, so that authentication is performed first
 
 $slim->get('/' . $config['dirs']['admin'] . '/home',
-    $domainAdminNs.'\AdminHomeView:index')
+    NAMESPACE_DOMAIN_ADMIN.'\AdminHomeView:index')
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_HOME_DEFAULT);
 
 $slim->get('/' . $config['dirs']['admin'] . '/logout',
-    $securityNs.'\Authentication\AuthenticationController:getLogout')
+    NAMESPACE_SECURITY.'\Authentication\AuthenticationController:getLogout')
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_LOGOUT);
 
+// system events
+$slim->get('/' . $config['dirs']['admin'] . '/systemEvents',
+    NAMESPACE_INFRASTRUCTURE.'\SystemEvents\SystemEventsView:index')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName(ROUTE_SYSTEM_EVENTS);
+
 // logins
-$loginsPath = $domainAdminNs.'\Admins\Logins\\';
 $slim->get('/' . $config['dirs']['admin'] . '/logins',
-    $loginsPath . 'LoginsView:index')
+    NAMESPACE_DOMAIN_ADMIN.'\Admins\Logins\LoginsView:index')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_LOGIN_ATTEMPTS);
 
 // admins
-$adminsPath = $domainAdminNs.'\Admins\\';
+$adminsPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\\';
 $slim->get('/' . $config['dirs']['admin'] . '/admins',
     $adminsPath . 'AdminsView:index')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS]))
@@ -103,7 +111,7 @@ $slim->get('/' . $config['dirs']['admin'] . '/admins/delete/{primaryKey}',
 // end admins
 
 // roles
-$rolesPath = $domainAdminNs.'\Admins\Roles\\';
+$rolesPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\Roles\\';
 $slim->get('/' . $config['dirs']['admin'] . '/roles',
     $rolesPath . 'RolesView:index')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES]))
@@ -142,7 +150,7 @@ $slim->get('/' . $config['dirs']['admin'] . '/roles/delete/{primaryKey}',
 // end roles
 
 // testimonials
-$testimonialsPath = $domainAdminNs . '\Marketing\Testimonials\\';
+$testimonialsPath = NAMESPACE_DOMAIN_ADMIN . '\Marketing\Testimonials\\';
 
 $slim->get('/' . $config['dirs']['admin'] . '/testimonials',
     $testimonialsPath . 'TestimonialsView:index')

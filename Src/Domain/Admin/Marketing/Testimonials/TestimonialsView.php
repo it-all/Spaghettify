@@ -10,6 +10,6 @@ class TestimonialsView extends AdminCrudView
 {
     public function __construct(Container $container)
     {
-        parent::__construct($container, new TestimonialsModel(), 'testimonials');
+        parent::__construct($container, new TestimonialsModel(), ROUTEPREFIX_ADMIN_TESTIMONIALS);
     }
 }

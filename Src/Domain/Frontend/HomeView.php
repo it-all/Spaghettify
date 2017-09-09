@@ -9,12 +9,10 @@ class HomeView extends View
 {
     public function index($request, $response)
     {
-        $adminLinkRoute = $this->authentication->getAdminHomeRouteForUser();
-
         return $this->view->render(
             $response,
             'frontend/home.twig',
-            ['title' => $this->settings['businessName'], 'pageType' => 'public', 'adminLinkRoute' => $adminLinkRoute]
+            ['title' => $this->settings['businessName'], 'pageType' => 'public', 'adminLinkRoute' => $this->authentication->getAdminHomeRouteForUser()]
         );
     }
 }

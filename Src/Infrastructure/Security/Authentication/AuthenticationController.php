@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
+use It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -42,12 +43,11 @@ class AuthenticationController extends Controller
 
             // redisplay the form with input values and error(s)
             return $response->withRedirect($this->router->pathFor(ROUTE_LOGIN));
-
         }
 
         // successful login
         FormHelper::unsetSessionVars();
-        $this->logger->addInfo($request->getParam('username').' logged in');
+        $this->systemEvents->insertEvent('Login', 'info', (int) $this->authentication->getUserId());
 
         // redirect to proper resource
         if (isset($_SESSION[SESSION_GOTO_ADMIN_PATH])) {

@@ -33,6 +33,12 @@ $container['authorization'] = function($container) {
     return new It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationService($settings['authorization']);
 };
 
+// System Events (Database Log)
+$container['systemEvents'] = function($container) {
+    return new \It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel();
+};
+
+
 // Twig
 $container['view'] = function ($container) {
     $settings = $container->get('settings');

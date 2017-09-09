@@ -12,7 +12,7 @@ class TestimonialsController extends CrudController
 {
     public function __construct(Container $container)
     {
-        parent::__construct($container, new TestimonialsModel(), new TestimonialsView($container), 'testimonials');
+        parent::__construct($container, new TestimonialsModel(), new TestimonialsView($container), ROUTEPREFIX_ADMIN_TESTIMONIALS);
     }
 
     /**
