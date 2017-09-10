@@ -23,8 +23,6 @@ class ErrorHandler
         bool $isLiveServer,
         PhpMailerService $m,
         array $emailTo,
-        Postgres $database,
-        SystemEventsModel $systemEventsModel,
         $fatalMessage = 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.'
     )
     {
@@ -33,14 +31,28 @@ class ErrorHandler
         $this->isLiveServer = $isLiveServer;
         $this->mailer = $m;
         $this->emailTo = $emailTo;
-        $this->database = $database;
-        $this->systemEventsModel = $systemEventsModel;
         $this->fatalMessage = $fatalMessage;
+    }
+
+    public function setDatabaseAndSystemEventsModel(Postgres $database, SystemEventsModel $systemEventsModel)
+    {
+        $this->setDatabase($database);
+        $this->setSystemEventsModel($systemEventsModel);
+    }
+
+    public function setDatabase(Postgres $database)
+    {
+        $this->database = $database;
+    }
+
+    public function setSystemEventsModel(SystemEventsModel $systemEventsModel)
+    {
+        $this->systemEventsModel = $systemEventsModel;
     }
 
     /*
      * 4 ways to handle:
-     * database - always (use @ to avoid infinite loop)
+     * database - always (as long as database and systemEventsModel properties have been set), (use @ to avoid infinite loop)
      * log - always (use @ to avoid infinite loop)
      * echo - never on live server, depends on config and @ controller on dev
      * email - always on live server, depends on config on dev. never email error deets. (use @ to avoid infinite loop)
@@ -54,27 +66,31 @@ class ErrorHandler
         }
         $errorMessage = $this->generateMessage($messageBody);
 
-        // database
-        switch ($this->getErrorType($errno)) {
-            case 'Core Error':
-            case 'Parse Error':
-            case 'Fatal Error':
-                $systemEventType = 'critical';
-                break;
-            case 'Core Warning':
-            case 'Warning':
-                $systemEventType = 'warning';
-                break;
-            case 'Deprecated':
-            case 'Notice':
-                $systemEventType = 'notice';
-                break;
-            default:
-                $systemEventType = 'error';
-        }
+        if (isset($this->database) && isset($this->systemEventsModel)) {
+            // database
+            switch ($this->getErrorType($errno)) {
+                case 'Core Error':
+                case 'Parse Error':
+                case 'Fatal Error':
+                    $systemEventType = 'critical';
+                    break;
+                case 'Core Warning':
+                case 'Warning':
+                    $systemEventType = 'warning';
+                    break;
+                case 'Deprecated':
+                case 'Notice':
+                    $systemEventType = 'notice';
+                    break;
+                default:
+                    $systemEventType = 'error';
+            }
 
-        $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;
-        $this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, explode('Stack Trace:', $errorMessage)[0].'. See phpErrors.log for further details.');
+            // note this will be null for errors occurring prior to session initialization
+            $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;
+
+            @$this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, explode('Stack Trace:', $errorMessage)[0].'. See phpErrors.log for further details.');
+        }
 
         // log
         @error_log($errorMessage, 3, $this->logPath);
@@ -98,13 +114,19 @@ class ErrorHandler
     }
 
     /**
-     * used in register_shutdown_function to see if a fatal error has occured and handle it.
+     * used in register_shutdown_function to see if a fatal error has occurred and handle it.
      * note, this does not occur often in php7, as almost all errors are now exceptions and will be caught by the registered exception handler. fatal errors can still occur for conditions like out of memory: https://trowski.com/2015/06/24/throwable-exceptions-and-errors-in-php7/
+     * see also https://stackoverflow.com/questions/10331084/error-logging-in-a-smooth-way
      */
-    public function checkForFatal()
+    public function shutdownFunction()
     {
         $error = error_get_last();
-        $fatalErrorTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR];
+
+        if (!isset($error)) {
+            return;
+        }
+
+        $fatalErrorTypes = [E_USER_ERROR, E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING];
         if (in_array($error["type"], $fatalErrorTypes)) {
             $this->handleError($this->generateMessageBodyCommon($error["type"], $error["message"], $error["file"], $error["line"]),$error["type"], true);
         }
@@ -184,6 +206,14 @@ class ErrorHandler
                 return 'Core Error';
             case E_CORE_WARNING:
                 return 'Core Warning';
+            case E_COMPILE_ERROR:
+                return 'Compile Error';
+            case E_COMPILE_WARNING:
+                return 'Compile Warning';
+            case E_STRICT:
+                return 'Strict';
+            case E_RECOVERABLE_ERROR:
+                return 'Recoverable Error';
             default:
                 return 'Unknown error type';
         }

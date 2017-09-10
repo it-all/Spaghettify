@@ -6,6 +6,7 @@ declare(strict_types=1);
 // -----------------------------------------------------------------------------
 // Services (Dependencies)
 // -----------------------------------------------------------------------------
+
 // Database
 $container['database'] = function($container) use ($database) {
     return $database;

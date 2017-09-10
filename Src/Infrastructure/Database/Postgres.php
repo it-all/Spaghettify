@@ -59,7 +59,7 @@ Class Postgres
         $connectionString .= " connect_timeout=5";
 
         if (!$this->pgConn = pg_connect($connectionString)) {
-            throw new \Exception('postgres connection failure');
+            throw new \Exception('postgres connection failure', E_USER_ERROR);
         }
     }
 

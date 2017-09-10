@@ -92,7 +92,34 @@ $mailer = new \It_All\Spaghettify\Src\Infrastructure\Utilities\PhpMailerService(
     $config['errors']['emailDev']
 );
 
-// connect to database. used in error handler and container
+$emailErrorsTo = [];
+foreach ($config['errors']['emailTo'] as $roleEmail) {
+    $emailErrorsTo[] = $config['emails'][$roleEmail];
+}
+
+// error handling
+$errorHandler = new Utilities\ErrorHandler(
+    $config['storage']['logs']['pathPhpErrors'],
+    $config['hostName']."/",
+    $config['isLive'],
+    $mailer,
+    $emailErrorsTo
+);
+
+// workaround for catching some fatal errors like parse errors. note that parse errors in this file and index.php are not handled, but cause a fatal error with display (not displayed if display_errors is off in php.ini, but the ini_set call will not affect it).
+register_shutdown_function(array($errorHandler, 'shutdownFunction'));
+set_error_handler(array($errorHandler, 'phpErrorHandler'));
+set_exception_handler(array($errorHandler, 'throwableHandler'));
+
+error_reporting( -1 ); // all, including future types
+ini_set( 'display_errors', 'off' );
+ini_set( 'display_startup_errors', 'off' );
+
+// keep this even though the error handler logs errors, so that any errors in the error handler itself or prior to will still be logged. note, if using slim error handling, this will log all php errors
+ini_set('error_log', $config['storage']['logs']['pathPhpErrors']);
+
+// used in error handler and container
+// do this after setting error handler in case connection fails
 $database = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
     $config['database']['name'],
     $config['database']['username'],
@@ -104,32 +131,7 @@ $database = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
 // used in error handler and container
 $systemEventsModel = new \It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel();
 
-// error handling
-$emailErrorsTo = [];
-foreach ($config['errors']['emailTo'] as $roleEmail) {
-    $emailErrorsTo[] = $config['emails'][$roleEmail];
-}
-$errorHandler = new Utilities\ErrorHandler(
-    $config['storage']['logs']['pathPhpErrors'],
-    $config['hostName']."/",
-    $config['isLive'],
-    $mailer,
-    $emailErrorsTo,
-    $database,
-    $systemEventsModel
-);
-
-// workaround for catching some fatal errors like parse errors. note that parse errors in this file and index.php are not handled, but cause a fatal error with display (not displayed if display_errors is off in php.ini, but the ini_set call will not affect it).
-register_shutdown_function(array($errorHandler, 'checkForFatal'));
-set_error_handler(array($errorHandler, 'phpErrorHandler'));
-set_exception_handler(array($errorHandler, 'throwableHandler'));
-
-error_reporting( -1 ); // all, including future types
-ini_set( 'display_errors', 'off' );
-ini_set( 'display_startup_errors', 'off' );
-
-// keep this even though the error handler logs errors, so that any errors in the error handler itself or prior to will still be logged. note, if using slim error handling, this will log all php errors
-ini_set('error_log', $config['storage']['logs']['pathPhpErrors']);
+$errorHandler->setDatabaseAndSystemEventsModel($database, $systemEventsModel);
 
 if (!Utilities\isRunningFromCommandLine()) {
     /**
