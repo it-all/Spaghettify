@@ -103,6 +103,44 @@ function isRunningFromCommandLine(): bool
     return php_sapi_name() == 'cli';
 }
 
+function getBaseUrl()
+{
+    global $config;
+    $baseUrl = "https://";
+    if ($config['domainUseWww']) {
+        $baseUrl .= "www.";
+    }
+    $baseUrl .= $_SERVER['SERVER_NAME'];
+    return $baseUrl;
+}
+
+function getCurrentUri(bool $includeQueryString = true): string
+{
+    $uri = $_SERVER['REQUEST_URI'];
+    if ($includeQueryString && isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
+        $uri .= "?" . $_SERVER['QUERY_STRING'];
+    }
+
+    return $uri;
+}
+
+// if called with no args, redirects to current URI with proper protocol, www or not based on config, and query string
+function redirect(string $toURI = null)
+{
+    if (is_null($toURI)) {
+        $toURI = getCurrentUri(true, false);
+    }
+
+    // add / if nec
+    if (substr($toURI, 0, 1) != "/") {
+        $toURI = "/" . $toURI;
+    }
+
+    $to = getBaseUrl() . $toURI;
+    header("Location: $to");
+    exit();
+}
+
 /**
  * gets extension of a fileName
  */

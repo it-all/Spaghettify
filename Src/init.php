@@ -80,7 +80,7 @@ $config = array_replace_recursive(
     require APP_ROOT . 'config/env.php'
 );
 
-// instantiate mailer, which is used in error handler and container
+// used in error handler and container
 $mailer = new \It_All\Spaghettify\Src\Infrastructure\Utilities\PhpMailerService(
     $config['storage']['logs']['pathPhpErrors'],
     $config['emails']['service'],
@@ -92,6 +92,18 @@ $mailer = new \It_All\Spaghettify\Src\Infrastructure\Utilities\PhpMailerService(
     $config['errors']['emailDev']
 );
 
+// connect to database. used in error handler and container
+$database = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
+    $config['database']['name'],
+    $config['database']['username'],
+    $config['database']['password'],
+    $config['database']['host'],
+    $config['database']['port']
+);
+
+// used in error handler and container
+$systemEventsModel = new \It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel();
+
 // error handling
 $emailErrorsTo = [];
 foreach ($config['errors']['emailTo'] as $roleEmail) {
@@ -102,7 +114,9 @@ $errorHandler = new Utilities\ErrorHandler(
     $config['hostName']."/",
     $config['isLive'],
     $mailer,
-    $emailErrorsTo
+    $emailErrorsTo,
+    $database,
+    $systemEventsModel
 );
 
 // workaround for catching some fatal errors like parse errors. note that parse errors in this file and index.php are not handled, but cause a fatal error with display (not displayed if display_errors is off in php.ini, but the ini_set call will not affect it).

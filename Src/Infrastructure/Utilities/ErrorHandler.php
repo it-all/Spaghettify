@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Utilities;
 
+use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
+use It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel;
+
 class ErrorHandler
 {
     private $logPath;
@@ -10,6 +13,8 @@ class ErrorHandler
     private $isLiveServer;
     private $mailer;
     private $emailTo;
+    private $database;
+    private $systemEventsModel;
     private $fatalMessage;
 
     public function __construct(
@@ -18,6 +23,8 @@ class ErrorHandler
         bool $isLiveServer,
         PhpMailerService $m,
         array $emailTo,
+        Postgres $database,
+        SystemEventsModel $systemEventsModel,
         $fatalMessage = 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.'
     )
     {
@@ -26,17 +33,20 @@ class ErrorHandler
         $this->isLiveServer = $isLiveServer;
         $this->mailer = $m;
         $this->emailTo = $emailTo;
+        $this->database = $database;
+        $this->systemEventsModel = $systemEventsModel;
         $this->fatalMessage = $fatalMessage;
     }
 
-    /**
-     * 3 ways to handle:
-     * log - always
+    /*
+     * 4 ways to handle:
+     * database - always (use @ to avoid infinite loop)
+     * log - always (use @ to avoid infinite loop)
      * echo - never on live server, depends on config and @ controller on dev
-     * email - always on live server, depends on config on dev. never email error deets.
+     * email - always on live server, depends on config on dev. never email error deets. (use @ to avoid infinite loop)
      * Then, die if necessary
      */
-    private function handleError(string $messageBody, bool $die = false)
+    private function handleError(string $messageBody, int $errno, bool $die = false)
     {
         // happens when an expression is prefixed with @ (meaning: ignore errors).
         if (error_reporting() == 0) {
@@ -44,11 +54,33 @@ class ErrorHandler
         }
         $errorMessage = $this->generateMessage($messageBody);
 
+        // database
+        switch ($this->getErrorType($errno)) {
+            case 'Core Error':
+            case 'Parse Error':
+            case 'Fatal Error':
+                $systemEventType = 'critical';
+                break;
+            case 'Core Warning':
+            case 'Warning':
+                $systemEventType = 'warning';
+                break;
+            case 'Deprecated':
+            case 'Notice':
+                $systemEventType = 'notice';
+                break;
+            default:
+                $systemEventType = 'error';
+        }
+
+        $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;
+        $this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, explode('Stack Trace:', $errorMessage)[0].'. See phpErrors.log for further details.');
+
         // log
-        error_log($errorMessage, 3, $this->logPath);
+        @error_log($errorMessage, 3, $this->logPath);
 
         // email
-        $this->mailer->send($_SERVER['SERVER_NAME'] . " Error", "Check log file for details.", $this->emailTo);
+        @$this->mailer->send($_SERVER['SERVER_NAME'] . " Error", "Check log file for details.", $this->emailTo);
 
         // echo
         if (!$this->isLiveServer) {
@@ -74,7 +106,7 @@ class ErrorHandler
         $error = error_get_last();
         $fatalErrorTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR];
         if (in_array($error["type"], $fatalErrorTypes)) {
-            $this->handleError($this->generateMessageBodyCommon($error["type"], $error["message"], $error["file"], $error["line"]),true);
+            $this->handleError($this->generateMessageBodyCommon($error["type"], $error["message"], $error["file"], $error["line"]),$error["type"], true);
         }
     }
 
@@ -95,7 +127,7 @@ class ErrorHandler
         }
 
         $message .= "\nStack Trace:\n".str_replace('/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify', '', $traceString);
-        $this->handleError($message, $exitPage);
+        $this->handleError($message, $e->getCode(), $exitPage);
     }
 
     /**
@@ -109,10 +141,7 @@ class ErrorHandler
      */
     public function phpErrorHandler(int $errno, string $errstr, string $errfile = null, string $errline = null)
     {
-        $this->handleError(
-            $this->generateMessageBodyCommon($errno, $errstr, $errfile, $errline),
-            false
-        );
+        $this->handleError($this->generateMessageBodyCommon($errno, $errstr, $errfile, $errline), $errno, false);
     }
 
     private function generateMessage(string $messageBody): string

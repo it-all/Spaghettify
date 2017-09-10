@@ -72,7 +72,7 @@ return [
             '123456' => ROUTE_ADMIN_ROLES
         ],
         'roles' => [
-            'owner' => ROUTE_LOGIN_ATTEMPTS,
+            'owner' => ROUTE_SYSTEM_EVENTS,
             'director' => ROUTE_ADMIN_ADMINS,
             'manager' => ROUTE_ADMIN_TESTIMONIALS
         ]

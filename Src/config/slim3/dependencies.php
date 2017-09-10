@@ -6,16 +6,6 @@ declare(strict_types=1);
 // -----------------------------------------------------------------------------
 // Services (Dependencies)
 // -----------------------------------------------------------------------------
-
-// Create initial connection to DB
-$database = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
-    $config['database']['name'],
-    $config['database']['username'],
-    $config['database']['password'],
-    $config['database']['host'],
-    $config['database']['port']
-);
-
 // Database
 $container['database'] = function($container) use ($database) {
     return $database;
@@ -34,10 +24,9 @@ $container['authorization'] = function($container) {
 };
 
 // System Events (Database Log)
-$container['systemEvents'] = function($container) {
-    return new \It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel();
+$container['systemEvents'] = function($container) use ($systemEventsModel) {
+    return $systemEventsModel;
 };
-
 
 // Twig
 $container['view'] = function ($container) {

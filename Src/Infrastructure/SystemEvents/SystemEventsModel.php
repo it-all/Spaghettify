@@ -19,7 +19,7 @@ class SystemEventsModel extends DatabaseTableModel
             throw new \Exception("Invalid eventType: $eventType");
         }
 
-        $this->insert($title, (int) $eventTypeId, $notes, (int) $adminId);
+        $this->insert($title, (int) $eventTypeId, $notes, $adminId);
     }
 
     public function getEventTypeId(string $eventType)
