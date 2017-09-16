@@ -10,7 +10,8 @@ class ErrorHandler
 {
     private $logPath;
     private $redirectPage;
-    private $isLiveServer;
+    private $emailErrors;
+    private $echoErrors;
     private $mailer;
     private $emailTo;
     private $database;
@@ -20,15 +21,17 @@ class ErrorHandler
     public function __construct(
         string $logPath,
         string $redirectPage,
-        bool $isLiveServer,
-        PhpMailerService $m,
-        array $emailTo,
+        bool $echoErrors = false,
+        bool $emailErrors = true,
+        array $emailTo = [],
+        PhpMailerService $m = null,
         $fatalMessage = 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.'
     )
     {
         $this->logPath = $logPath;
         $this->redirectPage = $redirectPage;
-        $this->isLiveServer = $isLiveServer;
+        $this->emailErrors = $emailErrors;
+        $this->echoErrors = $echoErrors;
         $this->mailer = $m;
         $this->emailTo = $emailTo;
         $this->fatalMessage = $fatalMessage;
@@ -52,11 +55,12 @@ class ErrorHandler
 
     /*
      * 4 ways to handle:
-     * database - always (as long as database and systemEventsModel properties have been set), (use @ to avoid infinite loop)
-     * log - always (use @ to avoid infinite loop)
-     * echo - never on live server, depends on config and @ controller on dev
-     * email - always on live server, depends on config on dev. never email error deets. (use @ to avoid infinite loop)
-     * Then, die if necessary
+     * -database - always (as long as database and systemEventsModel properties have been set)
+     * -log - always
+     * -echo - depends on property
+     * -email - depends on property. never email error deets.
+     * use @ when calling fns from here to avoid infinite loop
+     * die if necessary
      */
     private function handleError(string $messageBody, int $errno, bool $die = false)
     {
@@ -66,8 +70,8 @@ class ErrorHandler
         }
         $errorMessage = $this->generateMessage($messageBody);
 
+        // database
         if (isset($this->database) && isset($this->systemEventsModel)) {
-            // database
             switch ($this->getErrorType($errno)) {
                 case 'Core Error':
                 case 'Parse Error':
@@ -86,26 +90,31 @@ class ErrorHandler
                     $systemEventType = 'error';
             }
 
+            $databaseErrorMessage = explode('Stack Trace:', $errorMessage)[0].'. See phpErrors.log for further details.';
+
             // note this will be null for errors occurring prior to session initialization
             $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;
 
-            @$this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, explode('Stack Trace:', $errorMessage)[0].'. See phpErrors.log for further details.');
+            @$this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, $databaseErrorMessage);
         }
 
         // log
         @error_log($errorMessage, 3, $this->logPath);
 
-        // email
-        @$this->mailer->send($_SERVER['SERVER_NAME'] . " Error", "Check log file for details.", $this->emailTo);
-
         // echo
-        if (!$this->isLiveServer) {
+        if ($this->echoErrors) {
             echo nl2br($errorMessage, false);
             if ($die) {
                 die();
             }
         }
 
+        // email
+        if ($this->emailErrors) {
+            @$this->mailer->send($_SERVER['SERVER_NAME'] . " Error", "Check log file for details.", $this->emailTo);
+        }
+
+        // will only get here if errors have not been echoed above
         if ($die) {
             $_SESSION[SESSION_NOTICE] = [$this->fatalMessage, 'error'];
             header("Location: https://$this->redirectPage");
@@ -120,7 +129,7 @@ class ErrorHandler
      */
     public function shutdownFunction()
     {
-        $error = error_get_last();
+        $error = error_get_last(); // note, stack trace is included in $error["message"]
 
         if (!isset($error)) {
             return;
@@ -139,16 +148,9 @@ class ErrorHandler
     public function throwableHandler(\Throwable $e)
     {
         $message = $this->generateMessageBodyCommon($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+        $message .= "\nStack Trace:\n" . $e->getTraceAsString();
         $exitPage = ($e->getCode() == E_ERROR || $e->getCode() == E_USER_ERROR) ? true : false;
 
-        $traceString = "";
-        foreach ($e->getTrace() as $k => $v) {
-            $traceString .= "#$k ";
-            $traceString .= arrayWalkToStringRecursive($v);
-            $traceString .= "\n";
-        }
-
-        $message .= "\nStack Trace:\n".str_replace('/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify', '', $traceString);
         $this->handleError($message, $e->getCode(), $exitPage);
     }
 
@@ -158,12 +160,13 @@ class ErrorHandler
      * @param string|null $errfile
      * @param string|null $errline
      * to be registered with php's set_error_handler()
-     * trigger_error() will call this
-     * called for php Notices and possibly more
+     * called for script errors and trigger_error()
      */
     public function phpErrorHandler(int $errno, string $errstr, string $errfile = null, string $errline = null)
     {
-        $this->handleError($this->generateMessageBodyCommon($errno, $errstr, $errfile, $errline), $errno, false);
+        $message = $this->generateMessageBodyCommon($errno, $errstr, $errfile, $errline) . "\nStack Trace:\n". $this->getDebugBacktraceString();
+
+        $this->handleError($message, $errno, false);
     }
 
     private function generateMessage(string $messageBody): string
@@ -181,7 +184,31 @@ class ErrorHandler
                 $message .= "?" . $_SERVER['QUERY_STRING'];
             }
         }
-        $message .= "\n" . $messageBody . "\n\n";
+        $message .= "\n$messageBody\n\n";
+        return $message;
+    }
+
+    /**
+     * @param int $errno
+     * @param string $errstr
+     * @param string|null $errfile
+     * @param null $errline
+     * @return string
+     * errline seems to be passed in as a string or int depending on where it's coming from
+     */
+    private function generateMessageBodyCommon(int $errno, string $errstr, string $errfile = null, $errline = null): string
+    {
+        $message = $this->getErrorType($errno).": ";
+        $message .= htmlspecialchars_decode($errstr)."\n";
+
+        if (!is_null($errfile)) {
+            $message .= "$errfile";
+            // note it only makes sense to have line if we have file
+            if (!is_null($errline)) {
+                $message .= " line: $errline";
+            }
+        }
+
         return $message;
     }
 
@@ -217,30 +244,76 @@ class ErrorHandler
             default:
                 return 'Unknown error type';
         }
-
     }
 
-    /**
-     * @param int $errno
-     * @param string $errstr
-     * @param string|null $errfile
-     * @param null $errline
-     * @return string
-     * errline seems to be passed in as a string or int depending on where it's coming from
-     */
-    private function generateMessageBodyCommon(int $errno, string $errstr, string $errfile = null, $errline = null): string
+    private function getDebugBacktraceString(): string
     {
-        $message = $this->getErrorType($errno).": ";
-        $message .= "$errstr\n";
+        $out = "";
 
-        if (!is_null($errfile)) {
-            $message .= "$errfile";
-            // note it only makes sense to have line if we have file
-            if (!is_null($errline)) {
-                $message .= " line: $errline";
+        $dbt = debug_backtrace(~DEBUG_BACKTRACE_PROVIDE_OBJECT & ~DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        // skip the first 2 entries, because they're from this file
+        array_shift($dbt);
+        array_shift($dbt);
+
+        $showVendorCalls = true;
+        $showFullFilePath = false;
+        $startFilePath = '/Src';
+        $showClassNamespace = false;
+
+        foreach ($dbt as $index => $call) {
+            $outLine = "#$index:";
+            if (isset($call['file'])) {
+                if (!$showVendorCalls && strstr($call['file'], '/vendor/')) {
+                    break;
+                }
+                $outLine .= " ";
+                if ($showFullFilePath) {
+                    $outLine .= $call['file'];
+                } else {
+                    $fileParts = explode($startFilePath, $call['file']);
+                    $outLine .= (isset($fileParts[1])) ? $fileParts[1] : $call['file'];
+                }
             }
+            if (isset($call['line'])) {
+                $outLine .= " [".$call['line']."] ";
+            }
+            if (isset($call['class'])) {
+                $classParts = explode("\\", $call['class']);
+                $outLine .= " ";
+                $outLine .= ($showClassNamespace) ? $call['class'] : $classParts[count($classParts) - 1];
+            }
+            if (isset($call['type'])) {
+                $outLine .= $call['type'];
+            }
+            if (isset($call['function'])) {
+                $outLine .= $call['function']."()";
+            }
+            if (isset($call['args'])) {
+                $outLine .= " {".arrayWalkToStringRecursive($call['args'])."}";
+            }
+            $out .= "$outLine\n\n";
         }
 
-        return $message;
+        return $out;
+    }
+
+    // http://php.net/manual/en/function.debug-backtrace.php#112238
+    private function getCallTrace(string $traceString)
+    {
+        $trace = explode("\n", $traceString);
+        // reverse array to make steps line up chronologically
+        $trace = array_reverse($trace);
+        array_shift($trace); // remove {main}
+        array_pop($trace); // remove call to this method
+        $length = count($trace);
+        $result = array();
+
+        for ($i = 0; $i < $length; $i++)
+        {
+            $result[] = ($i + 1)  . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
+        }
+
+        return "\t" . implode("\n\t", $result);
     }
 }

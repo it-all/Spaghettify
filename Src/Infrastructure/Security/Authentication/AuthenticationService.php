@@ -20,12 +20,12 @@ class AuthenticationService
         $this->adminHomeRoutes = $adminHomeRoutes;
     }
 
-    public function user()
+    public function user(): ?array
     {
         if (isset($_SESSION[SESSION_USER])) {
             return $_SESSION[SESSION_USER];
         }
-        return false;
+        return null;
     }
 
     public function check(): bool
@@ -33,36 +33,36 @@ class AuthenticationService
         return isset($_SESSION[SESSION_USER]);
     }
 
-    public function getUserId()
+    public function getUserId(): ?string
     {
         if (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) {
             return $_SESSION[SESSION_USER][SESSION_USER_ID];
         }
-        return false;
+        return null;
     }
 
-    public function getUserName()
+    public function getUserName(): ?string
     {
         if (isset($_SESSION[SESSION_USER][SESSION_USER_NAME])) {
             return $_SESSION[SESSION_USER][SESSION_USER_NAME];
         }
-        return false;
+        return null;
     }
 
-    public function getUserUsername()
+    public function getUserUsername(): ?string
     {
         if (isset($_SESSION[SESSION_USER][SESSION_USER_USERNAME])) {
             return $_SESSION[SESSION_USER][SESSION_USER_USERNAME];
         }
-        return false;
+        return null;
     }
 
-    public function getUserRole()
+    public function getUserRole(): ?string
     {
         if (isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
             return $_SESSION[SESSION_USER][SESSION_USER_ROLE];
         }
-        return false;
+        return null;
     }
 
     public function getAdminHomeRouteForUser(): string

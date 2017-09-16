@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
-use It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -14,6 +13,8 @@ class AuthenticationController extends Controller
     function postLogin(Request $request, Response $response, $args)
     {
         $this->setRequestInput($request);
+        $username = $_SESSION[SESSION_REQUEST_INPUT_KEY]['username'];
+        $password = $_SESSION[SESSION_REQUEST_INPUT_KEY]['password_hash'];
 
         $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->authentication->getLoginFields());
 
@@ -26,17 +27,14 @@ class AuthenticationController extends Controller
             return $av->getLogin($request, $response, $args);
         }
 
-        if (!$this->authentication->attemptLogin(
-            $request->getParam('username'),
-            $request->getParam('password_hash')
-        )) {
-            $this->logger->addWarning('Unsuccessful login for username: '.
-                $request->getParam('username') . ' from IP: '. $_SERVER['REMOTE_ADDR']);
+        if (!$this->authentication->attemptLogin($username, $password)) {
+            $this->systemEvents->insertWarning('Unsuccessful login', null, 'Username: '.$username);
 
             if ($this->authentication->tooManyFailedLogins()) {
-                $errorMessage = $this->authentication->getNumFailedLogins() . ' unsuccessful login attempts for IP: ' . $_SERVER['REMOTE_ADDR'];
-                $this->logger->addWarning($errorMessage);
-                throw new \Exception($errorMessage);
+                $eventTitle = 'Maximum unsuccessful login attempts exceeded';
+                $eventNotes = 'Number of Failed Login Attempts: '.$this->authentication->getNumFailedLogins().' IP: ' . $_SERVER['REMOTE_ADDR'];
+                $this->systemEvents->insertWarning($eventTitle, null, $eventNotes);
+                throw new \Exception($eventTitle . ' '. $eventNotes, E_USER_ERROR);
             }
 
             FormHelper::setGeneralError('Login Unsuccessful');
@@ -47,7 +45,7 @@ class AuthenticationController extends Controller
 
         // successful login
         FormHelper::unsetSessionVars();
-        $this->systemEvents->insertEvent('Login', 'info', (int) $this->authentication->getUserId());
+        $this->systemEvents->insertInfo('Login', (int) $this->authentication->getUserId());
 
         // redirect to proper resource
         if (isset($_SESSION[SESSION_GOTO_ADMIN_PATH])) {
@@ -63,12 +61,9 @@ class AuthenticationController extends Controller
     public function getLogout(Request $request, Response $response)
     {
         if (!$username = $this->authentication->getUserUsername()) {
-
-            $this->logger->addWarning('Attempted logout for non-logged-in visitor from IP: '. $_SERVER['REMOTE_ADDR']);
-
+            $this->systemEvents->insertWarning('Attempted logout for non-logged-in visitor');
         } else {
-
-            $this->logger->addInfo($username.' logged out');
+            $this->systemEvents->insertInfo('Logout', (int) $this->authentication->getUserId());
             $this->authentication->logout();
         }
 

@@ -164,7 +164,7 @@ function arrayWalkToStringRecursive(array $arr, int $level = 0, int $maxLevel = 
     $out = "";
     $tabs = " ";
     for ($i = 0; $i < $level; $i++) {
-        $tabs .= " ";
+        $tabs .= " ^"; // use ^ to denote another level
     }
     foreach ($arr as $k => $v) {
         $out .= "$tabs$k: ";

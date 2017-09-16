@@ -15,10 +15,11 @@ class PhpMailerService {
     private $smtpHost;
     private $smtpPort;
     private $phpMailer;
-    private $isLiveServer;
-    private $emailDev;
 
-    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol, string $smtpHost = null, int $smtpPort = null, bool $isLiveServer = true, bool $emailDev = false)
+    /** @var bool this can allow disabling service entirely, ie for a dev site */
+    private $disableSend;
+
+    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol, string $smtpHost = null, int $smtpPort = null, bool $disableSend = false)
     {
         $this->logPath = $logPath;
         $this->defaultFromEmail = $defaultFromEmail;
@@ -27,16 +28,13 @@ class PhpMailerService {
         $this->smtpHost = $smtpHost;
         $this->smtpPort = $smtpPort;
         $this->phpMailer = $this->create();
-        $this->isLiveServer = $isLiveServer;
-        $this->emailDev = $emailDev;
+        $this->disableSend = $disableSend;
     }
 
     public function send(string $subject, string $body, array $toEmails, string $fromEmail = null, string $fromName = null)
     {
-        // doing this check here allows code everywhere else to not do it
-        if (!$this->isLiveServer && !$this->emailDev) {
-            // don't throw exception as could result in infinite loop for prior exception.
-            return false;
+        if ($this->disableSend) {
+            return;
         }
 
         $this->phpMailer->Subject = $subject;

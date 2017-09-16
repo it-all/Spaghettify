@@ -81,6 +81,7 @@ $config = array_replace_recursive(
 );
 
 // used in error handler and container
+$disableMailerSend = !$config['isLive'] && !$config['errors']['emailDev'];
 $mailer = new \It_All\Spaghettify\Src\Infrastructure\Utilities\PhpMailerService(
     $config['storage']['logs']['pathPhpErrors'],
     $config['emails']['service'],
@@ -88,22 +89,24 @@ $mailer = new \It_All\Spaghettify\Src\Infrastructure\Utilities\PhpMailerService(
     $config['phpmailer']['protocol'],
     $config['phpmailer']['smtpHost'],
     $config['phpmailer']['smtpPort'],
-    $config['isLive'],
-    $config['errors']['emailDev']
+    $disableMailerSend
 );
 
+// error handling
+$echoErrors = !$config['isLive'];
+$emailErrors = $config['isLive'] || $config['errors']['emailDev'];
 $emailErrorsTo = [];
 foreach ($config['errors']['emailTo'] as $roleEmail) {
     $emailErrorsTo[] = $config['emails'][$roleEmail];
 }
 
-// error handling
 $errorHandler = new Utilities\ErrorHandler(
     $config['storage']['logs']['pathPhpErrors'],
     $config['hostName']."/",
-    $config['isLive'],
-    $mailer,
-    $emailErrorsTo
+    $echoErrors,
+    $emailErrors,
+    $emailErrorsTo,
+    $mailer
 );
 
 // workaround for catching some fatal errors like parse errors. note that parse errors in this file and index.php are not handled, but cause a fatal error with display (not displayed if display_errors is off in php.ini, but the ini_set call will not affect it).

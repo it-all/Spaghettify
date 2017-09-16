@@ -5,6 +5,8 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
 use It_All\Spaghettify\Src\Infrastructure\Middleware;
 use Slim\Container;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class AuthorizationMiddleware extends Middleware
 {
@@ -16,13 +18,12 @@ class AuthorizationMiddleware extends Middleware
         parent::__construct($container);
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(Request $request, Response $response, $next)
 	{
         // check if the user is not authorized
         if (!$this->container->authorization->check($this->minimumRole)) {
 
-            $this->container->logger->addWarning('No authorization for: ' .
-                $request->getUri()->getPath() . ' for user: ' . $this->container->authentication->getUserUsername());
+            $this->container->systemEvents->insertWarning('No authorization for resource', $this->container->authentication->getUserId());
 
             $_SESSION[SESSION_ADMIN_NOTICE] = ['No permission', 'adminNoticeFailure'];
 

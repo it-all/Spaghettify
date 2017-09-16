@@ -4,16 +4,17 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security;
 
 use It_All\Spaghettify\Src\Infrastructure\Middleware;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class CsrfMiddleware extends Middleware
 {
-	public function __invoke($request, $response, $next)
+	public function __invoke(Request $request, Response $response, $next)
 	{
         if (false === $request->getAttribute('csrf_status')) {
-            $errorMessage = 'CSRF Check Failure on resource: ' .
-                $request->getUri()->getPath() . ' for IP: ' . $_SERVER['REMOTE_ADDR'];
-            $this->container->logger->addWarning($errorMessage);
-            throw new \Exception($errorMessage);
+            $eventTitle = 'CSRF Check Failure';
+            $this->container->systemEvents->insertWarning($eventTitle, (int) $this->container->authentication->getUserId());
+            throw new \Exception($eventTitle);
         }
 
         $this->container->view->getEnvironment()->addGlobal('csrf', [
