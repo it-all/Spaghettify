@@ -5,7 +5,7 @@ return [
     'settings' => [
 
         // Slim Settings
-        'outputBuffering' => false, // just to uncomplicate things for now.
+        'outputBuffering' => 'append',
 
         'addContentLengthHeader' => false, // if this is not disabled, slim/App.php line 585 triggered an exception related to error handling, when the php set_error_handler() function was triggered
 
