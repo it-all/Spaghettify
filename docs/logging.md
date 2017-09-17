@@ -7,7 +7,7 @@ apacheErrors.log
 phpErrors.log 
 written to in ErrorHandler::handleError()
 
-events.log
-written by monolog (slim's container['logger'])
+System Events
+inserted to system_events table (search systemEvents->insert for usage example and see SystemEventsModel.php)
 
-Note that some errors/events are written to both events.log and phpErrors.log (ie, CSRF Check Failure, Too many login attempts failure).
+Note that PHP Errors are both logged to phpErrors.log and inserted to system_events.
