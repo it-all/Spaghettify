@@ -5,8 +5,8 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\Queries;
 
 class QueryBuilder
 {
-    public $sql;
-    public $args = array();
+    protected $sql;
+    protected $args = array();
 
     /**
      * QueryBuilder constructor. like add, for convenience
