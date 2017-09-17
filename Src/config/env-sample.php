@@ -5,7 +5,7 @@ return [
     /** set true for live server */
     'isLive' => false,
 
-    /** remove for live server */
+    /** remove for live server or change to your dev server name */
     'hostName' => 'localhost',
 
     'dirs' => [
