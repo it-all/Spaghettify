@@ -92,7 +92,6 @@ class ErrorHandler
 
             $databaseErrorMessage = explode('Stack Trace:', $errorMessage)[0].'.See phpErrors.log for further details.';
 
-            // note this will be null for errors occurring prior to session initialization
             $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;
 
             @$this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, $databaseErrorMessage);
@@ -246,6 +245,7 @@ class ErrorHandler
         }
     }
 
+    // note, formats of various stack traces will differ, as this is not the only way a stack trace is generated. php automatically generates one for fatal errors that are caught in the shutdown function, and throwable exceptions generate one through their getTraceAsString method.
     private function getDebugBacktraceString(): string
     {
         $out = "";
@@ -256,9 +256,10 @@ class ErrorHandler
         array_shift($dbt);
         array_shift($dbt);
 
+        // these could be in $config, but with the various format note above, that could lead to confusion.
         $showVendorCalls = true;
         $showFullFilePath = false;
-        $startFilePath = '/Src';
+        $startFilePath = '/Src'; // only applies if $showFullFilePath is false
         $showClassNamespace = false;
 
         foreach ($dbt as $index => $call) {
