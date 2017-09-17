@@ -101,6 +101,8 @@ abstract class AdminCrudView extends AdminView
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
+            $eventNote = $this->model->getPrimaryKeyColumnName().": ".$args['primaryKey'].", Table: ".$this->model->getTableName();
+            $this->systemEvents->insertWarning('Record not found for update', (int) $this->authentication->getUserId(), $eventNote);
             $_SESSION[SESSION_ADMIN_NOTICE] = ["Record ".$args['primaryKey']." Not Found", 'adminNoticeFailure'];
             return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
         }

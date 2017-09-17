@@ -174,7 +174,11 @@ class DatabaseTableModel
         $columnValues = $this->addBooleanColumnValues($columnValues);
         $ub = new UpdateBuilder($this->tableName, $primaryKeyName, $primaryKeyValue);
         $this->addColumnsToBuilder($ub, $columnValues);
-        return $ub->execute();
+        try {
+            return $ub->execute();
+        } catch(\Exception $exception) {
+            throw $exception;
+        }
     }
 
     public function deleteByPrimaryKey($primaryKeyValue, string $returning = null)
@@ -185,7 +189,15 @@ class DatabaseTableModel
         }
         $q = new QueryBuilder($query, $primaryKeyValue);
 
-        return $q->execute();
+        try {
+            $res = $q->execute();
+            if (pg_num_rows($res) == 0) {
+                return false;
+            }
+            return $res;
+        } catch(\Exception $exception) {
+            throw $exception;
+        }
     }
 
     private function addColumnsToBuilder(InsertUpdateBuilder $builder, array $columnValues)

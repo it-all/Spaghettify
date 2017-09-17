@@ -70,7 +70,7 @@ class SystemEventsModel extends DatabaseTableModel
 
     public function getView()
     {
-        $q = new QueryBuilder("SELECT se.id, syet.event_type as type, se.title as event, se.notes, admins.name as admin, se.created as time_stamp FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN admins ON se.admin_id = admins.id ORDER BY se.created DESC");
+        $q = new QueryBuilder("SELECT se.id, se.created as time_stamp, syet.event_type as type, se.title as event, admins.name as admin, se.notes FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN admins ON se.admin_id = admins.id ORDER BY se.created DESC");
         return $q->execute();
     }
 }

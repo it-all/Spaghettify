@@ -90,7 +90,7 @@ class ErrorHandler
                     $systemEventType = 'error';
             }
 
-            $databaseErrorMessage = explode('Stack Trace:', $errorMessage)[0].'. See phpErrors.log for further details.';
+            $databaseErrorMessage = explode('Stack Trace:', $errorMessage)[0].'.See phpErrors.log for further details.';
 
             // note this will be null for errors occurring prior to session initialization
             $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;

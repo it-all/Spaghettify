@@ -85,15 +85,6 @@ $container['mailer'] = function($container) {
     return $settings['mailer'];
 };
 
-// Logger
-$container['logger'] = function($container) {
-    $settings = $container->get('settings');
-    $logger = new \Monolog\Logger('monologger');
-    $file_handler = new \Monolog\Handler\StreamHandler($settings['storage']['pathLogs']);
-    $logger->pushHandler($file_handler);
-    return $logger;
-};
-
 // Form Validation
 $container['validator'] = function ($container) {
     return new \It_All\Spaghettify\Src\Infrastructure\Utilities\ValitronValidatorExtension();
