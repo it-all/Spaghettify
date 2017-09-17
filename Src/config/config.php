@@ -81,7 +81,7 @@ return [
     // when entering a new admin, role will default to this
     'adminDefaultRole' => 'user',
 
-    'maxFailedLogins' => 500,
+    'maxFailedLogins' => 5,
 
     'trimAllUserInput' => true
 ];
