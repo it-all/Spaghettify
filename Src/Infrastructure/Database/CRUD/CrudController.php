@@ -59,7 +59,7 @@ class CrudController extends Controller
         try {
             $this->insert();
         } catch (\Exception $e) {
-            throw new \Exception("Insert failure. ".$e->getMessage(), E_USER_ERROR);
+            throw new \Exception("Insert failure. ".$e->getMessage());
         }
 
         FormHelper::unsetSessionVars();
@@ -131,7 +131,7 @@ class CrudController extends Controller
         try {
             $this->update($response, $args);
         } catch (\Exception $e) {
-            throw new \Exception("Update failure. ".$e->getMessage(), E_USER_ERROR);
+            throw new \Exception("Update failure. ".$e->getMessage());
         }
 
         FormHelper::unsetSessionVars();

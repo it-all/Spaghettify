@@ -34,7 +34,7 @@ class AuthenticationController extends Controller
                 $eventTitle = 'Maximum unsuccessful login attempts exceeded';
                 $eventNotes = 'Number of Failed Login Attempts: '.$this->authentication->getNumFailedLogins().' IP: ' . $_SERVER['REMOTE_ADDR'];
                 $this->systemEvents->insertWarning($eventTitle, null, $eventNotes);
-                throw new \Exception($eventTitle . ' '. $eventNotes, E_USER_ERROR);
+                throw new \Exception($eventTitle . ' '. $eventNotes);
             }
 
             FormHelper::setGeneralError('Login Unsuccessful');
