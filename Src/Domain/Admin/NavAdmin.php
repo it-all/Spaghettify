@@ -71,13 +71,10 @@ class NavAdmin
                                 'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_LOGIN_ATTEMPTS),
                                 'link' => ROUTE_LOGIN_ATTEMPTS,
                             ],
-
                         ]
                     ]
                 ]
             ]
-
-
         ];
     }
 
