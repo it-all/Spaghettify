@@ -9,6 +9,7 @@ use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
+use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -155,8 +156,7 @@ class AdminsView extends AdminCrudView
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["Record ".$args['primaryKey']." Not Found", 'adminNoticeFailure'];
-            return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
+            return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         return $this->view->render(

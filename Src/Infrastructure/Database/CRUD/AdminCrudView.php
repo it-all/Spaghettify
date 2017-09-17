@@ -96,15 +96,20 @@ abstract class AdminCrudView extends AdminView
         return $this->updateView($request, $response, $args);
     }
 
+    public function updateViewNoRecord(Response $response, string $primaryKey)
+    {
+        $eventNote = $this->model->getPrimaryKeyColumnName().":$primaryKey|Table: ".$this->model->getTableName();
+        $this->systemEvents->insertWarning('Record not found for update', (int) $this->authentication->getUserId(), $eventNote);
+        $_SESSION[SESSION_ADMIN_NOTICE] = ["Record $primaryKey Not Found", 'adminNoticeFailure'];
+        return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
+    }
+
     /** this can be called for both the initial get and the posted form if errors exist (from controller) */
     public function updateView(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            $eventNote = $this->model->getPrimaryKeyColumnName().": ".$args['primaryKey'].", Table: ".$this->model->getTableName();
-            $this->systemEvents->insertWarning('Record not found for update', (int) $this->authentication->getUserId(), $eventNote);
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["Record ".$args['primaryKey']." Not Found", 'adminNoticeFailure'];
-            return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
+            return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         $formFieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];

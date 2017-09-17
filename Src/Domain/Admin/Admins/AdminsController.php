@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
@@ -62,11 +63,19 @@ class AdminsController extends CrudController
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
-        if (!$this->model->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
+        if (!$res = $this->model->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
             throw new \Exception("Insert Failure");
         }
 
+        $returned = pg_fetch_all($res);
+        $insertedRecordId = $returned[0]['id'];
+
+        $tableName = $this->model->getTableName();
+        $this->systemEvents->insertInfo("Inserted $tableName", (int) $this->authentication->getUserId(), "id:$insertedRecordId");
+
         FormHelper::unsetSessionVars();
+
+        $_SESSION[SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
         return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
     }
 
@@ -83,10 +92,11 @@ class AdminsController extends CrudController
 
         $redirectRoute = getRouteName(true, $this->routePrefix,'index');
 
+        $tableName = $this->model->getTableName();
+
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($primaryKey)) {
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["Record $primaryKey Not Found", 'adminNoticeFailure'];
-            return $response->withRedirect($this->router->pathFor($redirectRoute));
+            return CrudHelper::updateNoRecord($this->container, $response, $primaryKey, $this->model, $this->routePrefix);
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
@@ -121,18 +131,15 @@ class AdminsController extends CrudController
             throw new \Exception("Update Failure");
         }
 
+        $this->systemEvents->insertInfo("Updated $tableName", (int) $this->authentication->getUserId(), "id:$primaryKey");
+
         FormHelper::unsetSessionVars();
+
+        $_SESSION[SESSION_ADMIN_NOTICE] = ["Updated record $primaryKey", 'adminNoticeSuccess'];
         return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix,'index')));
     }
 
-    /**
-     * overrride for custom validation
-     * @param $request
-     * @param $response
-     * @param $args
-     * @return mixed
-     * @throws \Exception
-     */
+    // overrride for custom validation and return column
     public function getDelete(Request $request, Response $response, $args)
     {
         // make sure the current admin is not deleting themself
@@ -140,6 +147,6 @@ class AdminsController extends CrudController
             throw new \Exception('You cannot delete yourself from admins');
         }
 
-        return $this->delete($response, $args,'username', true);
+        return $this->getDeleteHelper($response, $args['primaryKey'],'username', true);
     }
 }

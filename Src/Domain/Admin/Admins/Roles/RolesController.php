@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
+use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -15,15 +16,13 @@ class RolesController extends CrudController
         parent::__construct($container, new RolesModel(), new RolesView($container), ROUTEPREFIX_ADMIN_ROLES);
     }
 
-    /**
-     * override for custom return column
-     * @param $request
-     * @param $response
-     * @param $args
-     * @return mixed
-     */
+    // overrride for custom return column
     public function getDelete(Request $request, Response $response, $args)
     {
-        return $this->delete($response, $args,'role');
+        if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'delete'))) {
+            throw new \Exception('No permission.');
+        }
+
+        return $this->getDeleteHelper($response, $args['primaryKey'],'role', true);
     }
 }

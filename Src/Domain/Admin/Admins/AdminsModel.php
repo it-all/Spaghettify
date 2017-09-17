@@ -17,7 +17,7 @@ class AdminsModel extends DatabaseTableModel
 
     public function insert(string $name, string $username, string $password, int $roleId)
     {
-        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4)", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
+        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4) RETURNING id", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
         return $q->execute();
     }
 

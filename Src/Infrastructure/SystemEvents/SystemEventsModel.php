@@ -24,16 +24,16 @@ class SystemEventsModel extends DatabaseTableModel
         $this->insertEvent($title, 'warning', $adminId, $notes);
     }
 
-    public function insertEvent(string $title, string $eventType = 'info', int $adminId = null, string $notes = null, bool $silent = false)
+    public function insertEvent(string $title, string $eventType = 'info', int $adminId = null, string $notes = null)
     {
         if (!$eventTypeId = $this->getEventTypeId($eventType)) {
             throw new \Exception("Invalid eventType: $eventType");
         }
 
-        $this->insert($title, (int) $eventTypeId, $notes, $adminId, $silent);
+        $this->insert($title, (int) $eventTypeId, $notes, $adminId);
     }
 
-    private function insert(string $title, int $eventType = 2, string $notes = null, int $adminId = null, bool $silent = false)
+    private function insert(string $title, int $eventType = 2, string $notes = null, int $adminId = null)
     {
         if (strlen(trim($title)) == 0) {
             throw new \Exception("Title cannot be blank");
@@ -70,7 +70,7 @@ class SystemEventsModel extends DatabaseTableModel
 
     public function getView()
     {
-        $q = new QueryBuilder("SELECT se.id, se.created as time_stamp, syet.event_type as type, se.title as event, admins.name as admin, se.notes FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN admins ON se.admin_id = admins.id ORDER BY se.created DESC");
+        $q = new QueryBuilder("SELECT se.id, se.created as time_stamp, syet.event_type as type, se.title as event, admins.name as admin, se.notes, se.ip_address, se.request_method as method, se.resource FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN admins ON se.admin_id = admins.id ORDER BY se.created DESC");
         return $q->execute();
     }
 }

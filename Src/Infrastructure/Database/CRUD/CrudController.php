@@ -88,10 +88,7 @@ class CrudController extends Controller
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            $eventNote = $this->model->getPrimaryKeyColumnName().": ".$args['primaryKey'].", Table: ".$this->model->getTableName();
-            $this->systemEvents->insertWarning('Record not found for update', (int) $this->authentication->getUserId(), $eventNote);
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["Record ".$args['primaryKey']." Not Found", 'adminNoticeFailure'];
-            return $response->withRedirect($this->router->pathFor($redirectRoute));
+            return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         // if no changes made, redirect
@@ -140,12 +137,17 @@ class CrudController extends Controller
 
     public function getDelete(Request $request, Response $response, $args)
     {
+        return $this->getDeleteHelper($response, $args['primaryKey']);
+    }
+
+    protected function getDeleteHelper(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false)
+    {
         if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'delete'))) {
             throw new \Exception('No permission.');
         }
 
         try {
-            $this->delete($response, $args);
+            $this->delete($response, $primaryKey, $returnColumn, $sendEmail);
         } catch (\Exception $e) {
             // no need to do anything, just redirect with error message already set
         }
@@ -181,8 +183,7 @@ class CrudController extends Controller
             $insertedRecordId = $returned[0][$primaryKeyColumnName];
             $tableName = $this->model->getTableName();
 
-            $eventNote = "$primaryKeyColumnName: $insertedRecordId, Table: $tableName";
-            $this->systemEvents->insertInfo('Inserted database record', (int) $this->authentication->getUserId(), $eventNote);
+            $this->systemEvents->insertInfo("Inserted $tableName", (int) $this->authentication->getUserId(), "$primaryKeyColumnName:$insertedRecordId");
 
             if ($sendEmail) {
                 $settings = $this->container->get('settings');
@@ -212,8 +213,7 @@ class CrudController extends Controller
             $updatedRecordId = $args['primaryKey'];
             $tableName = $this->model->getTableName();
 
-            $eventNote = "$primaryKeyColumnName: $updatedRecordId, Table: $tableName";
-            $this->systemEvents->insertInfo('Updated database record', (int) $this->authentication->getUserId(), $eventNote);
+            $this->systemEvents->insertInfo("Updated $tableName", (int) $this->authentication->getUserId(), "$primaryKeyColumnName:$updatedRecordId");
 
             if ($sendEmail) {
                 $settings = $this->container->get('settings');
@@ -233,12 +233,11 @@ class CrudController extends Controller
         }
     }
 
-    protected function delete(Response $response, $args, string $returnColumn = null, bool $sendEmail = false)
+    protected function delete(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false)
     {
-        $primaryKey = $args['primaryKey'];
         $primaryKeyColumnName = $this->model->getPrimaryKeyColumnName();
         $tableName = $this->model->getTableName();
-        $eventNote = "$primaryKeyColumnName: $primaryKey, Table: $tableName";
+        $eventNote = "$primaryKeyColumnName:$primaryKey";
 
         if (!$res = $this->model->deleteByPrimaryKey($primaryKey, $returnColumn)) {
             $this->systemEvents->insertWarning('Primary key not found for delete', (int) $this->authentication->getUserId(), $eventNote);
@@ -249,11 +248,11 @@ class CrudController extends Controller
         $adminMessage = 'Deleted record '.$primaryKey;
         if ($returnColumn != null) {
             $returned = pg_fetch_all($res);
-            $eventNote .= ", $returnColumn: ".$returned[0][$returnColumn];
+            $eventNote .= "|$returnColumn:".$returned[0][$returnColumn];
             $adminMessage .= " ($returnColumn ".$returned[0][$returnColumn].")";
         }
 
-        $this->systemEvents->insertInfo('Deleted database record', (int) $this->authentication->getUserId(), $eventNote);
+        $this->systemEvents->insertInfo("Deleted $tableName", (int) $this->authentication->getUserId(), $eventNote);
 
         if ($sendEmail) {
             $settings = $this->container->get('settings');

@@ -32,7 +32,7 @@ class AuthenticationController extends Controller
 
             if ($this->authentication->tooManyFailedLogins()) {
                 $eventTitle = 'Maximum unsuccessful login attempts exceeded';
-                $eventNotes = 'Number of Failed Login Attempts: '.$this->authentication->getNumFailedLogins().' IP: ' . $_SERVER['REMOTE_ADDR'];
+                $eventNotes = 'Failed:'.$this->authentication->getNumFailedLogins();
                 $this->systemEvents->insertWarning($eventTitle, null, $eventNotes);
                 throw new \Exception($eventTitle . ' '. $eventNotes);
             }

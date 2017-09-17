@@ -25,14 +25,7 @@ class TestimonialsController extends CrudController
             throw new \Exception('No permission.');
         }
 
-        try {
-            $this->delete($response, $args,self::DELETE_RETURN_COLUMN);
-        } catch (\Exception $e) {
-            // no need to do anything, just redirect with error message already set
-        }
-
-        $redirectRoute = getRouteName(true, $this->routePrefix, 'index');
-        return $response->withRedirect($this->router->pathFor($redirectRoute));
+        return $this->getDeleteHelper($response, $args['primaryKey'],self::DELETE_RETURN_COLUMN, true);
     }
 
 }
