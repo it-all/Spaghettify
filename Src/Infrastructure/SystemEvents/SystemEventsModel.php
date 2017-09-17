@@ -8,10 +8,17 @@ use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 
 class SystemEventsModel extends DatabaseTableModel
 {
+    // event types: debug, info, notice, warning, error, critical, alert, emergency [props to monolog]
+
     public function __construct()
     {
         // note time_stamp is the alias for created used in view query
         parent::__construct('system_events', 'time_stamp', false);
+    }
+
+    public function insertDebug(string $title, int $adminId = null, string $notes = null)
+    {
+        $this->insertEvent($title, 'debug', $adminId, $notes);
     }
 
     public function insertInfo(string $title, int $adminId = null, string $notes = null)
@@ -19,9 +26,34 @@ class SystemEventsModel extends DatabaseTableModel
         $this->insertEvent($title, 'info', $adminId, $notes);
     }
 
+    public function insertNotice(string $title, int $adminId = null, string $notes = null)
+    {
+        $this->insertEvent($title, 'notice', $adminId, $notes);
+    }
+
     public function insertWarning(string $title, int $adminId = null, string $notes = null)
     {
         $this->insertEvent($title, 'warning', $adminId, $notes);
+    }
+
+    public function insertError(string $title, int $adminId = null, string $notes = null)
+    {
+        $this->insertEvent($title, 'error', $adminId, $notes);
+    }
+
+    public function insertCritical(string $title, int $adminId = null, string $notes = null)
+    {
+        $this->insertEvent($title, 'critical', $adminId, $notes);
+    }
+
+    public function insertAlert(string $title, int $adminId = null, string $notes = null)
+    {
+        $this->insertEvent($title, 'alert', $adminId, $notes);
+    }
+
+    public function insertEmergency(string $title, int $adminId = null, string $notes = null)
+    {
+        $this->insertEvent($title, 'emergency', $adminId, $notes);
     }
 
     public function insertEvent(string $title, string $eventType = 'info', int $adminId = null, string $notes = null)
