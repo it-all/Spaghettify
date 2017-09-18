@@ -134,7 +134,9 @@ $database = new \It_All\Spaghettify\Src\Infrastructure\Database\Postgres(
 // used in error handler and container
 $systemEventsModel = new \It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel();
 
-$errorHandler->setDatabaseAndSystemEventsModel($database, $systemEventsModel);
+if ($config['errors']['logToDatabase']) {
+    $errorHandler->setDatabaseAndSystemEventsModel($database, $systemEventsModel);
+}
 
 if (!Utilities\isRunningFromCommandLine()) {
     /**
