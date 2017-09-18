@@ -44,7 +44,7 @@ return [
         'service' => "service@$domainName"
     ],
 
-    // either functionCategory => minimumRole or functionCategory.function => minimum role
+    // either functionalityCategory => minimumRole or functionalityCategory.functionality => minimum role
     // important to properly match the indexes to routes and nav authorization
     // the role values must be in the database: roles.role
     'adminMinimumPermissions' => [
