@@ -39,7 +39,7 @@ class NavAdmin
             ],
 
             'System' => [
-                'minimumPermissions' => $container->authorization->getMinimumPermission(PERMISSION_ADMIN_MARKETING),
+                'minimumPermissions' => $container->authorization->getMinimumPermission(PERMISSION_ADMIN_SYSTEM),
                 'subSections' => [
                     'Events' => [
                         'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_SYSTEM_EVENTS),
