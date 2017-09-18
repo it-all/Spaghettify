@@ -23,7 +23,7 @@ class AuthorizationMiddleware extends Middleware
         // check if the user is not authorized
         if (!$this->container->authorization->check($this->minimumRole)) {
 
-            $this->container->systemEvents->insertWarning('No authorization for resource', $this->container->authentication->getUserId());
+            $this->container->systemEvents->insertAlert('No authorization for resource', $this->container->authentication->getUserId());
 
             $_SESSION[SESSION_ADMIN_NOTICE] = ['No permission', 'adminNoticeFailure'];
 
