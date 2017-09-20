@@ -19,7 +19,7 @@ class PhpMailerService {
     /** @var bool this can allow disabling service entirely, ie for a dev site */
     private $disableSend;
 
-    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol, string $smtpHost = null, int $smtpPort = null, bool $disableSend = false)
+    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol = 'smtp', string $smtpHost = null, int $smtpPort = null, bool $disableSend = false)
     {
         $this->logPath = $logPath;
         $this->defaultFromEmail = $defaultFromEmail;

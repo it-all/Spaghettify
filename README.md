@@ -3,6 +3,13 @@
 Spaghettify is a PHP 7, PostgreSQL Web Platform Built on Slim Framework.
 
 INSTALLATION
+Create your project folder and config, public, and storage folders withi in.
+Create storage
+composer require it-all/spaghettify
+
+
+
+
 Clone or download
 
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level)

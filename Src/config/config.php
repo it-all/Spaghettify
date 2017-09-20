@@ -9,6 +9,8 @@ return [
 
     'domainName' => $domainName,
 
+    'isLive' => true,
+
     'hostName' => $domainName,
 
     'domainUseWww' => false,
@@ -28,7 +30,7 @@ return [
     ],
 
     'pathTemplates' => APP_ROOT . 'templates/',
-    'pathTwigMacros' => APP_ROOT . '../vendor/it-all/form-former/src/twigMacros',
+    'pathTwigMacros' => VENDOR_DIR . '/it-all/form-former/src/twigMacros',
 
     'errors' => [
         'emailTo' => ['owner', 'programmer'], // emails must be set in 'emails' section
