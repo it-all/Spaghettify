@@ -2,8 +2,6 @@
 
 A PHP 7, PostgreSQL Platform Built on Slim Framework
 
-CURRENTLY WORKING, DEVELOPMENT ONGOING...
-
 INSTALLATION
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level)
  - ie ~$ psql -U postgres
@@ -19,16 +17,16 @@ Browse to it. You should see the Spaghettify home page with a link to Login. Whe
  
 
 FEATURES  
-PostGreSQL Database (https://postgresql.org) Integration  
+<a href="https://postgresql.org">PostGreSQL Database</a> Integration  
 MVC Structure  
 <a href="#eh">Custom Error Handling</a>  
-Emailing with PHPMailer (https://github.com/PHPMailer/PHPMailer)  
+Emailing with <a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>    
 <a href="#se">Database Logging of system events and errors  
 Logging of PHP Errors with Stack Trace  
 <a href="#csrf">CSRF Checking</a>  
-Twig Templates (https://twig.symfony.com/)    
-HTML Form Generation using It_All/FormFormer (https://github.com/it-all/FormFormer)  
-Data Validation with [Valitron] (https://github.com/vlucas/valitron) (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP BCMath extension (http://php.net/manual/en/book.bc.php) for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
+<a href="https://twig.symfony.com/>Twig</a> Templates     
+HTML Form Generation using <a href="https://github.com/it-all/FormFormer">FormFormer</a>   
+Data Validation with <a href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
 <a href="#crud">CRUD for Single Database Tables</a> 
 <a href="#authe">Authentication</a> (Log In/Out)  
 Administrative Layout including <a href="#adminNav">Navigation</a>  
