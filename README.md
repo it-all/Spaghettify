@@ -11,11 +11,11 @@ Create a PostgreSQL database for this project and import spaghettify.postgres.sq
  - postgres=# create database mydbname with owner mydbname;
  - ~$ psql -U mydbname < /path/to/spaghettify.postgres.sql
 
-Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary
+Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.
 
-Create a web server (default is Apache w/ .htaccess in Src/public) and point it to Src/public
+Create a local site with root dir Src/public (default web server is Apache w/ .htaccess in Src/public).  
 
-You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner
+Browse to it. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
  
 
 FEATURES  
@@ -38,8 +38,9 @@ Administrative Layout including <a href="#adminNav">Navigation</a>
 CODING NEW FUNCTIONALITY 
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses CRUD) or Domain/Admin/Admins (joined database tables so mostly custom code).  
 Define a new global constant for the route name in init.php  
-Add the route(s) in routes.php  
-If authorization is required at a resource or functionality level, add them to the 'adminMinimumPermissions' key in config.php, then add AuthorizationMiddleware to the route for resource authorization in routes.php  
+Add the route(s) in routes.php.  
+If authorization is required at a resource or functionality level, add them to the 'adminMinimumPermissions' key in config.php, then add AuthorizationMiddleware to the route for resource authorization in routes.php.  
+If this is new admin functionality, add a link to it in NavAdmin.php.  
 
 
 <a name="eh">Error Handling</a>  
