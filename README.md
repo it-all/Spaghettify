@@ -1,6 +1,6 @@
 # Spaghettify
 
-Spaghettify is a PHP 7, PostgreSQL Web Platform Built on Slim Framework
+Spaghettify is a PHP 7, PostgreSQL Web Platform Built on Slim Framework.
 
 INSTALLATION
 Clone or download
