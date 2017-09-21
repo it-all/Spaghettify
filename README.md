@@ -1,29 +1,32 @@
 # Spaghettify
 
-Spaghettify is a PHP 7, PostgreSQL Web Platform Built on Slim Framework.
+Spaghettify is a PHP 7, PostgreSQL Web Platform Built on Slim Framework.  
 
-INSTALLATION
-Create your project folder and config, public, and storage folders withi in.
-Create storage
-composer require it-all/spaghettify
-
-
-
-
-Clone or download
-
-Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level)
- - ie ~$ psql -U postgres
+INSTALLATION  
+Create your project folder.  
+~$ composer require it-all/spaghettify  
+~$ cp -r /path/to/vendor/it-all/spaghettify/sampleProject/* /path/to/project/  
+Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:
+ - ~$ psql -U postgres
  - postgres=# create role mydbname with login;
  - postgres=# create database mydbname with owner mydbname;
- - ~$ psql -U mydbname < /path/to/spaghettify.postgres.sql
-
-Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.
-
-Create a local site with root dir Src/public (default web server is Apache w/ .htaccess in Src/public).  
-
-Browse to it. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
+ - ~$ psql -U mydbname < /path/to/spaghettify.postgres.sql  
  
+Configuration  
+~$ cd /path/to/project  
+~$ mv config/env-sample.php env.php  
+EDIT env.php as necessary, especially the database and email settings.  
+Create a (local) website with public as the root directory (default web server is Apache w/ .htaccess in /public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.
+Browse to it. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
+
+If you want to use Gulp for CSS and/or JS preprocessing  
+~$ cd /path/to/project  
+~$ npm init  
+~$ cd cssJsBuildTool  
+~$ npm install gulp gulp-beepbeep babel-core babel-loader --save-dev  
+~$ npm install gulp-plumber gulp-sourcemaps gulp-sass gulp-autoprefixer gulp-cssnano gulp-concat gulp-uglify gulp-babel --save-dev  
+~$ gulp watch  
+See: https://travismaynard.com/writing/getting-started-with-gulp for further information.  
 
 FEATURES  
 <a href="https://postgresql.org">PostGreSQL Database</a> Integration  
@@ -33,16 +36,16 @@ Emailing with <a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>
 <a href="#se">Database Logging of system events and errors  
 Logging of PHP Errors with Stack Trace  
 <a href="#csrf">CSRF Checking</a>  
-<a href="https://twig.symfony.com/>Twig</a> Templates     
+<a href="https://twig.symfony.com/">Twig</a> Templates     
 HTML Form Generation using <a href="https://github.com/it-all/FormFormer">FormFormer</a>   
 Data Validation with <a href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
-<a href="#crud">CRUD for Single Database Tables</a> 
+<a href="#crud">CRUD for Single Database Tables</a>  
 <a href="#authe">Authentication</a> (Log In/Out)  
 Administrative Layout including <a href="#adminNav">Navigation</a>  
 <a href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
 <a href="#xss">Preventing XSS</a>  
 
-CODING NEW FUNCTIONALITY 
+CODING NEW FUNCTIONALITY  
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses CRUD) or Domain/Admin/Admins (joined database tables so mostly custom code).  
 Define a new global constant for the route name in init.php  
 Add the route(s) in routes.php.  
@@ -105,3 +108,5 @@ The appropriate <a href="https://twig.sensiolabs.org/doc/2.x/filters/escape.html
 protectXSS() or arrayProtectRecursive() should be called for any user-input data* that is output into HTML independent of Twig (currently there is none).
 
 *Note this includes database data that has been input by any user, including through the admin
+
+Thank you.

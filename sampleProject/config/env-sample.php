@@ -1,6 +1,12 @@
 <?php
 
+$domainName = 'example.com';
+
 return [
+
+    'businessName' => 'Our Biz, LLC',
+
+    'domainName' => $domainName,
 
     /** set true for live server */
     'isLive' => false,
@@ -27,9 +33,9 @@ return [
     ],
 
     'emails' => [
-        'owner' => 'owner@example.com',
-        'programmer' => 'programmer@example.com',
-        'service' => 'service@example.com'
+        'owner' => "owner@$domainName",
+        'programmer' => "programmer@$domainName",
+        'service' => "service@$domainName"
     ],
 
     'twigAutoReload' => true

@@ -29,7 +29,7 @@ return [
         'pathCache' => APP_ROOT . '../storage/cache/'
     ],
 
-    'pathTemplates' => APP_ROOT . 'templates/',
+    'pathTemplates' => APP_ROOT . '../templates/',
     'pathTwigMacros' => VENDOR_DIR . '/it-all/form-former/src/twigMacros',
 
     'errors' => [

@@ -1,10 +1,4 @@
-.gitignore~
-Src/config/env.php
-.idea/
-buildTool/node_modules/
-storage/
 vendor/
 ignored/
-Src/public/css/
-Src/public/js/
-testPublic/
+.idea/
+.gitignore~
