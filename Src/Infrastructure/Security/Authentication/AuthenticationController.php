@@ -39,7 +39,8 @@ class AuthenticationController extends Controller
 
             FormHelper::setGeneralError('Login Unsuccessful');
 
-            // redisplay the form with input values and error(s)
+            // redisplay the form with input values and error(s). reset password.
+            $_SESSION[SESSION_REQUEST_INPUT_KEY]['password_hash'] = '';
             return $response->withRedirect($this->router->pathFor(ROUTE_LOGIN));
         }
 
