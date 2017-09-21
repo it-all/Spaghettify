@@ -9,7 +9,7 @@
     "slim/twig-view": "^2.2",
     "slim/csrf": "^0.8.1",
     "it-all/form-former": "^1.1",
-    "vlucas/valitron": "dev-master"
+    "vlucas/valitron": "^1.4"
   },
   "autoload": {
     "psr-4": {

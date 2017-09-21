@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 // GLOBAL CONSTANTS
 define('APP_ROOT', __DIR__ . '/' );
-define('VENDOR_DIR', '../../vendor');
+define('VENDOR_DIR', APP_ROOT . '../vendor');
 
 // routes
 // KISS - don't use array constants because may be tricky to access in twig

@@ -5,16 +5,9 @@ Spaghettify is a PHP 7, PostgreSQL Web Platform Built on <a target="_blank" href
 INSTALLATION  
 Create your project folder.  
 ~$ cd /path/to/project
-create a composer.json file with   
-{  
-  "minimum-stability": "dev",  
-  "require": {  
-    "it-all/spaghettify": "dev-master"  
-  }  
-}  
-note: dev in order to get the latest spaghettify and valitron code
-~$ composer install   
+~$ composer install it-all/spaghettify
 ~$ cp -r vendor/it-all/spaghettify/sampleProject/* .
+~$ chmod 777 storage/*
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:
  - ~$ psql -U postgres
  - postgres=# create role mydbname with login;
