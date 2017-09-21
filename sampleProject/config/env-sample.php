@@ -38,5 +38,11 @@ return [
         'service' => "service@$domainName"
     ],
 
+    'storage' => [
+        'cache' => [
+            'routerCacheFile' => false // remove this entry when routes are stable for increased performance
+        ]
+    ],
+
     'twigAutoReload' => true
 ];

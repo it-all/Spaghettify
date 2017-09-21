@@ -26,7 +26,10 @@ return [
             'pathEvents' => APP_ROOT . '../storage/logs/events.log'
         ],
 
-        'pathCache' => APP_ROOT . '../storage/cache/'
+        'cache' => [
+            'pathCache' => APP_ROOT . '../storage/cache/',
+            'routerCacheFile' => APP_ROOT . '../storage/cache/router.txt'
+        ]
     ],
 
     'pathTemplates' => APP_ROOT . '../templates/',

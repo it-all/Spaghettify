@@ -9,7 +9,7 @@ return [
 
         'addContentLengthHeader' => false, // if this is not disabled, slim/App.php line 585 triggered an exception related to error handling, when the php set_error_handler() function was triggered
 
-        'routerCacheFile' => $config['storage']['pathCache'].'router.txt',
+        'routerCacheFile' => $config['storage']['cache']['routerCacheFile'],
 
         'authentication' => [
             'maxFailedLogins' => $config['maxFailedLogins'],
@@ -24,7 +24,7 @@ return [
                 $config['pathTemplates'],
                 $config['pathTwigMacros']
             ],
-            'pathCache' => $config['storage']['pathCache'].'twig/',
+            'pathCache' => $config['storage']['cache']['pathCache'].'twig/',
             'autoReload' => $config['twigAutoReload'],
             'debug' => true
         ],
@@ -34,7 +34,7 @@ return [
 
         'storage' => [
             'pathLogs' => $config['storage']['logs']['pathEvents'],
-            'pathTwigCache' => $config['storage']['pathCache'].'twig/',
+            'pathTwigCache' => $config['storage']['cache']['pathCache'].'twig/',
         ],
 
         'dirs' => [
