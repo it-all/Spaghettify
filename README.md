@@ -1,11 +1,20 @@
 # Spaghettify
 
-Spaghettify is a PHP 7, PostgreSQL Web Platform Built on Slim Framework.  
+Spaghettify is a PHP 7, PostgreSQL Web Platform Built on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
 INSTALLATION  
 Create your project folder.  
-~$ composer require it-all/spaghettify  
-~$ cp -r /path/to/vendor/it-all/spaghettify/sampleProject/* /path/to/project/  
+~$ cd /path/to/project
+create a composer.json file with   
+{  
+  "minimum-stability": "dev",  
+  "require": {  
+    "it-all/spaghettify": "dev-master"  
+  }  
+}  
+note: dev in order to get the latest spaghettify and valitron code
+~$ composer install   
+~$ cp -r vendor/it-all/spaghettify/sampleProject/* .
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:
  - ~$ psql -U postgres
  - postgres=# create role mydbname with login;
@@ -29,21 +38,21 @@ If you want to use Gulp for CSS and/or JS preprocessing
 See: https://travismaynard.com/writing/getting-started-with-gulp for further information.  
 
 FEATURES  
-<a href="https://postgresql.org">PostGreSQL Database</a> Integration  
+<a target="_blank" href="https://postgresql.org">PostGreSQL Database</a> Integration  
 MVC Structure  
-<a href="#eh">Custom Error Handling</a>  
-Emailing with <a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>    
-<a href="#se">Database Logging of system events and errors  
+<a target="_blank" href="#eh">Custom Error Handling</a>  
+Emailing with <a target="_blank" href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>    
+<a target="_blank" href="#se">Database Logging of system events and errors  
 Logging of PHP Errors with Stack Trace  
-<a href="#csrf">CSRF Checking</a>  
-<a href="https://twig.symfony.com/">Twig</a> Templates     
-HTML Form Generation using <a href="https://github.com/it-all/FormFormer">FormFormer</a>   
-Data Validation with <a href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
-<a href="#crud">CRUD for Single Database Tables</a>  
-<a href="#authe">Authentication</a> (Log In/Out)  
-Administrative Layout including <a href="#adminNav">Navigation</a>  
-<a href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
-<a href="#xss">Preventing XSS</a>  
+<a target="_blank" href="#csrf">CSRF Checking</a>  
+<a target="_blank" href="https://twig.symfony.com/">Twig</a> Templates     
+HTML Form Generation using <a target="_blank" href="https://github.com/it-all/FormFormer">FormFormer</a>   
+Data Validation with <a target="_blank" href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a target="_blank" href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
+<a target="_blank" href="#crud">CRUD for Single Database Tables</a>  
+<a target="_blank" href="#authe">Authentication</a> (Log In/Out)  
+Administrative Layout including <a target="_blank" href="#adminNav">Navigation</a>  
+<a target="_blank" href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
+<a target="_blank" href="#xss">Preventing XSS</a>  
 
 CODING NEW FUNCTIONALITY  
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses CRUD) or Domain/Admin/Admins (joined database tables so mostly custom code).  
@@ -103,7 +112,7 @@ See NavAdmin.php.
 Admin pages and functionality can be protected against unauthorized use based on administrative roles. Resource and functionality access is defined in config.php in the 'adminMinimumPermissions' array key based on the role and is set in routes.php on resources as necessary, in NavAdmin to determine whether or not to display navigation options, and in views and controllers as necessary to grant or limit functionality access. Authorization failures result in alerts being written to the system_events table and the user redirected to the admin homepage with a red alert message displayed.
 
 <a name="xss">Preventing XSS</a>  
-The appropriate <a href="https://twig.sensiolabs.org/doc/2.x/filters/escape.html" target="_blank">Twig escape filter</a> are used for any user-input data* that is output through Twig. Note that Twig defaults to autoescape 'html' in the autoescape environment variable: https://twig.sensiolabs.org/api/2.x/Twig_Environment.html
+The appropriate <a target="_blank" href="https://twig.sensiolabs.org/doc/2.x/filters/escape.html" target="_blank">Twig escape filter</a> are used for any user-input data* that is output through Twig. Note that Twig defaults to autoescape 'html' in the autoescape environment variable: https://twig.sensiolabs.org/api/2.x/Twig_Environment.html
 
 protectXSS() or arrayProtectRecursive() should be called for any user-input data* that is output into HTML independent of Twig (currently there is none).
 
