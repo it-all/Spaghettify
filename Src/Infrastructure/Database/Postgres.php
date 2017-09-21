@@ -41,19 +41,19 @@ Class Postgres
     public function __construct(
         string $dbname,
         string $user,
-        string $password = NULL,
-        string $host = NULL,
-        int $port = NULL
+        string $password = null,
+        string $host = null,
+        int $port = null
     )
     {
         $connectionString = "dbname=$dbname user=$user";
-        if (!($host === NULL)) {
+        if (!($host === null)) {
             $connectionString .= " host=$host";
         }
-        if (!($password === NULL)) {
+        if (!($password === null)) {
             $connectionString .= " password=$password";
         }
-        if (!($port === NULL)) {
+        if (!($port === null)) {
             $connectionString .= " port=$port";
         }
         $connectionString .= " connect_timeout=5";
