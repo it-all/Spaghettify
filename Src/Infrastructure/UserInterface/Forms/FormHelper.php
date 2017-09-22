@@ -7,6 +7,7 @@ use It_All\FormFormer\Fields\InputField;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
+use It_All\Spaghettify\Src\Spaghettify;
 
 class FormHelper
 {
@@ -36,7 +37,7 @@ class FormHelper
 
     public static function getFieldValue(string $fieldName): string
     {
-        return (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$fieldName])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY][$fieldName] : '';
+        return (isset($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$fieldName])) ? $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$fieldName] : '';
     }
 
     private static function getCommonFieldAttributes(string $fieldName = '', array $addAttributes = []): array
@@ -100,7 +101,7 @@ class FormHelper
 
     public static function unsetSessionVars()
     {
-        unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+        unset($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY]);
         unset($_SESSION[self::SESSION_ERRORS_KEY]);
     }
 

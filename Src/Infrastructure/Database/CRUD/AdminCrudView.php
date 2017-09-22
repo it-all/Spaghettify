@@ -8,6 +8,7 @@ use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
+use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -75,7 +76,7 @@ abstract class AdminCrudView extends AdminView
     /** this can be called for both the initial get and the posted form if errors exist (from controller) */
     public function insertView(Request $request, Response $response, $args)
     {
-        $formFieldData = ($request->isGet()) ? null : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+        $formFieldData = ($request->isGet()) ? null : $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
 
         $form = new DatabaseTableForm($this->model, $this->router->pathFor(getRouteName(true, $this->routePrefix, 'insert', 'post')), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'insert', $formFieldData);
         FormHelper::unsetSessionVars();
@@ -104,7 +105,7 @@ abstract class AdminCrudView extends AdminView
             return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
-        $formFieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+        $formFieldData = ($request->isGet()) ? $record : $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
 
         $form = new DatabaseTableForm($this->model, $this->router->pathFor(getRouteName(true, $this->routePrefix, 'update', 'put'), ['primaryKey' => $args['primaryKey']]), $this->csrf->getTokenNameKey(), $this->csrf->getTokenName(), $this->csrf->getTokenValueKey(), $this->csrf->getTokenValue(), 'update', $formFieldData);
         FormHelper::unsetSessionVars();

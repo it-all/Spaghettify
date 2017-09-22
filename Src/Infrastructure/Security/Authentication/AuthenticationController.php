@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -13,10 +14,10 @@ class AuthenticationController extends Controller
     function postLogin(Request $request, Response $response, $args)
     {
         $this->setRequestInput($request);
-        $username = $_SESSION[SESSION_REQUEST_INPUT_KEY]['username'];
-        $password = $_SESSION[SESSION_REQUEST_INPUT_KEY]['password_hash'];
+        $username = $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY]['username'];
+        $password = $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY]['password_hash'];
 
-        $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], $this->authentication->getLoginFields());
+        $this->validator = $this->validator->withData($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY], $this->authentication->getLoginFields());
 
         $this->validator->rules($this->authentication->getLoginFieldValidationRules());
 
@@ -40,7 +41,7 @@ class AuthenticationController extends Controller
             FormHelper::setGeneralError('Login Unsuccessful');
 
             // redisplay the form with input values and error(s). reset password.
-            $_SESSION[SESSION_REQUEST_INPUT_KEY]['password_hash'] = '';
+            $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY]['password_hash'] = '';
             return $response->withRedirect($this->router->pathFor(ROUTE_LOGIN));
         }
 
@@ -49,9 +50,9 @@ class AuthenticationController extends Controller
         $this->systemEvents->insertInfo('Login', (int) $this->authentication->getUserId());
 
         // redirect to proper resource
-        if (isset($_SESSION[SESSION_GOTO_ADMIN_PATH])) {
-            $redirect = $_SESSION[SESSION_GOTO_ADMIN_PATH];
-            unset($_SESSION[SESSION_GOTO_ADMIN_PATH]);
+        if (isset($_SESSION[Spaghettify::SESSION_GOTO_ADMIN_PATH])) {
+            $redirect = $_SESSION[Spaghettify::SESSION_GOTO_ADMIN_PATH];
+            unset($_SESSION[Spaghettify::SESSION_GOTO_ADMIN_PATH]);
         } else {
             $redirect = $this->router->pathFor($this->authentication->getAdminHomeRouteForUser());
         }

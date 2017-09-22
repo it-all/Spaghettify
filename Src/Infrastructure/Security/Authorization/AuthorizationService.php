@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
+use It_All\Spaghettify\Src\Spaghettify;
 use Psr\Log\InvalidArgumentException;
 
 class AuthorizationService
@@ -44,17 +45,17 @@ class AuthorizationService
     public function check(string $minimumPermission = 'owner'): bool
     {
         if (!in_array($minimumPermission, $this->roles)) {
-            throw new InvalidArgumentException("minimumRole $minimumPermission must be a valid role");
+            throw new \Exception("minimumRole $minimumPermission must be a valid role");
         }
-        if (!isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
+        if (!isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ROLE])) {
             return false;
         }
 
-        $role = $_SESSION[SESSION_USER][SESSION_USER_ROLE];
+        $role = $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ROLE];
 
         if (!in_array($role, $this->roles)) {
             // database this event
-            unset($_SESSION[SESSION_USER]); // force logout
+            unset($_SESSION[Spaghettify::SESSION_USER]); // force logout
             return false;
         }
 

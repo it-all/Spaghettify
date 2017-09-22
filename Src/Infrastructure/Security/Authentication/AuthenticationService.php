@@ -8,6 +8,7 @@ use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Logins\LoginsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use It_All\Spaghettify\Src\Spaghettify;
 
 class AuthenticationService
 {
@@ -22,45 +23,45 @@ class AuthenticationService
 
     public function user(): ?array
     {
-        if (isset($_SESSION[SESSION_USER])) {
-            return $_SESSION[SESSION_USER];
+        if (isset($_SESSION[Spaghettify::SESSION_USER])) {
+            return $_SESSION[Spaghettify::SESSION_USER];
         }
         return null;
     }
 
     public function check(): bool
     {
-        return isset($_SESSION[SESSION_USER]);
+        return isset($_SESSION[Spaghettify::SESSION_USER]);
     }
 
     public function getUserId(): ?string
     {
-        if (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) {
-            return $_SESSION[SESSION_USER][SESSION_USER_ID];
+        if (isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ID])) {
+            return $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ID];
         }
         return null;
     }
 
     public function getUserName(): ?string
     {
-        if (isset($_SESSION[SESSION_USER][SESSION_USER_NAME])) {
-            return $_SESSION[SESSION_USER][SESSION_USER_NAME];
+        if (isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_NAME])) {
+            return $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_NAME];
         }
         return null;
     }
 
     public function getUserUsername(): ?string
     {
-        if (isset($_SESSION[SESSION_USER][SESSION_USER_USERNAME])) {
-            return $_SESSION[SESSION_USER][SESSION_USER_USERNAME];
+        if (isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_USERNAME])) {
+            return $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_USERNAME];
         }
         return null;
     }
 
     public function getUserRole(): ?string
     {
-        if (isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
-            return $_SESSION[SESSION_USER][SESSION_USER_ROLE];
+        if (isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ROLE])) {
+            return $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ROLE];
         }
         return null;
     }
@@ -104,13 +105,13 @@ class AuthenticationService
     private function loginSucceeded(string $username, array $userRecord)
     {
         // set session for user
-        $_SESSION[SESSION_USER] = [
-            SESSION_USER_ID => $userRecord['id'],
-            SESSION_USER_NAME => $userRecord['name'],
-            SESSION_USER_USERNAME => $username,
-            SESSION_USER_ROLE => $userRecord['role']
+        $_SESSION[Spaghettify::SESSION_USER] = [
+            Spaghettify::SESSION_USER_ID => $userRecord['id'],
+            Spaghettify::SESSION_USER_NAME => $userRecord['name'],
+            Spaghettify::SESSION_USER_USERNAME => $username,
+            Spaghettify::SESSION_USER_ROLE => $userRecord['role']
         ];
-        unset($_SESSION[SESSION_NUMBER_FAILED_LOGINS]);
+        unset($_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS]);
 
         // insert login_attempts record
         (new LoginsModel())->insertSuccessfulLogin($username, (int) $userRecord['id']);
@@ -118,10 +119,10 @@ class AuthenticationService
 
     private function loginFailed(string $username, int $adminId = null)
     {
-        if (isset($_SESSION[SESSION_NUMBER_FAILED_LOGINS])) {
-            $_SESSION[SESSION_NUMBER_FAILED_LOGINS]++;
+        if (isset($_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS])) {
+            $_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS]++;
         } else {
-            $_SESSION[SESSION_NUMBER_FAILED_LOGINS] = 1;
+            $_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS] = 1;
         }
 
         // insert login_attempts record
@@ -130,18 +131,18 @@ class AuthenticationService
 
     public function tooManyFailedLogins(): bool
     {
-        return isset($_SESSION[SESSION_NUMBER_FAILED_LOGINS]) &&
-            $_SESSION[SESSION_NUMBER_FAILED_LOGINS] > $this->maxFailedLogins;
+        return isset($_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS]) &&
+            $_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS] > $this->maxFailedLogins;
     }
 
     public function getNumFailedLogins(): int
     {
-        return (isset($_SESSION[SESSION_NUMBER_FAILED_LOGINS])) ? $_SESSION[SESSION_NUMBER_FAILED_LOGINS] : 0;
+        return (isset($_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS])) ? $_SESSION[Spaghettify::SESSION_NUMBER_FAILED_LOGINS] : 0;
     }
 
     public function logout()
     {
-        unset($_SESSION[SESSION_USER]);
+        unset($_SESSION[Spaghettify::SESSION_USER]);
     }
 
     public function getLoginFields(): array

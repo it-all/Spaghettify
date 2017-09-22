@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure;
 
+use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Container;
 use Slim\Http\Request;
 
@@ -26,9 +27,9 @@ abstract class Controller
     /** may want a config var bool trimAllInputs */
     protected function setRequestInput(Request $request)
     {
-        $_SESSION[SESSION_REQUEST_INPUT_KEY] = [];
+        $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY] = [];
         foreach ($request->getParsedBody() as $key => $value) {
-            $_SESSION[SESSION_REQUEST_INPUT_KEY][$key] = ($this->settings['trimAllUserInput']) ? trim($value) : $value;
+            $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$key] = ($this->settings['trimAllUserInput']) ? trim($value) : $value;
         }
     }
 }

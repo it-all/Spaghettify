@@ -6,6 +6,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
+use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -33,7 +34,7 @@ class CrudController extends Controller
         $this->setRequestInput($request);
         $this->addBooleanFieldsToInput();
 
-        $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
+        $this->validator = $this->validator->withData($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
 
         $this->validator->mapFieldsRules(FormHelper::getDatabaseTableValidation($this->model));
 
@@ -69,8 +70,8 @@ class CrudController extends Controller
     private function addBooleanFieldsToInput()
     {
         foreach ($this->model->getColumns() as $databaseColumnModel) {
-            if ($databaseColumnModel->isBoolean() && !isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()])) {
-                $_SESSION[SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()] = 'f';
+            if ($databaseColumnModel->isBoolean() && !isset($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()])) {
+                $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()] = 'f';
             }
         }
     }
@@ -93,13 +94,13 @@ class CrudController extends Controller
 
         // if no changes made, redirect
         // debatable whether this should be part of validation and stay on page with error
-        if (!$this->haveAnyFieldsChanged($_SESSION[SESSION_REQUEST_INPUT_KEY], $record)) {
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["No changes made (Record ".$args['primaryKey'].")", 'adminNoticeFailure'];
+        if (!$this->haveAnyFieldsChanged($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY], $record)) {
+            $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["No changes made (Record ".$args['primaryKey'].")", 'adminNoticeFailure'];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
 
-        $this->validator = $this->validator->withData($_SESSION[SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
+        $this->validator = $this->validator->withData($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY], FormHelper::getDatabaseTableValidationFields($this->model));
 
         $this->validator->mapFieldsRules(FormHelper::getDatabaseTableValidation($this->model));
 
@@ -113,7 +114,7 @@ class CrudController extends Controller
 
             foreach ($this->model->getUniqueColumns() as $databaseColumnModel) {
                 // only set rule for changed columns
-                if ($_SESSION[SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()] != $record[$databaseColumnModel->getName()]) {
+                if ($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$databaseColumnModel->getName()] != $record[$databaseColumnModel->getName()]) {
                     $this->validator->rule('unique', $databaseColumnModel->getName(), $databaseColumnModel, $this->validator);
                 }
             }
@@ -177,7 +178,7 @@ class CrudController extends Controller
     {
         // attempt insert
         try {
-            $res = $this->model->insertRecord($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+            $res = $this->model->insertRecord($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY]);
             $returned = pg_fetch_all($res);
             $primaryKeyColumnName = $this->model->getPrimaryKeyColumnName();
             $insertedRecordId = $returned[0][$primaryKeyColumnName];
@@ -194,7 +195,7 @@ class CrudController extends Controller
                 );
             }
 
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
+            $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
 
             return true;
 
@@ -207,7 +208,7 @@ class CrudController extends Controller
     {
         // attempt to update the model
         try {
-            $this->model->updateRecordByPrimaryKey($_SESSION[SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
+            $this->model->updateRecordByPrimaryKey($_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY], $args['primaryKey']);
 
             $primaryKeyColumnName = $this->model->getPrimaryKeyColumnName();
             $updatedRecordId = $args['primaryKey'];
@@ -224,7 +225,7 @@ class CrudController extends Controller
                 );
             }
 
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["Updated record $updatedRecordId", 'adminNoticeSuccess'];
+            $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["Updated record $updatedRecordId", 'adminNoticeSuccess'];
 
             return true;
 
@@ -241,7 +242,7 @@ class CrudController extends Controller
 
         if (!$res = $this->model->deleteByPrimaryKey($primaryKey, $returnColumn)) {
             $this->systemEvents->insertWarning('Primary key not found for delete', (int) $this->authentication->getUserId(), $eventNote);
-            $_SESSION[SESSION_ADMIN_NOTICE] = [$primaryKey.' not found', 'adminNoticeFailure'];
+            $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = [$primaryKey.' not found', 'adminNoticeFailure'];
             return false;
         }
 
@@ -263,7 +264,7 @@ class CrudController extends Controller
             );
         }
 
-        $_SESSION[SESSION_ADMIN_NOTICE] = [$adminMessage, 'adminNoticeSuccess'];
+        $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = [$adminMessage, 'adminNoticeSuccess'];
         return true;
     }
 }

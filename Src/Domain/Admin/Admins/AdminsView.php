@@ -13,6 +13,7 @@ use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
+use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -81,11 +82,11 @@ class AdminsView extends AdminCrudView
         $fields = [];
 
         if ($action == 'insert') {
-            $fieldValues = ($request->isGet()) ? [] : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+            $fieldValues = ($request->isGet()) ? [] : $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
             $formAction = $this->router->pathFor(getRouteName(true, $this->routePrefix, 'insert', 'post'));
             $passwordLabel = 'Password';
         } else {
-            $fieldValues = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
+            $fieldValues = ($request->isGet()) ? $record : $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
             $formAction = $this->router->pathFor(getRouteName(true, $this->routePrefix, 'update', 'put'), ['primaryKey' => $primaryKey]);
             $passwordLabel = 'Password [leave blank to keep existing]';
             $fields[] = FormHelper::getPutMethodField();

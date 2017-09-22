@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security;
 
 use It_All\Spaghettify\Src\Infrastructure\Middleware;
+use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -15,7 +16,7 @@ class CsrfMiddleware extends Middleware
             $eventTitle = 'CSRF Check Failure';
             $this->container->systemEvents->insertError($eventTitle, (int) $this->container->authentication->getUserId());
             session_unset();
-            $_SESSION[SESSION_NOTICE] = ['Error. Your session has been reset.', 'error'];
+            $_SESSION[Spaghettify::SESSION_NOTICE] = ['Error. Your session has been reset.', 'error'];
             return $response->withRedirect($this->container->router->pathFor(ROUTE_HOME));
         }
 

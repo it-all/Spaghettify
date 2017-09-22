@@ -9,6 +9,24 @@ class Spaghettify
 {
     private $envConfig;
 
+    // session key constants
+    const SESSION_REQUEST_INPUT_KEY = 'requestInput';
+    const SESSION_NUMBER_FAILED_LOGINS = 'numFailedLogins';
+    const SESSION_LAST_ACTIVITY = 'lastActivity';
+    const SESSION_USER = 'user';
+    const SESSION_USER_ID = 'id';
+    const SESSION_USER_NAME = 'name';
+    const SESSION_USER_USERNAME = 'username';
+    const SESSION_USER_ROLE = 'role';
+    const SESSION_ADMIN_NOTICE = 'adminNotice';
+    const SESSION_NOTICE = 'notice';
+    const SESSION_GOTO_ADMIN_PATH = 'gotoAdminPath';
+
+
+
+
+
+
     public function __construct(array $envConfig)
     {
         $this->checkRequiredConfig($envConfig);
@@ -122,7 +140,7 @@ class Spaghettify
             }
             session_save_path($config['session']['savePath']);
             session_start();
-            $_SESSION[SESSION_LAST_ACTIVITY] = time(); // update last activity time stamp
+            $_SESSION[self::SESSION_LAST_ACTIVITY] = time(); // update last activity time stamp
         }
 
         // Instantiate Slim

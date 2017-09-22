@@ -54,17 +54,17 @@ define('PERMISSION_ADMIN_MARKETING', ROUTEPREFIX_ADMIN.'.'.'marketing');
 define('PERMISSION_ADMIN_TESTIMONIALS', ROUTEPREFIX_ADMIN.'.'.'testimonials');
 
 // $_SESSION var keys
-define('SESSION_REQUEST_INPUT_KEY', 'requestInput');
-define('SESSION_NUMBER_FAILED_LOGINS', 'numFailedLogins');
-define('SESSION_LAST_ACTIVITY', 'lastActivity');
-define('SESSION_USER', 'user');
-define('SESSION_USER_ID', 'id');
-define('SESSION_USER_NAME', 'name');
-define('SESSION_USER_USERNAME', 'username');
-define('SESSION_USER_ROLE', 'role');
-define('SESSION_ADMIN_NOTICE', 'adminNotice');
-define('SESSION_NOTICE', 'notice');
-define('SESSION_GOTO_ADMIN_PATH', 'gotoAdminPath');
+//define('SESSION_REQUEST_INPUT_KEY', 'requestInput');
+//define('SESSION_NUMBER_FAILED_LOGINS', 'numFailedLogins');
+//define('SESSION_LAST_ACTIVITY', 'lastActivity');
+//define('SESSION_USER', 'user');
+//define('SESSION_USER_ID', 'id');
+//define('SESSION_USER_NAME', 'name');
+//define('SESSION_USER_USERNAME', 'username');
+//define('SESSION_USER_ROLE', 'role');
+//define('SESSION_ADMIN_NOTICE', 'adminNotice');
+//define('SESSION_NOTICE', 'notice');
+//define('SESSION_GOTO_ADMIN_PATH', 'gotoAdminPath');
 
 // END GLOBAL CONSTANTS
 

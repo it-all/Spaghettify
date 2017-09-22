@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1);
 
+use It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationService;
+use It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationService;
+use It_All\Spaghettify\Src\Spaghettify;
+use Slim\Views\TwigExtension;
+use Slim\Views\Twig;
+
 // DIC configuration
 
 // -----------------------------------------------------------------------------
@@ -15,13 +21,13 @@ $container['database'] = function($container) use ($database) {
 // Authentication
 $container['authentication'] = function($container) {
     $settings = $container->get('settings');
-    return new It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationService($settings['authentication']['maxFailedLogins'], $settings['authentication']['adminHomeRoutes']);
+    return new AuthenticationService($settings['authentication']['maxFailedLogins'], $settings['authentication']['adminHomeRoutes']);
 };
 
 // Authorization
 $container['authorization'] = function($container) {
     $settings = $container->get('settings');
-    return new It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationService($settings['authorization']);
+    return new AuthorizationService($settings['authorization']);
 };
 
 // System Events (Database Log)
@@ -32,7 +38,7 @@ $container['systemEvents'] = function($container) use ($systemEventsModel) {
 // Twig
 $container['view'] = function ($container) {
     $settings = $container->get('settings');
-    $view = new \Slim\Views\Twig($settings['view']['paths'], [
+    $view = new Twig($settings['view']['paths'], [
         'cache' => $settings['view']['pathCache'],
         'auto_reload' => $settings['view']['autoReload'],
         'debug' => $settings['view']['debug']
@@ -40,7 +46,7 @@ $container['view'] = function ($container) {
 
     // Instantiate and add Slim specific extension
     $basePath = rtrim(str_ireplace('index.php', '', $container['request']->getUri()->getBasePath()), '/');
-    $view->addExtension(new Slim\Views\TwigExtension($container->router, $basePath));
+    $view->addExtension(new TwigExtension($container->router, $basePath));
 
     if ($settings['view']['debug']) {
         // allows {{ dump(var) }}
@@ -58,15 +64,15 @@ $container['view'] = function ($container) {
         'check' => $container->authorization->check()
     ]);
 
-    if (isset($_SESSION[SESSION_ADMIN_NOTICE])) {
-        $view->getEnvironment()->addGlobal('adminNotice', $_SESSION[SESSION_ADMIN_NOTICE]);
-        unset($_SESSION[SESSION_ADMIN_NOTICE]);
+    if (isset($_SESSION[Spaghettify::SESSION_ADMIN_NOTICE])) {
+        $view->getEnvironment()->addGlobal('adminNotice', $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE]);
+        unset($_SESSION[Spaghettify::SESSION_ADMIN_NOTICE]);
     }
 
     // frontend
-    if (isset($_SESSION[SESSION_NOTICE])) {
-        $view->getEnvironment()->addGlobal('notice', $_SESSION[SESSION_NOTICE]);
-        unset($_SESSION[SESSION_NOTICE]);
+    if (isset($_SESSION[Spaghettify::SESSION_NOTICE])) {
+        $view->getEnvironment()->addGlobal('notice', $_SESSION[Spaghettify::SESSION_NOTICE]);
+        unset($_SESSION[Spaghettify::SESSION_NOTICE]);
     }
 
     // make some config setting available inside templates
