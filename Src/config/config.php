@@ -98,9 +98,9 @@ return [
     ],
 
     // either functionalityCategory => minimumRole or functionalityCategory.functionality => minimum role
-    // important to properly match the indexes to routes and nav authorization
+    // important to properly match the indexes to routes authorization
     // the role values must be in the database: roles.role
-    // required for every route and unlinked nav section
+    // if the index is not defined for a route or nav section, no authorization check is performed (all admins (logged in users) will be able to access resource or view nav section). therefore, indexes only need to be defined for routes and nav sections that require authorization greater than the base (least permission) role.
     'adminMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
         ROUTE_SYSTEM_EVENTS => 'owner',
@@ -112,13 +112,8 @@ return [
         ROUTE_ADMIN_ROLES_INSERT => 'director',
         ROUTE_ADMIN_ROLES_UPDATE => 'director',
         ROUTE_ADMIN_ROLES_DELETE => 'director',
-        ROUTE_ADMIN_TESTIMONIALS => 'user',
         ROUTE_ADMIN_TESTIMONIALS_INSERT => 'manager',
-        ROUTE_ADMIN_TESTIMONIALS_UPDATE => 'user',
-        ROUTE_ADMIN_TESTIMONIALS_DELETE => 'user',
         NAV_ADMIN_SYSTEM => 'director',
-        NAV_ADMIN_MARKETING => 'user',
-        NAV_ADMIN_TESTIMONIALS => 'user'
     ],
 
     'adminHomeRoutes' => [

@@ -30,13 +30,6 @@ class AdminView extends View
             throw new \Exception("Invalid type $type");
         }
 
-        // returns specific category.function if it exists or category if it exists
-        if (isset($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, $type)])) {
-            return $this->container->settings['authorization'][getRouteName(true, $this->routePrefix, $type)];
-        } elseif (isset($this->container->settings['authorization'][$this->routePrefix])) {
-            return $this->container->settings['authorization'][$this->routePrefix];
-        } else {
-            throw new \Exception('No authorization level set for '.$type.' to '.$this->routePrefix);
-        }
+        return $this->container->authorization->getMinimumPermission(getRouteName(true, $this->routePrefix, $type));
     }
 }

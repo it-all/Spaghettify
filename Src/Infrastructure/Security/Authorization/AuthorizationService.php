@@ -9,18 +9,21 @@ use It_All\Spaghettify\Src\Spaghettify;
 
 class AuthorizationService
 {
-    private $roles;
     private $functionalityMinimumPermissions;
+    private $roles;
+    private $baseRole;
 
     public function __construct(array $functionalityMinimumPermissions = [])
     {
         $this->functionalityMinimumPermissions = $functionalityMinimumPermissions;
         $rolesModel = new RolesModel();
         $this->roles = $rolesModel->getRoles();
+        $this->baseRole = $rolesModel->getBaseRole();
     }
 
     // $functionality like 'marketing' or 'marketing.index'
-    public function getMinimumPermission(string $functionality)
+    // if not found as an exact match or category match, the base (least permission) role is returned
+    public function getMinimumPermission(string $functionality): string
     {
         if (!isset($this->functionalityMinimumPermissions[$functionality])) {
 
@@ -30,7 +33,8 @@ class AuthorizationService
                 return $this->functionalityMinimumPermissions[getRouteName(true, $fParts[0])];
             }
 
-            throw new \Exception('Not found in functionalityMinimumPermissions: '.$functionality);
+            // no matches
+            return $this->baseRole;
         }
 
         return $this->functionalityMinimumPermissions[$functionality];
@@ -61,8 +65,12 @@ class AuthorizationService
         return false;
     }
 
+    // note, returns false if the minimum permission for $functionality is not defined
     public function checkFunctionality(string $functionality): bool
     {
-        return $this->check($this->getMinimumPermission($functionality));
+        if (!$p = $this->getMinimumPermission($functionality)) {
+            return false;
+        }
+        return $this->check($p);
     }
 }

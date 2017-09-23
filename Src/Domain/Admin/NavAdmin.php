@@ -23,7 +23,6 @@ class NavAdmin
     // 1. directly set by minimumPermissions key in the section
     // 2. by section link
     // 3. by section name
-    // note that currently a minimum permission is required for all nav sections. if that changes, this function can be refactored to return false so the authorization won't be checked
     private function getSectionMinimumPermission(array $section, string $sectionName)
     {
         if (isset($section['minimumPermissions'])) {

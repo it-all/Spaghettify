@@ -42,8 +42,6 @@ abstract class AdminCrudView extends AdminView
             $numResults = 0;
         }
 
-        // bool $isAdmin = true, string $routePrefix = null, string $routeType = null, string $resourceType = null
-
         $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
         return $this->view->render(

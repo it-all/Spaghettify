@@ -154,7 +154,6 @@ $testimonialsPath = NAMESPACE_DOMAIN_ADMIN . '\Marketing\Testimonials\\';
 
 $slim->get('/' . $config['dirs']['admin'] . '/testimonials',
     $testimonialsPath . 'TestimonialsView:index')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS);
 
@@ -172,19 +171,16 @@ $slim->post('/' . $config['dirs']['admin'] . '/testimonials/insert',
 
 $slim->get('/' . $config['dirs']['admin'] . '/testimonials/{primaryKey}',
     $testimonialsPath . 'TestimonialsView:getUpdate')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_UPDATE]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS_UPDATE);
 
 $slim->put('/' . $config['dirs']['admin'] . '/testimonials/{primaryKey}',
     $testimonialsPath . 'TestimonialsController:putUpdate')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_UPDATE]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS_UPDATE_PUT);
 
 $slim->get('/' . $config['dirs']['admin'] . '/testimonials/delete/{primaryKey}',
     $testimonialsPath . 'TestimonialsController:getDelete')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_DELETE]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS_DELETE);
 // end testimonials
