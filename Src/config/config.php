@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 $domainName = 'it-all.com';
 
+// nav / permission options without routes
+define('NAV_ADMIN_SYSTEM', ROUTEPREFIX_ADMIN.'.'.'system');
+define('NAV_ADMIN_MARKETING', ROUTEPREFIX_ADMIN.'.'.'marketing');
+define('NAV_ADMIN_TESTIMONIALS', ROUTEPREFIX_ADMIN.'.'.'testimonials');
+
 return [
 
     'businessName' => 'Spaghettify',
