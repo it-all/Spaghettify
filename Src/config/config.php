@@ -52,6 +52,7 @@ return [
     // either functionalityCategory => minimumRole or functionalityCategory.functionality => minimum role
     // important to properly match the indexes to routes and nav authorization
     // the role values must be in the database: roles.role
+    // required for every route and unlinked nav section
     'adminMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
         ROUTE_SYSTEM_EVENTS => 'owner',
@@ -90,7 +91,7 @@ return [
 
     'navAdmin' => [
         'Marketing' => [
-            // note, uncomment the line below to override the default setting
+            // note, uncommenting the line below overrides the default setting
 //            'minimumPermissions' => 'director',
             'subSections' => [
                 'Testimonials' => [

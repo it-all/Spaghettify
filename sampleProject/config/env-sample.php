@@ -46,7 +46,7 @@ return [
 
     'twigAutoReload' => true,
 
-    /* change default admin home pages below. be sure permissions are ok. */
+    // change default admin home pages below. be sure permissions are ok.
     'adminHomeRoutes' => [
         'usernames' => [
             /* username takes precedence over role */
@@ -58,4 +58,36 @@ return [
             'manager' => ROUTE_ADMIN_TESTIMONIALS
         ]
     ]
+
+    // to add new admin nav sections and subsections,
+    /*
+
+    // new section:
+    // first add the nav section constant in index.php ie:
+    // define('NAV_ADMIN_TEST', ROUTEPREFIX_ADMIN.'.'.'test');
+
+    // then define the minimum permissions necessary to see the nav section
+    'adminMinimumPermissions' => [
+        NAV_ADMIN_TEST => 'user'
+    ],
+
+    // then add the new section or subsection to the nav
+
+    // new section like this:
+    'navAdmin' => [
+        'Test' => [.. see config.php for what goes here]
+    ]
+
+    // new subsection (of System) like this:
+    'navAdmin' => [
+        'System' => [
+            'subSections' => [
+                'test' => [.. see config.php for what goes here]
+            ]
+        ]
+    ]
+
+    // note, to have spaces in your section or subsection name, ie 'test x', replace the spaces with underscores in the initial constant defined in index.php, ie define('NAV_ADMIN_TEST_X', ROUTEPREFIX_ADMIN.'.'.'test_x');
+
+    */
 ];

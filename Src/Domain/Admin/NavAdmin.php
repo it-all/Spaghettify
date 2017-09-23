@@ -95,7 +95,7 @@ class NavAdmin
         }
 
         // by nav section - ie NAV_ADMIN_SYSTEM
-        return $this->container->authorization->getMinimumPermission(constant('NAV_ADMIN_'.strtoupper($sectionName)));
+        return $this->container->authorization->getMinimumPermission(constant('NAV_ADMIN_'.strtoupper(str_replace(" ", "_", $sectionName))));
 
     }
 

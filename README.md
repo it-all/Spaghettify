@@ -49,11 +49,10 @@ Administrative Layout including <a target="_blank" href="#adminNav">Navigation</
 
 CODING NEW FUNCTIONALITY  
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses CRUD) or Domain/Admin/Admins (joined database tables so mostly custom code).  
-Define a new global constant for the route name in init.php  
+Define a new global constant for the route name in index.php  
 Add the route(s) in routes.php.  
 If authorization is required at a resource or functionality level, add them to the 'adminMinimumPermissions' key in config.php, then add AuthorizationMiddleware to the route for resource authorization in routes.php.  
-If this is new admin functionality, add a link to it in NavAdmin.php.  
-
+If this is new admin functionality, you can add a link to it in the admin nav by editing env.php. see env-sample.php for details.  
 
 <a name="eh">Error Handling</a>  
   
