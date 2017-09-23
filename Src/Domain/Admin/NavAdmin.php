@@ -19,66 +19,6 @@ class NavAdmin
         $this->container = $container;
     }
 
-    private function setNav(Container $container)
-    {
-        $this->nav = [
-
-            'Marketing' => [
-                'minimumPermissions' => $container->authorization->getMinimumPermission(NAV_ADMIN_MARKETING),
-                'subSections' => [
-                    'Testimonials' => [
-                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_TESTIMONIALS),
-                        'link' => ROUTE_ADMIN_TESTIMONIALS,
-                        'subSections' => [
-                            'Insert' => [
-                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_TESTIMONIALS_INSERT),
-                                'link' => ROUTE_ADMIN_TESTIMONIALS_INSERT,
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-
-            'System' => [
-                'minimumPermissions' => $container->authorization->getMinimumPermission(NAV_ADMIN_SYSTEM),
-                'subSections' => [
-                    'Events' => [
-                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_SYSTEM_EVENTS),
-                        'link' => ROUTE_SYSTEM_EVENTS,
-                    ],
-
-                    'Admins' => [
-                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ADMINS),
-                        'link' => ROUTE_ADMIN_ADMINS,
-                        'subSections' => [
-
-                            'Insert' => [
-                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ADMINS_INSERT),
-                                'link' => ROUTE_ADMIN_ADMINS_INSERT,
-                            ],
-
-                            'Roles' => [
-                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ROLES),
-                                'link' => ROUTE_ADMIN_ROLES,
-                                'subSections' => [
-                                    'Insert' => [
-                                        'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_ADMIN_ROLES_INSERT),
-                                        'link' => ROUTE_ADMIN_ROLES_INSERT,
-                                    ]
-                                ],
-                            ],
-
-                            'Login Attempts' => [
-                                'minimumPermissions' => $container->authorization->getMinimumPermission(ROUTE_LOGIN_ATTEMPTS),
-                                'link' => ROUTE_LOGIN_ATTEMPTS,
-                            ],
-                        ]
-                    ]
-                ]
-            ]
-        ];
-    }
-
     // precedence:
     // 1. directly set by minimumPermissions key in the section
     // 2. by section link
