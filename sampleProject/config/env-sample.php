@@ -44,5 +44,18 @@ return [
         ]
     ],
 
-    'twigAutoReload' => true
+    'twigAutoReload' => true,
+
+    /* change default admin home pages below. be sure permissions are ok. */
+    'adminHomeRoutes' => [
+        'usernames' => [
+            /* username takes precedence over role */
+            'owner' => ROUTE_ADMIN_ROLES
+        ],
+        'roles' => [
+            'owner' => ROUTE_SYSTEM_EVENTS,
+            'director' => ROUTE_ADMIN_ADMINS,
+            'manager' => ROUTE_ADMIN_TESTIMONIALS
+        ]
+    ]
 ];

@@ -6,13 +6,11 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use It_All\Spaghettify\Src\Spaghettify;
-use Psr\Log\InvalidArgumentException;
 
 class AuthorizationService
 {
     private $roles;
     private $functionalityMinimumPermissions;
-    private $authentication;
 
     public function __construct(array $functionalityMinimumPermissions = [])
     {
@@ -32,16 +30,12 @@ class AuthorizationService
                 return $this->functionalityMinimumPermissions[getRouteName(true, $fParts[0])];
             }
 
-            throw new InvalidArgumentException('Not found in functionalityMinimumPermissions: '.$functionality);
+            throw new \Exception('Not found in functionalityMinimumPermissions: '.$functionality);
         }
 
         return $this->functionalityMinimumPermissions[$functionality];
     }
 
-    /**
-     * @param string $minimumPermission
-     * @return bool
-     */
     public function check(string $minimumPermission = 'owner'): bool
     {
         if (!in_array($minimumPermission, $this->roles)) {

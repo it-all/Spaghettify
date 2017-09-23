@@ -47,7 +47,8 @@ return [
         'emails' => $config['emails'],
         'trimAllUserInput' => $config['trimAllUserInput'],
         'adminDefaultRole' => $config['adminDefaultRole'],
-        'adminHomeRoutes' => $config['adminHomeRoutes']
+        'adminHomeRoutes' => $config['adminHomeRoutes'],
+        'navAdmin' => $config['navAdmin']
     ],
 
     //Override the default Not Found Handler

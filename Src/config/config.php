@@ -54,7 +54,6 @@ return [
     // the role values must be in the database: roles.role
     'adminMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
-        PERMISSION_ADMIN_SYSTEM => 'director',
         ROUTE_SYSTEM_EVENTS => 'owner',
         ROUTE_ADMIN_ADMINS => 'director',
         ROUTE_ADMIN_ADMINS_INSERT => 'director',
@@ -64,19 +63,17 @@ return [
         ROUTE_ADMIN_ROLES_INSERT => 'director',
         ROUTE_ADMIN_ROLES_UPDATE => 'director',
         ROUTE_ADMIN_ROLES_DELETE => 'director',
-        PERMISSION_ADMIN_MARKETING => 'user',
-        PERMISSION_ADMIN_TESTIMONIALS => 'user',
         ROUTE_ADMIN_TESTIMONIALS => 'user',
         ROUTE_ADMIN_TESTIMONIALS_INSERT => 'manager',
         ROUTE_ADMIN_TESTIMONIALS_UPDATE => 'user',
         ROUTE_ADMIN_TESTIMONIALS_DELETE => 'user',
-
+        NAV_ADMIN_SYSTEM => 'director',
+        NAV_ADMIN_MARKETING => 'user',
+        NAV_ADMIN_TESTIMONIALS => 'user'
     ],
 
     'adminHomeRoutes' => [
-        'usernames' => [
-            '123456' => ROUTE_ADMIN_ROLES
-        ],
+        'usernames' => [],
         'roles' => [
             'owner' => ROUTE_SYSTEM_EVENTS,
             'director' => ROUTE_ADMIN_ADMINS,
@@ -89,5 +86,53 @@ return [
 
     'maxFailedLogins' => 5,
 
-    'trimAllUserInput' => true
+    'trimAllUserInput' => true,
+
+    'navAdmin' => [
+        'Marketing' => [
+            // note, uncomment the line below to override the default setting
+//            'minimumPermissions' => 'director',
+            'subSections' => [
+                'Testimonials' => [
+                    'link' => ROUTE_ADMIN_TESTIMONIALS,
+                    'subSections' => [
+                        'Insert' => [
+                            'link' => ROUTE_ADMIN_TESTIMONIALS_INSERT,
+                        ]
+                    ]
+                ]
+            ]
+        ],
+
+        'System' => [
+            'subSections' => [
+                'Events' => [
+                    'link' => ROUTE_SYSTEM_EVENTS,
+                ],
+
+                'Admins' => [
+                    'link' => ROUTE_ADMIN_ADMINS,
+                    'subSections' => [
+
+                        'Insert' => [
+                            'link' => ROUTE_ADMIN_ADMINS_INSERT,
+                        ],
+
+                        'Roles' => [
+                            'link' => ROUTE_ADMIN_ROLES,
+                            'subSections' => [
+                                'Insert' => [
+                                    'link' => ROUTE_ADMIN_ROLES_INSERT,
+                                ]
+                            ],
+                        ],
+
+                        'Login Attempts' => [
+                            'link' => ROUTE_LOGIN_ATTEMPTS,
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ]
 ];

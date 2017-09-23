@@ -9,7 +9,7 @@ class Spaghettify
 {
     private $envConfig;
 
-    // session key constants
+    // session var keys
     const SESSION_REQUEST_INPUT_KEY = 'requestInput';
     const SESSION_NUMBER_FAILED_LOGINS = 'numFailedLogins';
     const SESSION_LAST_ACTIVITY = 'lastActivity';

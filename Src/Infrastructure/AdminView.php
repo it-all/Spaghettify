@@ -17,7 +17,7 @@ class AdminView extends View
 
         // Instantiate navigation navbar contents
         $navAdmin = new NavAdmin($container);
-        $this->navigationItems = $navAdmin->getNavForUser($container->authorization);
+        $this->navigationItems = $navAdmin->getNavForUser();
     }
 
     protected function getAuthorizationMinimumLevel(string $type = 'index')

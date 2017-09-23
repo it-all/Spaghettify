@@ -188,4 +188,3 @@ $slim->get('/' . $config['dirs']['admin'] . '/testimonials/delete/{primaryKey}',
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS_DELETE);
 // end testimonials
-
