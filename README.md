@@ -9,7 +9,7 @@ Create a PostgreSQL database for this project and import spaghettify.postgres.sq
  - postgres=# create database mydbname with owner mydbname;
  - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
 
-$ composer create-project --no-interaction it-all/spaghettify project-name  
+$ composer create-project --no-interaction --stability=dev it-all/spaghettify project-name  
 
 Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.  
 
