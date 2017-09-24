@@ -22,7 +22,6 @@ class AdminsView extends AdminCrudView
 {
     public function __construct(Container $container)
     {
-        var_dump($container); die();
         parent::__construct($container, new AdminsModel(), ROUTEPREFIX_ADMIN_ADMINS);
     }
 
