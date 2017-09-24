@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "37bd5812deb482fd26a556a1f5d3b758",
-    "content-hash": "7c129160a0f6f29cfeb88b5ff619ebef",
+    "hash": "c3da698c83c8e428c64ce2c29ef128ae",
+    "content-hash": "495cc5e32514a1867c2129870b96dbe9",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -509,16 +509,16 @@
         },
         {
             "name": "slim/twig-view",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Twig-View.git",
-                "reference": "a743ac45e2a089942159dda499c5ef5bc5f6bfa6"
+                "reference": "f6ff5ec3a24e11866376b8ffa235fbbb7e1d1301"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Twig-View/zipball/a743ac45e2a089942159dda499c5ef5bc5f6bfa6",
-                "reference": "a743ac45e2a089942159dda499c5ef5bc5f6bfa6",
+                "url": "https://api.github.com/repos/slimphp/Twig-View/zipball/f6ff5ec3a24e11866376b8ffa235fbbb7e1d1301",
+                "reference": "f6ff5ec3a24e11866376b8ffa235fbbb7e1d1301",
                 "shasum": ""
             },
             "require": {
@@ -555,7 +555,7 @@
                 "twig",
                 "view"
             ],
-            "time": "2017-01-25 20:38:39"
+            "time": "2017-09-20 19:47:37"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -684,16 +684,16 @@
         },
         {
             "name": "vlucas/valitron",
-            "version": "dev-master",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/valitron.git",
-                "reference": "20a9c2d604b0932b2bd58fa32fbb2520616fef65"
+                "reference": "b33c79116260637337187b7125f955ae26d306cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/valitron/zipball/20a9c2d604b0932b2bd58fa32fbb2520616fef65",
-                "reference": "20a9c2d604b0932b2bd58fa32fbb2520616fef65",
+                "url": "https://api.github.com/repos/vlucas/valitron/zipball/b33c79116260637337187b7125f955ae26d306cc",
+                "reference": "b33c79116260637337187b7125f955ae26d306cc",
                 "shasum": ""
             },
             "require": {
@@ -726,15 +726,13 @@
                 "validation",
                 "validator"
             ],
-            "time": "2017-08-28 20:06:05"
+            "time": "2017-02-23 08:31:59"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "vlucas/valitron": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
