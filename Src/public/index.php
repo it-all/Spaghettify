@@ -20,6 +20,6 @@ unset($container['phpErrorHandler']);
 require APP_ROOT . 'config/slim3/middleware.php';
 
 // Register routes
-require APP_ROOT . 'routes.php';
+require APP_ROOT . 'config/slim3/routes.php';
 
 $slim->run();
