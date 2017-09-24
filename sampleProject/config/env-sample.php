@@ -46,10 +46,11 @@ return [
 
     'twigAutoReload' => true,
 
-    // change default admin home pages below. be sure permissions are ok.
+    // to set/change default admin home pages (be sure permissions are ok).
+    /*
     'adminHomeRoutes' => [
         'usernames' => [
-            /* username takes precedence over role */
+            // username takes precedence over role
             'owner' => ROUTE_ADMIN_ROLES
         ],
         'roles' => [
@@ -58,6 +59,7 @@ return [
             'manager' => ROUTE_ADMIN_TESTIMONIALS
         ]
     ]
+    */
 
     // to add new admin nav sections and subsections,
     /*
@@ -88,6 +90,15 @@ return [
     ]
 
     // note, to have spaces in your section or subsection name, ie 'test x', replace the spaces with underscores in the initial constant defined in index.php, ie define('NAV_ADMIN_TEST_X', ROUTEPREFIX_ADMIN.'.'.'test_x');
+    */
 
+
+    // to add a slim dependency into the container, define $yourObject at the top of this file
+    /*
+    'slimDependencies' => [
+        'test' => function($container) use ($yourObject) {
+            return $yourObject;
+        }
+    ]
     */
 ];
