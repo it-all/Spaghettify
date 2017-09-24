@@ -6,7 +6,7 @@ return [
 
     'businessName' => 'Our Biz, LLC',
 
-    'domainName' => $domainName,
+    'domainName' => $domainName, // not currently referenced in the app
 
     /** set true for live server */
     'isLive' => false,
@@ -15,7 +15,7 @@ return [
     'hostName' => 'localhost',
 
     'dirs' => [
-        'admin' => 'private'
+        'admin' => 'private' // browse to this dir to get to the admin login page
     ],
 
     'database' => [
@@ -44,5 +44,5 @@ return [
         ]
     ],
 
-    'twigAutoReload' => true
+    'twigAutoReload' => true // true is good when developing in order to recompile twig templates when source code changes (https://twig.symfony.com/doc/2.x/api.html)
 ];
