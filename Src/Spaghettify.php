@@ -22,11 +22,6 @@ class Spaghettify
     const SESSION_NOTICE = 'notice';
     const SESSION_GOTO_ADMIN_PATH = 'gotoAdminPath';
 
-
-
-
-
-
     public function __construct(array $envConfig)
     {
         $this->checkRequiredConfig($envConfig);

@@ -13,6 +13,12 @@ use Slim\Views\Twig;
 // Services (Dependencies)
 // -----------------------------------------------------------------------------
 
+if (isset($config['slimDependencies'])) {
+    foreach ($config['slimDependencies'] as $dependencyName => $dependency) {
+        $container[$dependencyName] = $dependency;
+    }
+}
+
 // Database
 $container['database'] = function($container) use ($database) {
     return $database;
