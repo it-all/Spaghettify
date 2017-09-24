@@ -17,10 +17,7 @@ unset($container['errorHandler']);
 unset($container['phpErrorHandler']);
 
 // Middleware registration
-// handle CSRF check failures and allow Twig to access and insert CSRF fields to forms
-$slim->add(new \It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware($container));
-// slim CSRF check middleware
-$slim->add($container->csrf);
+require APP_ROOT . 'config/slim3/middleware.php';
 
 // Register routes
 require APP_ROOT . 'routes.php';
