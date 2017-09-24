@@ -118,8 +118,8 @@ error_reporting( -1 ); // all, including future types
 ini_set( 'display_errors', 'off' );
 ini_set( 'display_startup_errors', 'off' );
 
-// keep this even though the error handler logs errors, so that any errors in the error handler itself or prior to will still be logged. note, if using slim error handling, this will log all php errors
-ini_set('error_log', $config['storage']['logs']['pathPhpErrors']);
+// any errors prior to the following line will not be logged
+ini_set('error_log', $config['storage']['logs']['pathPhpErrors']); // even though the error handler logs errors, this ensures errors in the error handler itself or in this file after this point will be logged. note, if using slim error handling, this will log all php errors
 
 // used in error handler and container
 // do this after setting error handler in case connection fails
