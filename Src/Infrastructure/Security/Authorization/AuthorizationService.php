@@ -45,15 +45,15 @@ class AuthorizationService
         if (!in_array($minimumPermission, $this->roles)) {
             throw new \Exception("minimumRole $minimumPermission must be a valid role");
         }
-        if (!isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ROLE])) {
+        if (!isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
             return false;
         }
 
-        $role = $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ROLE];
+        $role = $_SESSION[SESSION_USER][SESSION_USER_ROLE];
 
         if (!in_array($role, $this->roles)) {
             // database this event
-            unset($_SESSION[Spaghettify::SESSION_USER]); // force logout
+            unset($_SESSION[SESSION_USER]); // force logout
             return false;
         }
 

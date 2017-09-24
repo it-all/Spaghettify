@@ -13,12 +13,6 @@ use Slim\Views\Twig;
 // Services (Dependencies)
 // -----------------------------------------------------------------------------
 
-if (isset($config['slimDependencies'])) {
-    foreach ($config['slimDependencies'] as $dependencyName => $dependency) {
-        $container[$dependencyName] = $dependency;
-    }
-}
-
 // Database
 $container['database'] = function($container) use ($database) {
     return $database;
@@ -70,15 +64,15 @@ $container['view'] = function ($container) {
         'check' => $container->authorization->check()
     ]);
 
-    if (isset($_SESSION[Spaghettify::SESSION_ADMIN_NOTICE])) {
-        $view->getEnvironment()->addGlobal('adminNotice', $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE]);
-        unset($_SESSION[Spaghettify::SESSION_ADMIN_NOTICE]);
+    if (isset($_SESSION[SESSION_ADMIN_NOTICE])) {
+        $view->getEnvironment()->addGlobal('adminNotice', $_SESSION[SESSION_ADMIN_NOTICE]);
+        unset($_SESSION[SESSION_ADMIN_NOTICE]);
     }
 
     // frontend
-    if (isset($_SESSION[Spaghettify::SESSION_NOTICE])) {
-        $view->getEnvironment()->addGlobal('notice', $_SESSION[Spaghettify::SESSION_NOTICE]);
-        unset($_SESSION[Spaghettify::SESSION_NOTICE]);
+    if (isset($_SESSION[SESSION_NOTICE])) {
+        $view->getEnvironment()->addGlobal('notice', $_SESSION[SESSION_NOTICE]);
+        unset($_SESSION[SESSION_NOTICE]);
     }
 
     // make some config setting available inside templates

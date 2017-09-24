@@ -93,7 +93,7 @@ class ErrorHandler
 
             $databaseErrorMessage = explode('Stack Trace:', $errorMessage)[0].'.See phpErrors.log for further details.';
 
-            $adminId = (isset($_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ID])) ? (int) $_SESSION[Spaghettify::SESSION_USER][Spaghettify::SESSION_USER_ID] : null;
+            $adminId = (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) ? (int) $_SESSION[SESSION_USER][SESSION_USER_ID] : null;
 
             @$this->systemEventsModel->insertEvent('PHP Error', $systemEventType, $adminId, $databaseErrorMessage);
         }
@@ -116,7 +116,7 @@ class ErrorHandler
 
         // will only get here if errors have not been echoed above
         if ($die) {
-            $_SESSION[Spaghettify::SESSION_NOTICE] = [$this->fatalMessage, 'error'];
+            $_SESSION[SESSION_NOTICE] = [$this->fatalMessage, 'error'];
             header("Location: https://$this->redirectPage");
             exit();
         }

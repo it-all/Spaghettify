@@ -16,7 +16,7 @@ class CrudHelper
     {
         $eventNote = $model->getPrimaryKeyColumnName().":$primaryKey|Table: ".$model->getTableName();
         $container->systemEvents->insertWarning('Record not found for update', (int) $container->authentication->getUserId(), $eventNote);
-        $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["Record $primaryKey Not Found", 'adminNoticeFailure'];
+        $_SESSION[SESSION_ADMIN_NOTICE] = ["Record $primaryKey Not Found", 'adminNoticeFailure'];
         return $response->withRedirect($container->router->pathFor(getRouteName(true, $routePrefix, 'index')));
     }
 

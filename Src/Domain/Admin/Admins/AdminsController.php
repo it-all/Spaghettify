@@ -21,7 +21,7 @@ class AdminsController extends CrudController
 
     private function setValidation(array $record = null)
     {
-        $input = $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
+        $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
         $this->validator = $this->validator->withData($input);
 
         $this->validator->rule('required', ['name', 'username', 'role_id']);
@@ -63,7 +63,7 @@ class AdminsController extends CrudController
             return $this->view->getInsert($request, $response, $args);
         }
 
-        $input = $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
+        $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
         if (!$res = $this->model->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
             throw new \Exception("Insert Failure");
         }
@@ -76,7 +76,7 @@ class AdminsController extends CrudController
 
         FormHelper::unsetSessionVars();
 
-        $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
+        $_SESSION[SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
         return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
     }
 
@@ -100,7 +100,7 @@ class AdminsController extends CrudController
             return CrudHelper::updateNoRecord($this->container, $response, $primaryKey, $this->model, $this->routePrefix);
         }
 
-        $input = $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY];
+        $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
 
         // if no changes made, redirect
         // note, if pw and pwconf fields are blank, do not include them in changed fields check
@@ -115,7 +115,7 @@ class AdminsController extends CrudController
             $checkChangedFields['password_hash'] = password_hash($input['password'], PASSWORD_DEFAULT);
         }
         if (!$this->haveAnyFieldsChanged($checkChangedFields, $record)) {
-            $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["No changes made (Record $primaryKey)", 'adminNoticeFailure'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["No changes made (Record $primaryKey)", 'adminNoticeFailure'];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
         }
@@ -136,7 +136,7 @@ class AdminsController extends CrudController
 
         FormHelper::unsetSessionVars();
 
-        $_SESSION[Spaghettify::SESSION_ADMIN_NOTICE] = ["Updated record $primaryKey", 'adminNoticeSuccess'];
+        $_SESSION[SESSION_ADMIN_NOTICE] = ["Updated record $primaryKey", 'adminNoticeSuccess'];
         return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix,'index')));
     }
 

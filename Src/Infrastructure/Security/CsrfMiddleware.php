@@ -16,7 +16,7 @@ class CsrfMiddleware extends Middleware
             $eventTitle = 'CSRF Check Failure';
             $this->container->systemEvents->insertError($eventTitle, (int) $this->container->authentication->getUserId());
             session_unset();
-            $_SESSION[Spaghettify::SESSION_NOTICE] = ['Error. Your session has been reset.', 'error'];
+            $_SESSION[SESSION_NOTICE] = ['Error. Your session has been reset.', 'error'];
             return $response->withRedirect($this->container->router->pathFor(ROUTE_HOME));
         }
 

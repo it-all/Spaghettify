@@ -15,8 +15,60 @@ class NavAdmin
 
     function __construct(Container $container)
     {
-        $this->nav = $container->get('settings')['navAdmin'];
+        $this->setNav();
         $this->container = $container;
+    }
+
+    private function setNav()
+    {
+        $this->nav = [
+
+            'Marketing' => [
+                // note, uncommenting the line below overrides the default setting
+//            'minimumPermissions' => 'director',
+                'subSections' => [
+                    'Testimonials' => [
+                        'link' => ROUTE_ADMIN_TESTIMONIALS,
+                        'subSections' => [
+                            'Insert' => [
+                                'link' => ROUTE_ADMIN_TESTIMONIALS_INSERT,
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+
+            'System' => [
+                'subSections' => [
+                    'Events' => [
+                        'link' => ROUTE_SYSTEM_EVENTS,
+                    ],
+
+                    'Admins' => [
+                        'link' => ROUTE_ADMIN_ADMINS,
+                        'subSections' => [
+
+                            'Insert' => [
+                                'link' => ROUTE_ADMIN_ADMINS_INSERT,
+                            ],
+
+                            'Roles' => [
+                                'link' => ROUTE_ADMIN_ROLES,
+                                'subSections' => [
+                                    'Insert' => [
+                                        'link' => ROUTE_ADMIN_ROLES_INSERT,
+                                    ]
+                                ],
+                            ],
+
+                            'Login Attempts' => [
+                                'link' => ROUTE_LOGIN_ATTEMPTS,
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        ];
     }
 
     // precedence:

@@ -3,22 +3,18 @@
 Spaghettify is a PHP 7, PostgreSQL Web Platform Built on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
 INSTALLATION  
-Create your project folder.  
-~$ cd /path/to/project  
-~$ composer install it-all/spaghettify  
-~$ cp -r vendor/it-all/spaghettify/sampleProject/* .  
-~$ chmod 777 storage/*  
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
- - ~$ psql -U postgres
+ - $ psql -U postgres
  - postgres=# create role mydbname with login;
  - postgres=# create database mydbname with owner mydbname;
- - ~$ psql -U mydbname < /path/to/spaghettify.postgres.sql  
- 
-Configuration  
-~$ cd /path/to/project  
-~$ mv config/env-sample.php env.php  
-Edit env.php as necessary, especially the database and email settings.  
-Create a (local) website with public as the root directory (default web server is Apache w/ .htaccess in /public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.
+ - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
+
+$ composer create-project --no-interaction it-all/spaghettify project-name  
+
+Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.  
+
+Create a local site with Src/public as the root directory (default web server is Apache w/ .htaccess in Src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  
+
 Browse to it. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
 
 If you want to use Gulp for CSS and/or JS preprocessing  

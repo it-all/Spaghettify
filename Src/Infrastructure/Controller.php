@@ -27,9 +27,9 @@ abstract class Controller
     /** may want a config var bool trimAllInputs */
     protected function setRequestInput(Request $request)
     {
-        $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY] = [];
+        $_SESSION[SESSION_REQUEST_INPUT_KEY] = [];
         foreach ($request->getParsedBody() as $key => $value) {
-            $_SESSION[Spaghettify::SESSION_REQUEST_INPUT_KEY][$key] = ($this->settings['trimAllUserInput']) ? trim($value) : $value;
+            $_SESSION[SESSION_REQUEST_INPUT_KEY][$key] = ($this->settings['trimAllUserInput']) ? trim($value) : $value;
         }
     }
 }
