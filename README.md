@@ -1,6 +1,6 @@
 # Spaghettify
 
-Spaghettify is a PHP 7, PostgreSQL Web Platform Built on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
+Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administration, based on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
 INSTALLATION  
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
