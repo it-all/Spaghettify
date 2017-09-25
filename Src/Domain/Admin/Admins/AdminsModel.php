@@ -76,9 +76,40 @@ class AdminsModel extends DatabaseTableModel
         return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
     }
 
-    public function getWithRoles()
+    public function getWithRoles(string $whereId = null, string $whereName = null, string $whereUsername = null, string $whereRole = null, string $whereLevel = null)
     {
-        $q = new QueryBuilder("SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id ORDER BY r.level");
+        $q = new QueryBuilder("SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id");
+        $argCounter = 1;
+        if ($whereId !== null) {
+            $q->add(" WHERE a.id = $1", $whereId);
+            $argCounter++;
+        }
+        if ($whereName !== null) {
+            $sql = ($argCounter == 1) ? " WHERE " : ", ";
+            $sql .= "a.name = $$argCounter";
+            $q->add($sql, $whereName);
+            $argCounter++;
+        }
+        if ($whereUsername !== null) {
+            $sql = ($argCounter == 1) ? " WHERE " : ", ";
+            $sql .= "a.username = $$argCounter";
+            $q->add($sql, $whereUsername);
+            $argCounter++;
+        }
+        if ($whereRole !== null) {
+            $sql = ($argCounter == 1) ? " WHERE " : ", ";
+            $sql .= "r.role = $$argCounter";
+            $q->add($sql, $whereRole);
+            $argCounter++;
+        }
+        if ($whereLevel !== null) {
+            $sql = ($argCounter == 1) ? " WHERE " : ", ";
+            $sql .= "r.level = $$argCounter";
+            $q->add($sql, $whereLevel);
+            $argCounter++;
+        }
+
+        $q->add(" ORDER BY r.level");
         return $q->execute();
     }
 }

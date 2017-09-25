@@ -106,4 +106,11 @@ protectXSS() or arrayProtectRecursive() should be called for any user-input data
 
 *Note this includes database data that has been input by any user, including through the admin
 
-Thank you.
+Miscellaneous Instructions  
+
+To add a form to a Twig template:  
+Be sure to include the csrf fields:  
+<input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}">  
+<input type="hidden" name="{{ csrf['tokenValueKey'] }}" value="{{ csrf['tokenValue'] }}">  
+
+===========================================================Thank you.

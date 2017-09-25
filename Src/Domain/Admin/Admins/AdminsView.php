@@ -33,12 +33,12 @@ class AdminsView extends AdminCrudView
      */
     public function index(Request $request, Response $response, $args)
     {
-        $this->indexView($response, 'id, name, username');
+        $this->indexView($response);
     }
 
-    public function indexView(Response $response, string $columns = '*')
+    public function indexView(Response $response, string $whereId = null, string $whereName = null, string $whereUsername = null, string $whereRole = null, string $whereLevel = null)
     {
-        if ($results = pg_fetch_all($this->model->getWithRoles())) {
+        if ($results = pg_fetch_all($this->model->getWithRoles($whereId, $whereName, $whereUsername, $whereRole, $whereLevel))) {
             $numResults = count($results);
         } else {
             $numResults = 0;

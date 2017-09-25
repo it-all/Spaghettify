@@ -1,0 +1,617 @@
+[2017-09-25 08:54:47 America/New_York] spag
+Web Page: POST /private/admins
+Unknown error type: Argument 1 passed to It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView::indexFilter() must be an instance of Slim\Http\Response, instance of Slim\Http\Request given
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php line: 71
+Stack Trace:
+#0 [internal function]: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->indexFilter(Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#1 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(344): Slim\Handlers\Strategies\RequestResponse->__invoke(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#3 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#4 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#6 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#7 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#8 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#9 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#10 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#11 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#12 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#13 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#14 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#15 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#17 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#19 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#20 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#21 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#22 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#23 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#24 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#25 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#26 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#27 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#28 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#30 {main}
+
+[2017-09-25 09:01:39 America/New_York] spag
+Web Page: GET /private/admins
+Unknown error type: syntax error, unexpected '$q' (T_VARIABLE), expecting '('
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsModel.php line: 84
+Stack Trace:
+#0 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/composer/ClassLoader.php(301): Composer\Autoload\includeFile('/media/gcat/sto...')
+#1 [internal function]: Composer\Autoload\ClassLoader->loadClass('It_All\\Spaghett...')
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php(25): spl_autoload_call('It_All\\Spaghett...')
+#3 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/CallableResolver.php(93): It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->__construct(Object(Slim\Container))
+#4 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/CallableResolver.php(61): Slim\CallableResolver->resolveCallable('It_All\\Spaghett...', 'index')
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/CallableResolverAwareTrait.php(45): Slim\CallableResolver->resolve('It_All\\Spaghett...')
+#6 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(333): Slim\Routable->resolveCallable('It_All\\Spaghett...')
+#7 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#8 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#9 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#10 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#11 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#12 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#13 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#14 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#15 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#17 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#19 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#20 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#21 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#22 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#23 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#24 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#25 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#26 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#27 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#28 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#30 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#31 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#32 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#33 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#34 {main}
+
+[2017-09-25 09:03:34 America/New_York] spag
+Web Page: GET /private/admins
+Warning: pg_query_params(): Query failed: ERROR:  column reference "id" is ambiguous
+LINE 1: ...M admins a JOIN roles r ON a.role_id = r.id WHERE id = $1 OR...
+                                                             ^
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Database/Queries/QueryBuilder.php line: 69
+Stack Trace:
+#0: /Infrastructure/Database/Queries/QueryBuilder.php [69] pg_query_params() { 0: SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id WHERE id = $1 ORDER BY r.level 1:   ^0: 30}
+
+#1: /Domain/Admin/Admins/AdminsModel.php [88]  QueryBuilder->execute() {}
+
+#2: /Domain/Admin/Admins/AdminsView.php [41]  AdminsModel->getWithRoles() { 0: 30}
+
+#3: /Domain/Admin/Admins/AdminsView.php [36]  AdminsView->indexView() { 0: object type: Slim\Http\Response}
+
+#4: AdminsView->index() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#5: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php [41] call_user_func() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView  ^1: index 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#6: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [344]  RequestResponse->__invoke() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView  ^1: index 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#7: /Infrastructure/Security/Authorization/AuthorizationMiddleware.php [34]  Route->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#8: AuthorizationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#9: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\Route}
+
+#10: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#11: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\Route}
+
+#12: /Infrastructure/Security/Authentication/AuthenticationMiddleware.php [23]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#13: AuthenticationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#14: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#15: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#16: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#17: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#18: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [316]  Route->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#19: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [476]  Route->run() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#20: /Infrastructure/Security/CsrfMiddleware.php [30]  App->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#21: CsrfMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#22: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\App}
+
+#23: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#24: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\App}
+
+#25: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php [167]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#26: Guard->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#27: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: Slim\Csrf\Guard 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#28: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#29: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#30: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#31: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [370]  App->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#32: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [295]  App->process() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#33: /public/index.php [25]  App->run() {}
+
+
+
+[2017-09-25 09:03:34 America/New_York] spag
+Web Page: GET /private/admins
+Unknown error type: Query Execution Failure: SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id WHERE id = $1 ORDER BY r.level 
+Args: array (
+  0 => 30,
+)
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Database/Queries/QueryBuilder.php line: 71
+Stack Trace:
+#0 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsModel.php(88): It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder->execute()
+#1 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php(41): It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel->getWithRoles(30)
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php(36): It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->indexView(Object(Slim\Http\Response))
+#3 [internal function]: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->index(Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#4 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(344): Slim\Handlers\Strategies\RequestResponse->__invoke(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#6 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#7 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#8 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#9 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#10 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#11 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#12 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#13 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#14 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#15 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#17 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#19 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#20 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#21 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#22 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#23 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#24 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#25 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#26 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#27 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#28 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#30 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#31 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#32 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#33 {main}
+
+[2017-09-25 09:03:55 America/New_York] spag
+Web Page: GET /private/admins
+Warning: pg_query_params(): Query failed: ERROR:  column reference "id" is ambiguous
+LINE 1: ...M admins a JOIN roles r ON a.role_id = r.id WHERE id = $1 OR...
+                                                             ^
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Database/Queries/QueryBuilder.php line: 69
+Stack Trace:
+#0: /Infrastructure/Database/Queries/QueryBuilder.php [69] pg_query_params() { 0: SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id WHERE id = $1 ORDER BY r.level 1:   ^0: 30}
+
+#1: /Domain/Admin/Admins/AdminsModel.php [88]  QueryBuilder->execute() {}
+
+#2: /Domain/Admin/Admins/AdminsView.php [41]  AdminsModel->getWithRoles() { 0: 30}
+
+#3: /Domain/Admin/Admins/AdminsView.php [36]  AdminsView->indexView() { 0: object type: Slim\Http\Response}
+
+#4: AdminsView->index() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#5: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php [41] call_user_func() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView  ^1: index 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#6: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [344]  RequestResponse->__invoke() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView  ^1: index 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#7: /Infrastructure/Security/Authorization/AuthorizationMiddleware.php [34]  Route->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#8: AuthorizationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#9: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\Route}
+
+#10: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#11: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\Route}
+
+#12: /Infrastructure/Security/Authentication/AuthenticationMiddleware.php [23]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#13: AuthenticationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#14: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#15: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#16: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#17: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#18: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [316]  Route->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#19: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [476]  Route->run() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#20: /Infrastructure/Security/CsrfMiddleware.php [30]  App->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#21: CsrfMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#22: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\App}
+
+#23: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#24: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\App}
+
+#25: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php [167]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#26: Guard->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#27: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: Slim\Csrf\Guard 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#28: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#29: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#30: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#31: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [370]  App->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#32: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [295]  App->process() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#33: /public/index.php [25]  App->run() {}
+
+
+
+[2017-09-25 09:03:55 America/New_York] spag
+Web Page: GET /private/admins
+Unknown error type: Query Execution Failure: SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id WHERE id = $1 ORDER BY r.level 
+Args: array (
+  0 => 30,
+)
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Database/Queries/QueryBuilder.php line: 71
+Stack Trace:
+#0 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsModel.php(88): It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder->execute()
+#1 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php(41): It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel->getWithRoles(30)
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php(36): It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->indexView(Object(Slim\Http\Response))
+#3 [internal function]: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->index(Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#4 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(344): Slim\Handlers\Strategies\RequestResponse->__invoke(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#6 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#7 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#8 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#9 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#10 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#11 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#12 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#13 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#14 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#15 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#17 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#19 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#20 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#21 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#22 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#23 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#24 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#25 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#26 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#27 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#28 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#30 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#31 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#32 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#33 {main}
+
+[2017-09-25 09:13:54 America/New_York] spag
+Web Page: GET /private/admins
+Unknown error type: syntax error, unexpected '}'
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php line: 75
+Stack Trace:
+#0 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/composer/ClassLoader.php(301): Composer\Autoload\includeFile('/media/gcat/sto...')
+#1 [internal function]: Composer\Autoload\ClassLoader->loadClass('It_All\\Spaghett...')
+#2 [internal function]: spl_autoload_call('It_All\\Spaghett...')
+#3 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/CallableResolver.php(89): class_exists('It_All\\Spaghett...')
+#4 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/CallableResolver.php(61): Slim\CallableResolver->resolveCallable('It_All\\Spaghett...', 'index')
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/CallableResolverAwareTrait.php(45): Slim\CallableResolver->resolve('It_All\\Spaghett...')
+#6 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(333): Slim\Routable->resolveCallable('It_All\\Spaghett...')
+#7 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#8 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#9 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#10 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#11 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#12 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#13 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#14 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#15 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#17 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#19 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#20 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#21 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#22 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#23 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#24 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#25 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#26 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#27 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#28 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#30 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#31 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#32 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#33 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#34 {main}
+
+[2017-09-25 09:14:10 America/New_York] spag
+Web Page: POST /private/admins
+Unknown error type: Argument 2 passed to It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView::indexView() must be of the type string or null, integer given, called in /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php on line 74
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php line: 39
+Stack Trace:
+#0 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php(74): It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->indexView(Object(Slim\Http\Response), 30)
+#1 [internal function]: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsView->indexFilter(Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#3 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(344): Slim\Handlers\Strategies\RequestResponse->__invoke(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#4 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#5 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#6 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#7 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#8 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#9 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#10 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#11 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#12 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#13 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#14 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#15 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#17 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#18 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#19 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#20 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#21 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#22 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#23 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#24 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#25 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#26 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#27 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#28 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#30 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#31 {main}
+
+[2017-09-25 09:20:33 America/New_York] spag
+Web Page: POST /private/admins
+Unknown error type: Call to undefined method It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController::indexView()
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsController.php line: 59
+Stack Trace:
+#0 [internal function]: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController->postIndexFilter(Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#1 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(344): Slim\Handlers\Strategies\RequestResponse->__invoke(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#3 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#4 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#6 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#7 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#8 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#9 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#10 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#11 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#12 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#13 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#14 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#15 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#17 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#19 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#20 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#21 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#22 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#23 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#24 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#25 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#26 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#27 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#28 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#30 {main}
+
+[2017-09-25 09:20:38 America/New_York] spag
+Web Page: POST /private/admins
+Unknown error type: Call to undefined method It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController::indexView()
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsController.php line: 59
+Stack Trace:
+#0 [internal function]: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController->postIndexFilter(Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#1 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#2 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(344): Slim\Handlers\Strategies\RequestResponse->__invoke(Array, Object(Slim\Http\Request), Object(Slim\Http\Response), Array)
+#3 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authorization/AuthorizationMiddleware.php(34): Slim\Route->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#4 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#5 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware), Array)
+#6 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#7 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\Route))
+#8 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/Authentication/AuthenticationMiddleware.php(23): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#9 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#10 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware), Array)
+#11 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#12 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#13 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\Route->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#14 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php(316): Slim\Route->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#15 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(476): Slim\Route->run(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#16 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Infrastructure/Security/CsrfMiddleware.php(30): Slim\App->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#17 [internal function]: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#18 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware), Array)
+#19 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#20 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Slim\App))
+#21 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php(167): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#22 [internal function]: Slim\Csrf\Guard->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#23 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Slim\Csrf\Guard), Array)
+#24 [internal function]: Slim\DeferredCallable->__invoke(Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#25 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(73): call_user_func(Object(Slim\DeferredCallable), Object(Slim\Http\Request), Object(Slim\Http\Response), Object(Closure))
+#26 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(122): Slim\App->Slim\{closure}(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#27 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(370): Slim\App->callMiddlewareStack(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#28 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php(295): Slim\App->process(Object(Slim\Http\Request), Object(Slim\Http\Response))
+#29 /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/public/index.php(25): Slim\App->run()
+#30 {main}
+
+[2017-09-25 09:21:34 America/New_York] spag
+Web Page: POST /private/admins
+Notice: Undefined index: password
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php line: 110
+Stack Trace:
+#0: /Domain/Admin/Admins/AdminsView.php [149]  AdminsView->getForm() { 0: object type: Slim\Http\Request}
+
+#1: /Infrastructure/Database/CRUD/AdminCrudView.php [71]  AdminsView->insertView() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#2: /Domain/Admin/Admins/AdminsController.php [59]  AdminCrudView->getInsert() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#3: AdminsController->postIndexFilter() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#4: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php [41] call_user_func() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController  ^1: postIndexFilter 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#5: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [344]  RequestResponse->__invoke() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController  ^1: postIndexFilter 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#6: /Infrastructure/Security/Authorization/AuthorizationMiddleware.php [34]  Route->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#7: AuthorizationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#8: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\Route}
+
+#9: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#10: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\Route}
+
+#11: /Infrastructure/Security/Authentication/AuthenticationMiddleware.php [23]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#12: AuthenticationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#13: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#14: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#15: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#16: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#17: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [316]  Route->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#18: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [476]  Route->run() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#19: /Infrastructure/Security/CsrfMiddleware.php [30]  App->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#20: CsrfMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#21: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\App}
+
+#22: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#23: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\App}
+
+#24: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php [167]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#25: Guard->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#26: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: Slim\Csrf\Guard 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#27: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#28: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#29: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#30: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [370]  App->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#31: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [295]  App->process() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#32: /public/index.php [25]  App->run() {}
+
+
+
+[2017-09-25 09:21:34 America/New_York] spag
+Web Page: POST /private/admins
+Notice: Undefined index: password_confirm
+/media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/Src/Domain/Admin/Admins/AdminsView.php line: 111
+Stack Trace:
+#0: /Domain/Admin/Admins/AdminsView.php [149]  AdminsView->getForm() { 0: object type: Slim\Http\Request}
+
+#1: /Infrastructure/Database/CRUD/AdminCrudView.php [71]  AdminsView->insertView() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#2: /Domain/Admin/Admins/AdminsController.php [59]  AdminCrudView->getInsert() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#3: AdminsController->postIndexFilter() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: }
+
+#4: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php [41] call_user_func() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController  ^1: postIndexFilter 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#5: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [344]  RequestResponse->__invoke() { 0:   ^0: object type: It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsController  ^1: postIndexFilter 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: }
+
+#6: /Infrastructure/Security/Authorization/AuthorizationMiddleware.php [34]  Route->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#7: AuthorizationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#8: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\Route}
+
+#9: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\Route}
+
+#10: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\Route}
+
+#11: /Infrastructure/Security/Authentication/AuthenticationMiddleware.php [23]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#12: AuthenticationMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#13: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#14: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#15: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#16: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  Route->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#17: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/Route.php [316]  Route->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#18: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [476]  Route->run() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#19: /Infrastructure/Security/CsrfMiddleware.php [30]  App->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#20: CsrfMiddleware->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#21: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: It_All\Spaghettify\Src\Infrastructure\Security\CsrfMiddleware 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Slim\App}
+
+#22: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Slim\App}
+
+#23: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Slim\App}
+
+#24: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/csrf/src/Guard.php [167]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#25: Guard->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#26: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/DeferredCallable.php [43] call_user_func_array() { 0: object type: Slim\Csrf\Guard 1:   ^0: object type: Slim\Http\Request  ^1: object type: Slim\Http\Response  ^2: object type: Closure}
+
+#27: DeferredCallable->__invoke() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response 2: object type: Closure}
+
+#28: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [73] call_user_func() { 0: object type: Slim\DeferredCallable 1: object type: Slim\Http\Request 2: object type: Slim\Http\Response 3: object type: Closure}
+
+#29: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/MiddlewareAwareTrait.php [122]  App->Slim\{closure}() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#30: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [370]  App->callMiddlewareStack() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#31: /media/gcat/storage/it-all.com/Software/ProjectsSrc/Spaghettify/vendor/slim/slim/Slim/App.php [295]  App->process() { 0: object type: Slim\Http\Request 1: object type: Slim\Http\Response}
+
+#32: /public/index.php [25]  App->run() {}
+
+
+

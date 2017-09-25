@@ -46,6 +46,51 @@ class AdminsController extends CrudController
         }
     }
 
+    public function postIndexFilter(Request $request, Response $response, $args)
+    {
+        // parse the where
+        $this->setRequestInput($request);
+        $whereParts = explode(",", $_SESSION[SESSION_REQUEST_INPUT_KEY]['where']);
+        if (strlen($whereParts[0]) == 0) {
+            echo 'nothing entered';
+        }
+        foreach ($whereParts as $whereFieldValue) {
+            $whereFieldValueParts = explode("=", $whereFieldValue);
+            if (count($whereFieldValueParts) != 2) {
+                echo 'malformed where';
+            }
+            $fieldName = $whereFieldValueParts[0];
+            $whereValue = $whereFieldValueParts[1];
+            // initialize where fields
+            $whereId = null;
+            $whereName = null;
+            $whereUsername = null;
+            $whereRole = null;
+            $wherelevel = null;
+            switch ($fieldName) {
+                case 'id':
+                    $whereId = $whereValue;
+                    break;
+                case 'name':
+                    $whereName = $whereValue;
+                    break;
+                case 'username':
+                    $whereUsername = $whereValue;
+                    break;
+                case 'role':
+                    $whereRole = $whereValue;
+                    break;
+                case 'level':
+                    $wherelevel = $whereValue;
+                    break;
+                default:
+                    echo 'unmatched field in where';
+            }
+            $whereId = ($fieldName == 'id') ? $whereValue : null;
+        }
+        return $this->view->indexView($response, $whereId, $whereName, $whereUsername, $whereRole, $wherelevel);
+    }
+
     public function postInsert(Request $request, Response $response, $args)
     {
         if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'insert'))) {
