@@ -3,13 +3,13 @@
 Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administration, based on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
 INSTALLATION  
+$ composer create-project --no-interaction it-all/spaghettify project-name  
+
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
  - $ psql -U postgres
  - postgres=# create role mydbname with login;
  - postgres=# create database mydbname with owner mydbname;
  - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
-
-$ composer create-project --no-interaction it-all/spaghettify project-name  
 
 Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.  
 
