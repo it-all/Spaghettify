@@ -54,41 +54,57 @@ class AdminsController extends CrudController
         if (strlen($whereParts[0]) == 0) {
             echo 'nothing entered';
         }
+        // initialize where fields and operators
+        $whereId = null;
+        $whereIdOperator = null;
+        $whereName = null;
+        $whereNameOperator = null;
+        $whereUsername = null;
+        $whereUsernameOperator = null;
+        $whereRole = null;
+        $whereRoleOperator = null;
+        $whereLevel = null;
+        $whereLevelOperator = null;
         foreach ($whereParts as $whereFieldValue) {
-            $whereFieldValueParts = explode("=", $whereFieldValue);
-            if (count($whereFieldValueParts) != 2) {
+            //field:operator:value
+            $whereFieldValueParts = explode(":", $whereFieldValue);
+            if (count($whereFieldValueParts) != 3) {
                 echo 'malformed where';
             }
             $fieldName = $whereFieldValueParts[0];
-            $whereValue = $whereFieldValueParts[1];
-            // initialize where fields
-            $whereId = null;
-            $whereName = null;
-            $whereUsername = null;
-            $whereRole = null;
-            $wherelevel = null;
+            $operator = strtoupper($whereFieldValueParts[1]);
+            $whereValue = $whereFieldValueParts[2];
+            // validate the operator =,>,<,
+            $goodOperators = ['=', '<', '>', '<=', '>=', 'IS', 'IS NOT', 'LIKE', 'ILIKE'];
+            if (!in_array($operator, $goodOperators)) {
+                echo 'invalid operator';
+            }
             switch ($fieldName) {
                 case 'id':
                     $whereId = $whereValue;
+                    $whereIdOperator = $operator;
                     break;
                 case 'name':
                     $whereName = $whereValue;
+                    $whereNameOperator = $operator;
                     break;
                 case 'username':
                     $whereUsername = $whereValue;
+                    $whereUsernameOperator = $operator;
                     break;
                 case 'role':
                     $whereRole = $whereValue;
+                    $whereRoleOperator = $operator;
                     break;
                 case 'level':
-                    $wherelevel = $whereValue;
+                    $whereLevel = $whereValue;
+                    $whereLevelOperator = $operator;
                     break;
                 default:
                     echo 'unmatched field in where';
             }
-            $whereId = ($fieldName == 'id') ? $whereValue : null;
         }
-        return $this->view->indexView($response, $whereId, $whereName, $whereUsername, $whereRole, $wherelevel);
+        return $this->view->indexView($response, $whereId, $whereIdOperator, $whereName, $whereNameOperator, $whereUsername, $whereUsernameOperator, $whereRole, $whereRoleOperator, $whereLevel, $whereLevelOperator);
     }
 
     public function postInsert(Request $request, Response $response, $args)

@@ -76,35 +76,35 @@ class AdminsModel extends DatabaseTableModel
         return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
     }
 
-    public function getWithRoles(string $whereId = null, string $whereName = null, string $whereUsername = null, string $whereRole = null, string $whereLevel = null)
+    public function getWithRoles(string $whereId = null, string $whereIdOperator = null, string $whereName = null, string $whereNameOperator = null, string $whereUsername = null, string $whereUsernameOperator = null, string $whereRole = null, string $whereRoleOperator = null, string $whereLevel = null, string $whereLevelOperator = null)
     {
         $q = new QueryBuilder("SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id");
         $argCounter = 1;
         if ($whereId !== null) {
-            $q->add(" WHERE a.id = $1", $whereId);
+            $q->add(" WHERE a.id $whereIdOperator $1", $whereId);
             $argCounter++;
         }
         if ($whereName !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : ", ";
-            $sql .= "a.name = $$argCounter";
+            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
+            $sql .= "a.name $whereNameOperator $$argCounter";
             $q->add($sql, $whereName);
             $argCounter++;
         }
         if ($whereUsername !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : ", ";
-            $sql .= "a.username = $$argCounter";
+            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
+            $sql .= "a.username $whereUsernameOperator $$argCounter";
             $q->add($sql, $whereUsername);
             $argCounter++;
         }
         if ($whereRole !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : ", ";
-            $sql .= "r.role = $$argCounter";
+            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
+            $sql .= "r.role $whereRoleOperator $$argCounter";
             $q->add($sql, $whereRole);
             $argCounter++;
         }
         if ($whereLevel !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : ", ";
-            $sql .= "r.level = $$argCounter";
+            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
+            $sql .= "r.level $whereLevelOperator $$argCounter";
             $q->add($sql, $whereLevel);
             $argCounter++;
         }
