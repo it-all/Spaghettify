@@ -7,7 +7,6 @@ use It_All\FormFormer\Fields\InputField;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
-use It_All\Spaghettify\Src\Spaghettify;
 
 class FormHelper
 {

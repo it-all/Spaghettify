@@ -8,7 +8,6 @@ use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Logins\LoginsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
-use It_All\Spaghettify\Src\Spaghettify;
 
 class AuthenticationService
 {

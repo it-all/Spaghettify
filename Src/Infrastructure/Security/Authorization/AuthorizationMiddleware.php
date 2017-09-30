@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
 use It_All\Spaghettify\Src\Infrastructure\Middleware;
-use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;

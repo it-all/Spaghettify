@@ -19,7 +19,7 @@
                             {% if insertLink %}
                                 <a class="tableCaptionAction" href="{{ path_for(insertLink.route) }}">{{ insertLink.text }}</a>
                                 <form name="filter" method="post" style="display: inline">
-                                    SELECT WHERE <input type="text" name="where" size="50" maxlength="1000" placeholder="field1:[=,<,>,IS,IS NOT]:value 1[,field2=value 2,...]">
+                                    SELECT WHERE <input type="text" name="where" size="50" maxlength="1000" placeholder="field1:{op}:value 1[,field2{=}value 2,...] op is one of [=,<,>,IS,IS NOT]">
                                     <input type="submit" value="Filter">
                                     <input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}">
                                     <input type="hidden" name="{{ csrf['tokenValueKey'] }}" value="{{ csrf['tokenValue'] }}">

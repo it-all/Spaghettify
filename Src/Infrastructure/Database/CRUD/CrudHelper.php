@@ -5,7 +5,6 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
-use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;

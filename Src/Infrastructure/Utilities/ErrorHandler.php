@@ -5,7 +5,6 @@ namespace It_All\Spaghettify\Src\Infrastructure\Utilities;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
 use It_All\Spaghettify\Src\Infrastructure\SystemEvents\SystemEventsModel;
-use It_All\Spaghettify\Src\Spaghettify;
 
 class ErrorHandler
 {

@@ -5,7 +5,6 @@ namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
-use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Http\Request;
 use Slim\Http\Response;
 

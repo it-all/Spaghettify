@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 use It_All\Spaghettify\Src\Infrastructure\Security\Authentication\AuthenticationService;
 use It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationService;
-use It_All\Spaghettify\Src\Spaghettify;
 use Slim\Views\TwigExtension;
 use Slim\Views\Twig;
 
