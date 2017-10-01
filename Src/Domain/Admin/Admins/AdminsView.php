@@ -8,8 +8,9 @@ use It_All\FormFormer\Fields\SelectField;
 use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
+use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
+use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -17,11 +18,16 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsView extends AdminCrudView
+class AdminsView extends AdminView
 {
+    protected $routePrefix;
+    protected $model;
+
     public function __construct(Container $container)
     {
-        parent::__construct($container, new AdminsModel(), ROUTEPREFIX_ADMIN_ADMINS);
+        $this->model = new AdminsModel();
+        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
+        parent::__construct($container);
     }
 
     /**
@@ -35,9 +41,14 @@ class AdminsView extends AdminCrudView
         $this->indexView($response);
     }
 
-    public function indexView(Response $response, string $whereId = null, string $whereIdOperator = null, string $whereName = null, string $whereNameOperator = null, string $whereUsername = null, string $whereUsernameOperator = null, string $whereRole = null, string $whereRoleOperator = null, string $whereLevel = null, string $whereLevelOperator = null)
+    public function indexView(Response $response, array $whereColumnsInfo = null)
     {
-        if ($results = pg_fetch_all($this->model->getWithRoles($whereId, $whereIdOperator, $whereName, $whereNameOperator, $whereUsername, $whereUsernameOperator, $whereRole, $whereRoleOperator, $whereLevel, $whereLevelOperator))) {
+        // holds filter view in session
+        if ($whereColumnsInfo == null && isset($_SESSION['adminWhereColumnsInfo'])) {
+            $whereColumnsInfo = $_SESSION['adminWhereColumnsInfo'];
+        }
+
+        if ($results = pg_fetch_all($this->model->getWithRoles($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -45,12 +56,17 @@ class AdminsView extends AdminCrudView
 
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
+        $whereValue = (isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'] : '';
+
         return $this->view->render(
             $response,
             'admin/adminsList.twig',
             [
                 'title' => $this->model->getFormalTableName(),
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
+                'whereOpsList' => QueryBuilder::getWhereOperatorsText(),
+                'whereValue' => $whereValue,
+                'whereErrorMessage' => FormHelper::getFieldError('where'),
                 'insertLink' => $insertLink,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),

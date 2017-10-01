@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
+use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
@@ -47,63 +48,72 @@ class AdminsController extends CrudController
 
     public function postIndexFilter(Request $request, Response $response, $args)
     {
+        $validationError = false;
         // parse the where
         $this->setRequestInput($request);
+        $whereColumnsInfo = [];
         $whereParts = explode(",", $_SESSION[SESSION_REQUEST_INPUT_KEY]['where']);
         if (strlen($whereParts[0]) == 0) {
-            echo 'nothing entered';
+            FormHelper::setFieldErrors(['where' => 'Not Entered']);
+            $validationError = true;
+        } else {
+
+            foreach ($whereParts as $whereFieldOperatorValue) {
+                //field:operator:value
+                $whereFieldOperatorValueParts = explode(":", $whereFieldOperatorValue);
+                if (count($whereFieldOperatorValueParts) != 3) {
+                    FormHelper::setFieldErrors(['where' => 'Malformed']);
+                    $validationError = true;
+                    break;
+                }
+                $columnName = trim($whereFieldOperatorValueParts[0]);
+                $whereOperator = strtoupper(trim($whereFieldOperatorValueParts[1]));
+                $whereValue = trim($whereFieldOperatorValueParts[2]);
+
+                // validate the column name
+                try {
+                    $columnNameSql = $this->model::getColumnNameSqlForColumnName($columnName);
+                } catch (\Exception $e) {
+                    FormHelper::setFieldErrors(['where' => "$columnName not found"]);
+                    $validationError = true;
+                    break;
+                }
+
+                // validate the operator
+                if (!QueryBuilder::validateWhereOperator($whereOperator)) {
+                    FormHelper::setFieldErrors(['where' => "Invalid Operator $whereOperator"]);
+                    $validationError = true;
+                    break;
+                }
+
+                // null value only valid with IS and IS NOT operators
+                if (strtolower($whereValue) == 'null') {
+                    if ($whereOperator != 'IS' && $whereOperator != 'IS NOT') {
+                        FormHelper::setFieldErrors(['where' => "Mismatched null, $whereOperator"]);
+                        $validationError = true;
+                        break;
+                    }
+                    $whereValue = null;
+                }
+
+                if (!isset($whereColumnsInfo[$columnNameSql])) {
+                    $whereColumnsInfo[$columnNameSql] = [
+                        'operators' => [$whereOperator],
+                        'values' => [$whereValue]
+                    ];
+                } else {
+                    $whereColumnsInfo[$columnNameSql]['operators'][] = $whereOperator;
+                    $whereColumnsInfo[$columnNameSql]['values'][] = $whereValue;
+                }
+            }
         }
-        // initialize where fields and operators
-        $whereId = null;
-        $whereIdOperator = null;
-        $whereName = null;
-        $whereNameOperator = null;
-        $whereUsername = null;
-        $whereUsernameOperator = null;
-        $whereRole = null;
-        $whereRoleOperator = null;
-        $whereLevel = null;
-        $whereLevelOperator = null;
-        foreach ($whereParts as $whereFieldValue) {
-            //field:operator:value
-            $whereFieldValueParts = explode(":", $whereFieldValue);
-            if (count($whereFieldValueParts) != 3) {
-                echo 'malformed where';
-            }
-            $fieldName = $whereFieldValueParts[0];
-            $operator = strtoupper($whereFieldValueParts[1]);
-            $whereValue = $whereFieldValueParts[2];
-            // validate the operator =,>,<,
-            $goodOperators = ['=', '<', '>', '<=', '>=', 'IS', 'IS NOT', 'LIKE', 'ILIKE'];
-            if (!in_array($operator, $goodOperators)) {
-                echo 'invalid operator';
-            }
-            switch ($fieldName) {
-                case 'id':
-                    $whereId = $whereValue;
-                    $whereIdOperator = $operator;
-                    break;
-                case 'name':
-                    $whereName = $whereValue;
-                    $whereNameOperator = $operator;
-                    break;
-                case 'username':
-                    $whereUsername = $whereValue;
-                    $whereUsernameOperator = $operator;
-                    break;
-                case 'role':
-                    $whereRole = $whereValue;
-                    $whereRoleOperator = $operator;
-                    break;
-                case 'level':
-                    $whereLevel = $whereValue;
-                    $whereLevelOperator = $operator;
-                    break;
-                default:
-                    echo 'unmatched field in where';
-            }
+
+        if ($validationError) {
+            $whereColumnsInfo = null;
+        } else {
+            $_SESSION['adminWhereColumnsInfo'] = $whereColumnsInfo;
         }
-        return $this->view->indexView($response, $whereId, $whereIdOperator, $whereName, $whereNameOperator, $whereUsername, $whereUsernameOperator, $whereRole, $whereRoleOperator, $whereLevel, $whereLevelOperator);
+        return $this->view->indexView($response, $whereColumnsInfo);
     }
 
     public function postInsert(Request $request, Response $response, $args)

@@ -7,6 +7,7 @@ class QueryBuilder
 {
     protected $sql;
     protected $args = array();
+    const OPERATORS = ['=', '!=', '<', '>', '<=', '>=', 'IS', 'IS NOT', 'LIKE', 'ILIKE'];
 
     /**
      * QueryBuilder constructor. like add, for convenience
@@ -67,8 +68,9 @@ class QueryBuilder
     public function execute()
     {
         if (!$res = pg_query_params($this->sql, $this->args)) {
-            $msg = $this->sql . " \nArgs: " . var_export($this->args, true);
-            throw new \Exception('Query Execution Failure: '.$msg);
+            // note pg_last_error seems to often not return anything
+            $msg = pg_last_error() . " " . $this->sql . " \nArgs: " . var_export($this->args, true);
+            throw new \Exception('Query Execution Failure See Error Log: '.$msg);
         }
         return $res;
     }
@@ -86,19 +88,18 @@ class QueryBuilder
                     return pg_fetch_array($res)[0];
                 }
                 else {
-                    $this->triggerError('getOne too many fields');
-                    return false;
+                    throw new \Exception("Too many result fields");
                 }
             }
             else {
                 // either 0 or multiple records in result
+                // if 0
                 if (pg_num_rows($res) == 0) {
-                    // no error triggered here. client should trigger if appropriate
+                    // no error here. client can error if appropriate
                     return false;
                 }
                 else {
-                    $this->triggerError('getOne multiple records found');
-                    return false;
+                    throw new \Exception("Multiple results");
                 }
             }
         }
@@ -120,4 +121,21 @@ class QueryBuilder
         trigger_error($errorMsg);
     }
 
+    public static function validateWhereOperator(string $op): bool
+    {
+        return in_array($op, self::OPERATORS);
+    }
+
+    public static function getWhereOperatorsText(): string
+    {
+        $ops = "";
+        $opCount = 1;
+        foreach (self::OPERATORS as $op) {
+            $ops .= "$op";
+            if ($opCount < count(self::OPERATORS)) {
+                $ops .= ", ";
+            }
+        }
+        return $ops;
+    }
 }

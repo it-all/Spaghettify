@@ -5,10 +5,13 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
+use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
 
 class AdminsModel extends DatabaseTableModel
 {
 //    private $roles; // array of existing roles
+
+    const COLUMNS_WITH_ROLES = ['admins.id', 'admins.name', 'admins.username', 'roles.role', 'roles.level'];
 
     public function __construct()
     {
@@ -76,40 +79,106 @@ class AdminsModel extends DatabaseTableModel
         return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
     }
 
-    public function getWithRoles(string $whereId = null, string $whereIdOperator = null, string $whereName = null, string $whereNameOperator = null, string $whereUsername = null, string $whereUsernameOperator = null, string $whereRole = null, string $whereRoleOperator = null, string $whereLevel = null, string $whereLevelOperator = null)
+    public function getWithRoles(array $whereColumnsInfo = null)
     {
-        $q = new QueryBuilder("SELECT a.id, a.name, a.username, r.role, r.level FROM admins a JOIN roles r ON a.role_id = r.id");
-        $argCounter = 1;
-        if ($whereId !== null) {
-            $q->add(" WHERE a.id $whereIdOperator $1", $whereId);
-            $argCounter++;
+        $selectClause = "SELECT ";
+        $columnCount = 1;
+        foreach (self::COLUMNS_WITH_ROLES as $columnNameSql) {
+            $selectClause .= $columnNameSql;
+            if ($columnCount != count(self::COLUMNS_WITH_ROLES)) {
+                $selectClause .= ",";
+            }
+            $columnCount++;
         }
-        if ($whereName !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
-            $sql .= "a.name $whereNameOperator $$argCounter";
-            $q->add($sql, $whereName);
-            $argCounter++;
-        }
-        if ($whereUsername !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
-            $sql .= "a.username $whereUsernameOperator $$argCounter";
-            $q->add($sql, $whereUsername);
-            $argCounter++;
-        }
-        if ($whereRole !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
-            $sql .= "r.role $whereRoleOperator $$argCounter";
-            $q->add($sql, $whereRole);
-            $argCounter++;
-        }
-        if ($whereLevel !== null) {
-            $sql = ($argCounter == 1) ? " WHERE " : " AND ";
-            $sql .= "r.level $whereLevelOperator $$argCounter";
-            $q->add($sql, $whereLevel);
-            $argCounter++;
+        $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
+        $orderByClause = "ORDER BY roles.level";
+        if ($whereColumnsInfo != null) {
+            $this->validateWhereColumnsWithRoles($whereColumnsInfo);
         }
 
-        $q->add(" ORDER BY r.level");
+        $q = new SelectBuilder($selectClause, $fromClause, $whereColumnsInfo, $orderByClause);
+        return $q->execute();
+    }
+
+    // make sure each columnNameSql in columns
+    private function validateWhereColumnsWithRoles(array $whereColumnsInfo)
+    {
+        foreach ($whereColumnsInfo as $columnNameSql => $columnWhereInfo) {
+            if (!in_array($columnNameSql, self::COLUMNS_WITH_ROLES)) {
+                throw new \Exception("Invalid where column $columnNameSql");
+            }
+        }
+    }
+
+    // returns just the column name ie [id, name, username] instead of [admins.id etc]
+    public static function getValidWhereColumnNames(): array
+    {
+        $names = [];
+        foreach (self::COLUMNS_WITH_ROLES as $columnNameSql) {
+            $names[] = explode(".", $columnNameSql)[1];
+        }
+
+        return $names;
+    }
+
+    public static function getColumnNameSqlForColumnName(string $columnName): string
+    {
+        switch (strtolower($columnName)) {
+            case 'id':
+                return 'admins.id';
+                break;
+            case 'name':
+                return 'admins.name';
+                break;
+            case 'username':
+                return 'admins.username';
+                break;
+            case 'role':
+                return 'roles.role';
+                break;
+            case 'level':
+                return 'roles.level';
+                break;
+            default:
+                throw new \Exception("$columnName not found");
+        }
+    }
+
+
+    public function getWithRolesOld(string $whereId = null, string $whereIdOperator = null, string $whereName = null, string $whereNameOperator = null, string $whereUsername = null, string $whereUsernameOperator = null, string $whereRole = null, string $whereRoleOperator = null, string $whereLevel = null, string $whereLevelOperator = null)
+    {
+        $selectClause = "SELECT a.id, a.name, a.username, r.role, r.level";
+        $fromClause = "FROM admins a JOIN roles r ON a.role_id = r.id";
+        $whereColumns = [
+            'id' => [
+                'tableAbbrev' => 'a',
+                'whereValue' => $whereId,
+                'whereOperator' => $whereIdOperator
+            ],
+            'name' => [
+                'tableAbbrev' => 'a',
+                'whereValue' => $whereName,
+                'whereOperator' => $whereNameOperator
+            ],
+            'username' => [
+                'tableAbbrev' => 'a',
+                'whereValue' => $whereUsername,
+                'whereOperator' => $whereUsernameOperator
+            ],
+            'role' => [
+                'tableAbbrev' => 'r',
+                'whereValue' => $whereRole,
+                'whereOperator' => $whereRoleOperator
+            ],
+            'level' => [
+                'tableAbbrev' => 'r',
+                'whereValue' => $whereLevel,
+                'whereOperator' => $whereLevelOperator
+            ]
+        ];
+        $orderByClause = "ORDER BY r.level";
+
+        $q = new SelectBuilder($selectClause, $fromClause, $whereColumns, $orderByClause);
         return $q->execute();
     }
 }
