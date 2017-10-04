@@ -5,6 +5,7 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
+use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -46,16 +47,14 @@ class AdminsController extends CrudController
         }
     }
 
-    public function postIndexFilter(Request $request, Response $response, $args)
+    // parse the where field
+    public function getWhereFilterColumns(string $whereFieldValue, DatabaseTableModel $model): ?array
     {
-        $validationError = false;
-        // parse the where
-        $this->setRequestInput($request);
         $whereColumnsInfo = [];
-        $whereParts = explode(",", $_SESSION[SESSION_REQUEST_INPUT_KEY]['where']);
+        $whereParts = explode(",", $whereFieldValue);
         if (strlen($whereParts[0]) == 0) {
             FormHelper::setFieldErrors(['where' => 'Not Entered']);
-            $validationError = true;
+            return null;
         } else {
 
             foreach ($whereParts as $whereFieldOperatorValue) {
@@ -63,8 +62,7 @@ class AdminsController extends CrudController
                 $whereFieldOperatorValueParts = explode(":", $whereFieldOperatorValue);
                 if (count($whereFieldOperatorValueParts) != 3) {
                     FormHelper::setFieldErrors(['where' => 'Malformed']);
-                    $validationError = true;
-                    break;
+                    return null;
                 }
                 $columnName = trim($whereFieldOperatorValueParts[0]);
                 $whereOperator = strtoupper(trim($whereFieldOperatorValueParts[1]));
@@ -72,26 +70,23 @@ class AdminsController extends CrudController
 
                 // validate the column name
                 try {
-                    $columnNameSql = $this->model::getColumnNameSqlForColumnName($columnName);
+                    $columnNameSql = $model::getColumnNameSqlForColumnName($columnName);
                 } catch (\Exception $e) {
                     FormHelper::setFieldErrors(['where' => "$columnName not found"]);
-                    $validationError = true;
-                    break;
+                    return null;
                 }
 
                 // validate the operator
                 if (!QueryBuilder::validateWhereOperator($whereOperator)) {
                     FormHelper::setFieldErrors(['where' => "Invalid Operator $whereOperator"]);
-                    $validationError = true;
-                    break;
+                    return null;
                 }
 
                 // null value only valid with IS and IS NOT operators
                 if (strtolower($whereValue) == 'null') {
                     if ($whereOperator != 'IS' && $whereOperator != 'IS NOT') {
                         FormHelper::setFieldErrors(['where' => "Mismatched null, $whereOperator"]);
-                        $validationError = true;
-                        break;
+                        return null;
                     }
                     $whereValue = null;
                 }
@@ -108,10 +103,24 @@ class AdminsController extends CrudController
             }
         }
 
-        if ($validationError) {
+        return $whereColumnsInfo;
+    }
+
+    public function postIndexFilter(Request $request, Response $response, $args)
+    {
+        $this->setRequestInput($request);
+
+        if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) {
+            throw new \Exception("where session input must be set");
+        }
+
+        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'], $this->model)) {
+            // redisplay form with error
             return $this->view->indexViewAdmins($response);
         } else {
-            $_SESSION['adminWhereColumnsInfo'] = $whereColumnsInfo;
+            $_SESSION['adminsWhereColumnsInfo'] = $whereColumnsInfo;
+            $_SESSION['adminsWhereField'] = $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'];
+            FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
     }
@@ -147,7 +156,7 @@ class AdminsController extends CrudController
         FormHelper::unsetSessionVars();
 
         $_SESSION[SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
-        return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix, 'index')));
+        return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS_RESET)); // reset filter
     }
 
     public function putUpdate(Request $request, Response $response, $args)

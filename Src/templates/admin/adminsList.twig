@@ -25,7 +25,7 @@
                                     {% endif %}
                                     <input type="text" name="where" value="{{ whereValue }}" size="70" maxlength="500" placeholder="field1:{op}:value 1[,field2{=}value 2,...] op in [{{ whereOpsList }}]" required>
                                     <input type="submit" value="Filter">
-                                    {% if whereValue and not whereErrorMessage %}
+                                    {% if isFiltered %}
                                         <a href="{{ path_for(resetRoute) }}">reset</a>
                                     {% endif %}
                                     <input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}">

@@ -6,6 +6,7 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
+use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 
 class AdminsModel extends DatabaseTableModel
 {

@@ -28,9 +28,6 @@ class AdminsView extends AdminCrudView
     public function __construct(Container $container)
     {
         parent::__construct($container, new AdminsModel(), ROUTEPREFIX_ADMIN_ADMINS);
-//        $this->model = new AdminsModel();
-//        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
-//        parent::__construct($container);
     }
 
     /**
@@ -52,24 +49,34 @@ class AdminsView extends AdminCrudView
     public function indexViewAdmins(Response $response, bool $resetFilter = false)
     {
         if ($resetFilter) {
-            echo 'resetting filter';
-            if (isset($_SESSION['adminWhereColumnsInfo'])) {
-                unset($_SESSION['adminWhereColumnsInfo']);
+            if (isset($_SESSION['adminsWhereColumnsInfo'])) {
+                unset($_SESSION['adminsWhereColumnsInfo']);
             }
-            FormHelper::unsetSessionVars();
+            if (isset($_SESSION['adminsWhereField'])) {
+                unset($_SESSION['adminsWhereField']);
+            }
+            // redirect to the clean url
+//            return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
 
-        $whereColumnsInfo = (isset($_SESSION['adminWhereColumnsInfo'])) ? $_SESSION['adminWhereColumnsInfo'] : null;
+        $whereColumnsInfo = (isset($_SESSION['adminsWhereColumnsInfo'])) ? $_SESSION['adminsWhereColumnsInfo'] : null;
         if ($results = pg_fetch_all($this->model->getWithRoles($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
         }
 
-        $whereErrorMessage = FormHelper::getFieldError('where');
-        FormHelper::unsetSessionFormErrors();
+        // determine where field value
+        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) {
+            $whereFieldValue = $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'];
+        } elseif (isset($_SESSION['adminsWhereField'])) {
+            $whereFieldValue = $_SESSION['adminsWhereField'];
+        } else {
+            $whereFieldValue = '';
+        }
 
-        $whereFieldValue = (isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'] : '';
+        $whereErrorMessage = FormHelper::getFieldError('where');
+        FormHelper::unsetSessionVars();
 
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
@@ -77,13 +84,13 @@ class AdminsView extends AdminCrudView
             $response,
             'admin/adminsList.twig',
             [
-                'debug' => $debug,
                 'title' => $this->model->getFormalTableName(),
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
                 'insertLink' => $insertLink,
                 'whereOpsList' => QueryBuilder::getWhereOperatorsText(),
                 'whereValue' => $whereFieldValue,
                 'whereErrorMessage' => $whereErrorMessage,
+                'isFiltered' => $whereColumnsInfo,
                 'indexRoute' => ROUTE_ADMIN_ADMINS,
                 'resetRoute' => ROUTE_ADMIN_ADMINS_RESET,
                 'updatePermitted' => $this->authorization
