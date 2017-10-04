@@ -57,6 +57,7 @@ return [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
         ROUTE_SYSTEM_EVENTS => 'owner',
         ROUTE_ADMIN_ADMINS => 'director',
+        ROUTE_ADMIN_ADMINS_RESET => 'director',
         ROUTE_ADMIN_ADMINS_INSERT => 'director',
         ROUTE_ADMIN_ADMINS_UPDATE => 'director',
         ROUTE_ADMIN_ADMINS_DELETE => 'owner',

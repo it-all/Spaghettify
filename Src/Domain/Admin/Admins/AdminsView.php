@@ -9,25 +9,28 @@ use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use It_All\Spaghettify\Src\Infrastructure\AdminView;
+use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
+use function It_All\Spaghettify\Src\Infrastructure\Utilities\arrayWalkToStringRecursive;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsView extends AdminView
+class AdminsView extends AdminCrudView
 {
     protected $routePrefix;
     protected $model;
 
     public function __construct(Container $container)
     {
-        $this->model = new AdminsModel();
-        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
-        parent::__construct($container);
+        parent::__construct($container, new AdminsModel(), ROUTEPREFIX_ADMIN_ADMINS);
+//        $this->model = new AdminsModel();
+//        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
+//        parent::__construct($container);
     }
 
     /**
@@ -38,36 +41,51 @@ class AdminsView extends AdminView
      */
     public function index(Request $request, Response $response, $args)
     {
-        $this->indexView($response);
+        $this->indexViewAdmins($response);
     }
 
-    public function indexView(Response $response, array $whereColumnsInfo = null)
+    public function indexResetFilter(Request $request, Response $response, $args)
     {
-        // holds filter view in session
-        if ($whereColumnsInfo == null && isset($_SESSION['adminWhereColumnsInfo'])) {
-            $whereColumnsInfo = $_SESSION['adminWhereColumnsInfo'];
+        $this->indexViewAdmins($response, true);
+    }
+
+    public function indexViewAdmins(Response $response, bool $resetFilter = false)
+    {
+        if ($resetFilter) {
+            echo 'resetting filter';
+            if (isset($_SESSION['adminWhereColumnsInfo'])) {
+                unset($_SESSION['adminWhereColumnsInfo']);
+            }
+            FormHelper::unsetSessionVars();
         }
 
+        $whereColumnsInfo = (isset($_SESSION['adminWhereColumnsInfo'])) ? $_SESSION['adminWhereColumnsInfo'] : null;
         if ($results = pg_fetch_all($this->model->getWithRoles($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
         }
 
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $whereErrorMessage = FormHelper::getFieldError('where');
+        FormHelper::unsetSessionFormErrors();
 
-        $whereValue = (isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'] : '';
+        $whereFieldValue = (isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) ? $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'] : '';
+
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
         return $this->view->render(
             $response,
             'admin/adminsList.twig',
             [
+                'debug' => $debug,
                 'title' => $this->model->getFormalTableName(),
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
-                'whereOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'whereValue' => $whereValue,
-                'whereErrorMessage' => FormHelper::getFieldError('where'),
                 'insertLink' => $insertLink,
+                'whereOpsList' => QueryBuilder::getWhereOperatorsText(),
+                'whereValue' => $whereFieldValue,
+                'whereErrorMessage' => $whereErrorMessage,
+                'indexRoute' => ROUTE_ADMIN_ADMINS,
+                'resetRoute' => ROUTE_ADMIN_ADMINS_RESET,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),
                 'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),

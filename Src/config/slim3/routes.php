@@ -84,6 +84,12 @@ $slim->post('/' . $config['dirs']['admin'] . '/admins',
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS]))
     ->add(new AuthenticationMiddleware($container));
 
+$slim->get('/' . $config['dirs']['admin'] . '/admins/reset',
+    $adminsPath . 'AdminsView:indexResetFilter')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_RESET]))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName(ROUTE_ADMIN_ADMINS_RESET);
+
 $slim->get('/' . $config['dirs']['admin'] . '/admins/insert',
     $adminsPath . 'AdminsView:getInsert')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_INSERT]))

@@ -25,7 +25,7 @@ function getRouteName(bool $isAdmin = true, string $routePrefix = null, string $
     }
 
     if ($routeType !== null) {
-        $validRouteTypes = ['index', 'insert', 'update', 'delete'];
+        $validRouteTypes = ['index', 'index.filter', 'insert', 'update', 'delete'];
         if (!in_array($routeType, $validRouteTypes)) {
             throw new \Exception("Invalid route type $routeType");
         }
@@ -167,7 +167,7 @@ function arrayWalkToStringRecursive(array $arr, int $level = 0, int $maxLevel = 
         $tabs .= " ^"; // use ^ to denote another level
     }
     foreach ($arr as $k => $v) {
-        $out .= "$tabs$k: ";
+        $out .= "<br>$tabs$k: ";
         if (is_object($v)) {
             $out .= 'object type: '.get_class($v);
         } elseif (is_array($v)) {

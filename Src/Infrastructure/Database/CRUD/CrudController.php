@@ -140,7 +140,7 @@ class CrudController extends Controller
         return $this->getDeleteHelper($response, $args['primaryKey']);
     }
 
-    protected function getDeleteHelper(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false)
+    protected function getDeleteHelper(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false, $routeType = 'index')
     {
         if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'delete'))) {
             throw new \Exception('No permission.');
@@ -152,7 +152,7 @@ class CrudController extends Controller
             // no need to do anything, just redirect with error message already set
         }
 
-        $redirectRoute = getRouteName(true, $this->routePrefix, 'index');
+        $redirectRoute = getRouteName(true, $this->routePrefix, $routeType);
         return $response->withRedirect($this->router->pathFor($redirectRoute));
     }
 

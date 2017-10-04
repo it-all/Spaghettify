@@ -113,4 +113,9 @@ Be sure to include the csrf fields:
 <input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}">  
 <input type="hidden" name="{{ csrf['tokenValueKey'] }}" value="{{ csrf['tokenValue'] }}">  
 
+To print debugging info in admin pages:  
+Send a 'debug' variable to twig ie:   
+return $this->view->render($response, 'admin/adminsList.twig',['debug' => arrayWalkToStringRecursive($_SESSION)]);  
+This is because the html main page content is set to 100% height, and simply doing a var_dump or echo can cause an unreadable display of the content.  
+
 ===========================================================Thank you.

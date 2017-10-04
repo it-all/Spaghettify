@@ -98,10 +98,24 @@ class FormHelper
         return new InputField('', ['type' => 'submit', 'name' => 'submit', 'value' => $value]);
     }
 
+    public static function unsetSessionInput()
+    {
+        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY])) {
+            unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
+        }
+    }
+
+    public static function unsetSessionFormErrors()
+    {
+        if (isset($_SESSION[self::SESSION_ERRORS_KEY])) {
+            unset($_SESSION[self::SESSION_ERRORS_KEY]);
+        }
+    }
+
     public static function unsetSessionVars()
     {
-        unset($_SESSION[SESSION_REQUEST_INPUT_KEY]);
-        unset($_SESSION[self::SESSION_ERRORS_KEY]);
+        self::unsetSessionInput();
+        self::unsetSessionFormErrors();
     }
 
     public static function getDatabaseColumnValidationValue(DatabaseColumnModel $databaseColumnModel, string $validationType)

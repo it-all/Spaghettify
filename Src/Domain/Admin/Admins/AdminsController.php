@@ -109,11 +109,11 @@ class AdminsController extends CrudController
         }
 
         if ($validationError) {
-            $whereColumnsInfo = null;
+            return $this->view->indexViewAdmins($response);
         } else {
             $_SESSION['adminWhereColumnsInfo'] = $whereColumnsInfo;
+            return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
-        return $this->view->indexView($response, $whereColumnsInfo);
     }
 
     public function postInsert(Request $request, Response $response, $args)
