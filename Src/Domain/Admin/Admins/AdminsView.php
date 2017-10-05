@@ -43,7 +43,8 @@ class AdminsView extends AdminCrudView
 
     public function indexResetFilter(Request $request, Response $response, $args)
     {
-        $this->indexViewAdmins($response, true);
+        // redirect to the clean url
+        return $this->indexViewAdmins($response, true);
     }
 
     public function indexViewAdmins(Response $response, bool $resetFilter = false)
@@ -56,7 +57,7 @@ class AdminsView extends AdminCrudView
                 unset($_SESSION['adminsWhereField']);
             }
             // redirect to the clean url
-//            return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
+            return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
 
         $whereColumnsInfo = (isset($_SESSION['adminsWhereColumnsInfo'])) ? $_SESSION['adminsWhereColumnsInfo'] : null;
