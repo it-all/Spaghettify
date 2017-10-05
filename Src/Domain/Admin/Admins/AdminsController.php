@@ -219,7 +219,7 @@ class AdminsController extends CrudController
         return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix,'index')));
     }
 
-    // overrride for custom validation and return column
+    // override for custom validation and return column
     public function getDelete(Request $request, Response $response, $args)
     {
         // make sure the current admin is not deleting themself
