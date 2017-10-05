@@ -24,6 +24,9 @@ class AdminsView extends AdminCrudView
 {
     protected $routePrefix;
     protected $model;
+    const SESSION_WHERE_COLUMNS = 'adminsWhereColumnsInfo';
+    const SESSION_WHERE_VALUE_KEY = 'adminsWhereField';
+    const SESSION_WHERE_FIELD_NAME = 'where';
 
     public function __construct(Container $container)
     {
@@ -50,17 +53,17 @@ class AdminsView extends AdminCrudView
     public function indexViewAdmins(Response $response, bool $resetFilter = false)
     {
         if ($resetFilter) {
-            if (isset($_SESSION['adminsWhereColumnsInfo'])) {
-                unset($_SESSION['adminsWhereColumnsInfo']);
+            if (isset($_SESSION[self::SESSION_WHERE_COLUMNS])) {
+                unset($_SESSION[self::SESSION_WHERE_COLUMNS]);
             }
-            if (isset($_SESSION['adminsWhereField'])) {
-                unset($_SESSION['adminsWhereField']);
+            if (isset($_SESSION[self::SESSION_WHERE_VALUE_KEY])) {
+                unset($_SESSION[self::SESSION_WHERE_VALUE_KEY]);
             }
             // redirect to the clean url
             return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
 
-        $whereColumnsInfo = (isset($_SESSION['adminsWhereColumnsInfo'])) ? $_SESSION['adminsWhereColumnsInfo'] : null;
+        $whereColumnsInfo = (isset($_SESSION[self::SESSION_WHERE_COLUMNS])) ? $_SESSION[self::SESSION_WHERE_COLUMNS] : null;
         if ($results = pg_fetch_all($this->model->getWithRoles($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
@@ -68,15 +71,15 @@ class AdminsView extends AdminCrudView
         }
 
         // determine where field value
-        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) {
-            $whereFieldValue = $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'];
-        } elseif (isset($_SESSION['adminsWhereField'])) {
-            $whereFieldValue = $_SESSION['adminsWhereField'];
+        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_WHERE_FIELD_NAME])) {
+            $whereFieldValue = $_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_WHERE_FIELD_NAME];
+        } elseif (isset($_SESSION[self::SESSION_WHERE_VALUE_KEY])) {
+            $whereFieldValue = $_SESSION[self::SESSION_WHERE_VALUE_KEY];
         } else {
             $whereFieldValue = '';
         }
 
-        $whereErrorMessage = FormHelper::getFieldError('where');
+        $whereErrorMessage = FormHelper::getFieldError(self::SESSION_WHERE_FIELD_NAME);
         FormHelper::unsetSessionVars();
 
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;

@@ -53,7 +53,7 @@ class AdminsController extends CrudController
         $whereColumnsInfo = [];
         $whereParts = explode(",", $whereFieldValue);
         if (strlen($whereParts[0]) == 0) {
-            FormHelper::setFieldErrors(['where' => 'Not Entered']);
+            FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => 'Not Entered']);
             return null;
         } else {
 
@@ -61,7 +61,7 @@ class AdminsController extends CrudController
                 //field:operator:value
                 $whereFieldOperatorValueParts = explode(":", $whereFieldOperatorValue);
                 if (count($whereFieldOperatorValueParts) != 3) {
-                    FormHelper::setFieldErrors(['where' => 'Malformed']);
+                    FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => 'Malformed']);
                     return null;
                 }
                 $columnName = trim($whereFieldOperatorValueParts[0]);
@@ -72,20 +72,20 @@ class AdminsController extends CrudController
                 try {
                     $columnNameSql = $model::getColumnNameSqlForColumnName($columnName);
                 } catch (\Exception $e) {
-                    FormHelper::setFieldErrors(['where' => "$columnName not found"]);
+                    FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "$columnName not found"]);
                     return null;
                 }
 
                 // validate the operator
                 if (!QueryBuilder::validateWhereOperator($whereOperator)) {
-                    FormHelper::setFieldErrors(['where' => "Invalid Operator $whereOperator"]);
+                    FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "Invalid Operator $whereOperator"]);
                     return null;
                 }
 
                 // null value only valid with IS and IS NOT operators
                 if (strtolower($whereValue) == 'null') {
                     if ($whereOperator != 'IS' && $whereOperator != 'IS NOT') {
-                        FormHelper::setFieldErrors(['where' => "Mismatched null, $whereOperator"]);
+                        FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "Mismatched null, $whereOperator"]);
                         return null;
                     }
                     $whereValue = null;
@@ -110,16 +110,16 @@ class AdminsController extends CrudController
     {
         $this->setRequestInput($request);
 
-        if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'])) {
+        if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME])) {
             throw new \Exception("where session input must be set");
         }
 
-        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY]['where'], $this->model)) {
+        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME], $this->model)) {
             // redisplay form with error
             return $this->view->indexViewAdmins($response);
         } else {
-            $_SESSION['adminsWhereColumnsInfo'] = $whereColumnsInfo;
-            $_SESSION['adminsWhereField'] = $_SESSION[SESSION_REQUEST_INPUT_KEY]['where'];
+            $_SESSION[$this->view::SESSION_WHERE_COLUMNS] = $whereColumnsInfo;
+            $_SESSION[$this->view::SESSION_WHERE_VALUE_KEY] = $_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
