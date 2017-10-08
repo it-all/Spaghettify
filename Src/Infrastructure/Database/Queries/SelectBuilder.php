@@ -23,6 +23,15 @@ class SelectBuilder extends QueryBuilder
     private function addWhereClause(array $whereColumnsInfo)
     {
         foreach ($whereColumnsInfo as $columnNameSql => $columnWhereInfoArray) {
+            if (!isset($columnWhereInfoArray['operators'])) {
+                throw new \Exception('operators key not set');
+            }
+            if (!isset($columnWhereInfoArray['values'])) {
+                throw new \Exception('values key not set');
+            }
+            if (count($columnWhereInfoArray['operators']) != count($columnWhereInfoArray['values'])) {
+                throw new \Exception("number of operators must equal number of values");
+            }
             for ($i = 0; $i < count($columnWhereInfoArray['operators']); ++$i) {
                 if (!parent::validateWhereOperator($columnWhereInfoArray['operators'][$i])) {
                     throw new \Exception("invalid whereOperator key ".$columnWhereInfoArray['operators'][$i]."  in whereColumnsInfo for $columnNameSql");
