@@ -56,6 +56,7 @@ return [
     'adminMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
         ROUTE_SYSTEM_EVENTS => 'owner',
+        ROUTE_SYSTEM_EVENTS_RESET => 'owner',
         ROUTE_ADMIN_ADMINS => 'director',
         ROUTE_ADMIN_ADMINS_RESET => 'director',
         ROUTE_ADMIN_ADMINS_INSERT => 'director',

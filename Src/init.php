@@ -26,6 +26,7 @@ define('ROUTE_LOGOUT', 'authentication.logout');
 define('ROUTE_LOGIN_ATTEMPTS', ROUTEPREFIX_ADMIN.'.logins.index');
 // system events
 define('ROUTE_SYSTEM_EVENTS', ROUTEPREFIX_ADMIN.'.systemEvents.index');
+define('ROUTE_SYSTEM_EVENTS_RESET', ROUTEPREFIX_ADMIN.'.systemEvents.index.reset');
 // admins
 define('ROUTE_ADMIN_ADMINS', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.index');
 define('ROUTE_ADMIN_ADMINS_RESET', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.index.reset');

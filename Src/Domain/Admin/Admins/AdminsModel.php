@@ -6,13 +6,16 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
-use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 
 class AdminsModel extends DatabaseTableModel
 {
-//    private $roles; // array of existing roles
-
-    const COLUMNS_WITH_ROLES = ['admins.id', 'admins.name', 'admins.username', 'roles.role', 'roles.level'];
+    const COLUMNS = [
+        'id' => 'admins.id',
+        'name' => 'admins.name',
+        'username' => 'admins.username',
+        'role' => 'roles.role',
+        'level' => 'roles.level'
+    ];
 
     public function __construct()
     {
@@ -84,9 +87,9 @@ class AdminsModel extends DatabaseTableModel
     {
         $selectClause = "SELECT ";
         $columnCount = 1;
-        foreach (self::COLUMNS_WITH_ROLES as $columnNameSql) {
+        foreach (self::COLUMNS as $columnNameSql) {
             $selectClause .= $columnNameSql;
-            if ($columnCount != count(self::COLUMNS_WITH_ROLES)) {
+            if ($columnCount != count(self::COLUMNS)) {
                 $selectClause .= ",";
             }
             $columnCount++;
@@ -94,7 +97,7 @@ class AdminsModel extends DatabaseTableModel
         $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
         $orderByClause = "ORDER BY roles.level";
         if ($whereColumnsInfo != null) {
-            $this->validateWhereColumnsWithRoles($whereColumnsInfo);
+            $this->validateWhereColumns($whereColumnsInfo);
         }
 
         $q = new SelectBuilder($selectClause, $fromClause, $whereColumnsInfo, $orderByClause);
@@ -102,10 +105,10 @@ class AdminsModel extends DatabaseTableModel
     }
 
     // make sure each columnNameSql in columns
-    private function validateWhereColumnsWithRoles(array $whereColumnsInfo)
+    private function validateWhereColumns(array $whereColumnsInfo)
     {
         foreach ($whereColumnsInfo as $columnNameSql => $columnWhereInfo) {
-            if (!in_array($columnNameSql, self::COLUMNS_WITH_ROLES)) {
+            if (!in_array($columnNameSql, self::COLUMNS)) {
                 throw new \Exception("Invalid where column $columnNameSql");
             }
         }
@@ -115,7 +118,7 @@ class AdminsModel extends DatabaseTableModel
     public static function getValidWhereColumnNames(): array
     {
         $names = [];
-        foreach (self::COLUMNS_WITH_ROLES as $columnNameSql) {
+        foreach (self::COLUMNS as $columnNameSql) {
             $names[] = explode(".", $columnNameSql)[1];
         }
 
@@ -124,62 +127,9 @@ class AdminsModel extends DatabaseTableModel
 
     public static function getColumnNameSqlForColumnName(string $columnName): string
     {
-        switch (strtolower($columnName)) {
-            case 'id':
-                return 'admins.id';
-                break;
-            case 'name':
-                return 'admins.name';
-                break;
-            case 'username':
-                return 'admins.username';
-                break;
-            case 'role':
-                return 'roles.role';
-                break;
-            case 'level':
-                return 'roles.level';
-                break;
-            default:
-                throw new \Exception("$columnName not found");
+        if (isset(self::COLUMNS[strtolower($columnName)])) {
+            return self::COLUMNS[strtolower($columnName)];
         }
-    }
-
-
-    public function getWithRolesOld(string $whereId = null, string $whereIdOperator = null, string $whereName = null, string $whereNameOperator = null, string $whereUsername = null, string $whereUsernameOperator = null, string $whereRole = null, string $whereRoleOperator = null, string $whereLevel = null, string $whereLevelOperator = null)
-    {
-        $selectClause = "SELECT a.id, a.name, a.username, r.role, r.level";
-        $fromClause = "FROM admins a JOIN roles r ON a.role_id = r.id";
-        $whereColumns = [
-            'id' => [
-                'tableAbbrev' => 'a',
-                'whereValue' => $whereId,
-                'whereOperator' => $whereIdOperator
-            ],
-            'name' => [
-                'tableAbbrev' => 'a',
-                'whereValue' => $whereName,
-                'whereOperator' => $whereNameOperator
-            ],
-            'username' => [
-                'tableAbbrev' => 'a',
-                'whereValue' => $whereUsername,
-                'whereOperator' => $whereUsernameOperator
-            ],
-            'role' => [
-                'tableAbbrev' => 'r',
-                'whereValue' => $whereRole,
-                'whereOperator' => $whereRoleOperator
-            ],
-            'level' => [
-                'tableAbbrev' => 'r',
-                'whereValue' => $whereLevel,
-                'whereOperator' => $whereLevelOperator
-            ]
-        ];
-        $orderByClause = "ORDER BY r.level";
-
-        $q = new SelectBuilder($selectClause, $fromClause, $whereColumns, $orderByClause);
-        return $q->execute();
+        throw new \Exception("undefined column $columnName");
     }
 }

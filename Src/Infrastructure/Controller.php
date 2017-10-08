@@ -9,9 +9,6 @@ use Slim\Http\Request;
 abstract class Controller
 {
     protected $container; // dependency injection container
-    protected $model;
-    protected $view;
-    protected $routePrefix;
 
     public function __construct(Container $container)
     {

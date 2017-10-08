@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin;
-use It_All\Spaghettify\Src\Infrastructure\Security\Authorization\AuthorizationService;
 use Slim\Container;
 
 /**
@@ -41,11 +40,11 @@ class NavAdmin
             'System' => [
                 'subSections' => [
                     'Events' => [
-                        'link' => ROUTE_SYSTEM_EVENTS,
+                        'link' => ROUTE_SYSTEM_EVENTS_RESET,
                     ],
 
                     'Admins' => [
-                        'link' => ROUTE_ADMIN_ADMINS,
+                        'link' => ROUTE_ADMIN_ADMINS_RESET,
                         'subSections' => [
 
                             'Insert' => [

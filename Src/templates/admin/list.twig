@@ -18,6 +18,19 @@
                             {% if insertLink %}
                                 <a class="tableCaptionAction" href="{{ path_for(insertLink.route) }}">{{ insertLink.text }}</a>
                             {% endif %}
+                            <form name="filter" method="post" style="display: inline" action="{{ path_for(whereAction) }}">
+                                SELECT WHERE
+                                {% if whereErrorMessage %}
+                                    <span class="ffErrorMsg">{{ whereErrorMessage }}</span>
+                                {% endif %}
+                                <input type="text" name="{{ whereFieldName }}" value="{{ whereValue }}" size="70" maxlength="500" placeholder="field1:{op}:value 1[,field2{=}value 2,...] op in [{{ whereOpsList }}]" required>
+                                <input type="submit" value="Filter">
+                                {% if isFiltered %}
+                                    <a href="{{ path_for(resetRoute) }}">reset</a>
+                                {% endif %}
+                                <input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}">
+                                <input type="hidden" name="{{ csrf['tokenValueKey'] }}" value="{{ csrf['tokenValue'] }}">
+                            </form>
                         </th>
                     </tr>
                     {% set break = false %}

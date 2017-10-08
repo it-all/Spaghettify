@@ -5,7 +5,6 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -48,7 +47,7 @@ class AdminsController extends CrudController
     }
 
     // parse the where field
-    public function getWhereFilterColumns(string $whereFieldValue, DatabaseTableModel $model): ?array
+    public function getWhereFilterColumns(string $whereFieldValue): ?array
     {
         $whereColumnsInfo = [];
         $whereParts = explode(",", $whereFieldValue);
@@ -70,7 +69,7 @@ class AdminsController extends CrudController
 
                 // validate the column name
                 try {
-                    $columnNameSql = $model::getColumnNameSqlForColumnName($columnName);
+                    $columnNameSql = $this->model::getColumnNameSqlForColumnName($columnName);
                 } catch (\Exception $e) {
                     FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "$columnName not found"]);
                     return null;
@@ -114,7 +113,7 @@ class AdminsController extends CrudController
             throw new \Exception("where session input must be set");
         }
 
-        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME], $this->model)) {
+        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME])) {
             // redisplay form with error
             return $this->view->indexViewAdmins($response);
         } else {

@@ -8,13 +8,11 @@ use It_All\FormFormer\Fields\SelectField;
 use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
-use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
-use function It_All\Spaghettify\Src\Infrastructure\Utilities\arrayWalkToStringRecursive;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
@@ -26,7 +24,7 @@ class AdminsView extends AdminCrudView
     protected $model;
     const SESSION_WHERE_COLUMNS = 'adminsWhereColumnsInfo';
     const SESSION_WHERE_VALUE_KEY = 'adminsWhereField';
-    const SESSION_WHERE_FIELD_NAME = 'where';
+    const SESSION_WHERE_FIELD_NAME = 'adminsWhere';
 
     public function __construct(Container $container)
     {
@@ -95,7 +93,6 @@ class AdminsView extends AdminCrudView
                 'whereValue' => $whereFieldValue,
                 'whereErrorMessage' => $whereErrorMessage,
                 'isFiltered' => $whereColumnsInfo,
-                'indexRoute' => ROUTE_ADMIN_ADMINS,
                 'resetRoute' => ROUTE_ADMIN_ADMINS_RESET,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),

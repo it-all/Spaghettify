@@ -58,11 +58,23 @@ $slim->get('/' . $config['dirs']['admin'] . '/logout',
     ->setName(ROUTE_LOGOUT);
 
 // system events
+$systemEventsPath = NAMESPACE_INFRASTRUCTURE.'\SystemEvents\\';
 $slim->get('/' . $config['dirs']['admin'] . '/systemEvents',
-    NAMESPACE_INFRASTRUCTURE.'\SystemEvents\SystemEventsView:index')
+    $systemEventsPath . 'SystemEventsView:index')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_SYSTEM_EVENTS);
+
+$slim->post('/' . $config['dirs']['admin'] . '/systemEvents',
+    $systemEventsPath . 'SystemEventsController:postIndexFilter')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
+    ->add(new AuthenticationMiddleware($container));
+
+$slim->get('/' . $config['dirs']['admin'] . '/systemEvents/reset',
+    $systemEventsPath . 'SystemEventsView:indexResetFilter')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS_RESET]))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName(ROUTE_SYSTEM_EVENTS_RESET);
 
 // logins
 $slim->get('/' . $config['dirs']['admin'] . '/logins',
