@@ -8,7 +8,7 @@ use It_All\FormFormer\Fields\SelectField;
 use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\AdminCrudView;
+use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
@@ -18,7 +18,7 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsView extends AdminCrudView
+class AdminsView extends AdminView
 {
     protected $routePrefix;
     protected $model;
@@ -28,7 +28,9 @@ class AdminsView extends AdminCrudView
 
     public function __construct(Container $container)
     {
-        parent::__construct($container, new AdminsModel(), ROUTEPREFIX_ADMIN_ADMINS);
+        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
+        $this->model = new AdminsModel();
+        parent::__construct($container);
     }
 
     /**
@@ -62,7 +64,7 @@ class AdminsView extends AdminCrudView
         }
 
         $whereColumnsInfo = (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) ? $_SESSION[self::SESSION_FILTER_COLUMNS] : null;
-        if ($results = pg_fetch_all($this->model->getWithRoles($whereColumnsInfo))) {
+        if ($results = pg_fetch_all($this->model->getListView($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -80,14 +82,14 @@ class AdminsView extends AdminCrudView
         $filterErrorMessage = FormHelper::getFieldError(self::SESSION_FILTER_FIELD_NAME);
         FormHelper::unsetSessionVars();
 
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getListViewTitle(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
         return $this->view->render(
             $response,
             'admin/adminsList.twig',
             [
-                'title' => $this->model->getFormalTableName(),
-                'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
+                'title' => $this->model->getListViewTitle(),
+                'updateColumn' => $this->model->getUpdateColumnName(),
                 'insertLink' => $insertLink,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
                 'filterValue' => $filterFieldValue,
@@ -105,7 +107,7 @@ class AdminsView extends AdminCrudView
                 'results' => $results,
                 'numResults' => $numResults,
                 'sortColumn' => 'level',
-                'sortByAsc' => $this->model->getDefaultOrderByAsc(),
+                'sortByAsc' => $this->model->getIsOrderByAsc(),
                 'navigationItems' => $this->navigationItems
             ]
         );

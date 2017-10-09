@@ -185,7 +185,7 @@ class DatabaseTableModel
     {
         $query = "DELETE FROM $this->tableName WHERE ".$this->getPrimaryKeyColumnName()." = $1";
         if ($returning !== null) {
-            $query .= "RETURNING $returning";
+            $query .= " RETURNING $returning";
         }
         $q = new QueryBuilder($query, $primaryKeyValue);
 

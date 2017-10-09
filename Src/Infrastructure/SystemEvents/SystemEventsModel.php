@@ -6,26 +6,29 @@ namespace It_All\Spaghettify\Src\Infrastructure\SystemEvents;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
+use It_All\Spaghettify\Src\Infrastructure\ListViewModel;
 
-class SystemEventsModel extends DatabaseTableModel
+class SystemEventsModel extends ListViewModel
 {
     // event types: debug, info, notice, warning, error, critical, alert, emergency [props to monolog]
-    const COLUMNS = [
+    const LIST_VIEW_COLUMNS = [
         'id' => 'se.id',
-        'time_stamp' => 'time_stamp',
-        'type' => 'type',
-        'event' => 'event',
-        'admin' => 'admin',
+        'time_stamp' => 'se.created',
+        'type' => 'syet.event_type',
+        'event' => 'se.title',
+        'admin' => 'admins.name',
         'notes' => 'se.notes',
         'ip_address' => 'se.ip_address',
         'request_method' => 'se.request_method',
         'resource' => 'se.resource'
     ];
 
+    private $systemEventsTableModel;
+
     public function __construct()
     {
         // note time_stamp is the alias for created used in view query
-        parent::__construct('system_events', 'time_stamp', false);
+        parent::__construct(new DatabaseTableModel('system_events', 'time_stamp', false));
     }
 
     public function insertDebug(string $title, int $adminId = null, string $notes = null)
@@ -114,33 +117,41 @@ class SystemEventsModel extends DatabaseTableModel
 
     public static function getColumnNameSqlForColumnName(string $columnName): string
     {
-        if (isset(self::COLUMNS[strtolower($columnName)])) {
-            return self::COLUMNS[strtolower($columnName)];
+        if (isset(self::LIST_VIEW_COLUMNS[strtolower($columnName)])) {
+            return self::LIST_VIEW_COLUMNS[strtolower($columnName)];
         }
         throw new \Exception("undefined column $columnName");
     }
 
-    public function getView(array $whereColumnsInfo = null)
+    public function getListView(array $filterColumnsInfo = null)
     {
-        $selectClause = "SELECT se.id, se.created as time_stamp, se.event_type as type, se.title as event, admins.name as admin, se.notes, se.ip_address, se.request_method as method, se.resource";
+        $selectClause = "SELECT ";
+        $columnCount = 0;
+        foreach (self::LIST_VIEW_COLUMNS as $columnAlias => $columnNameSql) {
+            $selectClause .= " $columnNameSql as $columnAlias";
+            $columnCount++;
+            if ($columnCount < count(self::LIST_VIEW_COLUMNS)) {
+                $selectClause .= ",";
+            }
+        }
 
         $fromClause = "FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN admins ON se.admin_id = admins.id";
 
         $orderByClause = "ORDER BY se.created DESC";
 
-        if ($whereColumnsInfo != null) {
-            $this->validateWhereColumns($whereColumnsInfo);
+        if ($filterColumnsInfo != null) {
+            $this->validateFilterColumns($filterColumnsInfo);
         }
 
-        $q = new SelectBuilder($selectClause, $fromClause, $whereColumnsInfo, $orderByClause);
+        $q = new SelectBuilder($selectClause, $fromClause, $filterColumnsInfo, $orderByClause);
         return $q->execute();
     }
 
     // make sure each columnNameSql in columns
-    private function validateWhereColumns(array $whereColumnsInfo)
+    private function validateFilterColumns(array $filterColumnsInfo)
     {
-        foreach ($whereColumnsInfo as $columnNameSql => $columnWhereInfo) {
-            if (!in_array($columnNameSql, self::COLUMNS)) {
+        foreach ($filterColumnsInfo as $columnNameSql => $columnWhereInfo) {
+            if (!in_array($columnNameSql, self::LIST_VIEW_COLUMNS)) {
                 throw new \Exception("Invalid where column $columnNameSql");
             }
         }

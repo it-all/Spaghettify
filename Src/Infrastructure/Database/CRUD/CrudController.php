@@ -239,9 +239,14 @@ class CrudController extends Controller
         $tableName = $this->model->getTableName();
         $eventNote = "$primaryKeyColumnName:$primaryKey";
 
-        if (!$res = $this->model->deleteByPrimaryKey($primaryKey, $returnColumn)) {
-            $this->systemEvents->insertWarning('Primary key not found for delete', (int) $this->authentication->getUserId(), $eventNote);
-            $_SESSION[SESSION_ADMIN_NOTICE] = [$primaryKey.' not found', 'adminNoticeFailure'];
+        try {
+            if (!$res = $this->model->deleteByPrimaryKey($primaryKey, $returnColumn)) {
+                $this->systemEvents->insertWarning('Primary key not found for delete', (int) $this->authentication->getUserId(), $eventNote);
+                $_SESSION[SESSION_ADMIN_NOTICE] = [$primaryKey.' not found', 'adminNoticeFailure'];
+                return false;
+            }
+        } catch (\Exception $e) {
+            $_SESSION[SESSION_ADMIN_NOTICE] = ['Query Failure', 'adminNoticeFailure'];
             return false;
         }
 

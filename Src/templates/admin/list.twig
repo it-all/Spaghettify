@@ -51,9 +51,9 @@
                     <script type="text/javascript"></script>
                     <tr id="row{{ rowId }}">
                         {% for key, value in row %}
-                            {% if key == primaryKeyColumn and updatePermitted %}
+                            {% if key == updateColumn and updatePermitted %}
 
-                                <td><a href="{{ path_for(updateRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="update">{{ value }}</a></td>
+                                <td><a href="{{ path_for(updateRoute, {"primaryKey": attribute(row, updateColumn)}) }}" title="update">{{ value }}</a></td>
 
                             {%  else %}
                                 <td>{{ value }}</td>
@@ -63,7 +63,7 @@
 
                         {# add delete column if necessary #}
                         {% if addDeleteColumn %}
-                            <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, primaryKeyColumn) }}?');">X</a></td>
+                            <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, updateColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, updateColumn) }}?');">X</a></td>
                         {% endif %}
 
                     </tr>

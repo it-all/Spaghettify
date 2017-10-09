@@ -6,10 +6,11 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
+use It_All\Spaghettify\Src\Infrastructure\ListViewModel;
 
-class AdminsModel extends DatabaseTableModel
+class AdminsModel extends ListViewModel
 {
-    const COLUMNS = [
+    const LIST_VIEW_COLUMNS = [
         'id' => 'admins.id',
         'name' => 'admins.name',
         'username' => 'admins.username',
@@ -19,7 +20,7 @@ class AdminsModel extends DatabaseTableModel
 
     public function __construct()
     {
-        parent::__construct('admins');
+        parent::__construct(new DatabaseTableModel('admins'));
     }
 
     public function insert(string $name, string $username, string $password, int $roleId)
@@ -54,7 +55,7 @@ class AdminsModel extends DatabaseTableModel
         }
 
         $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, password_hash($password, PASSWORD_DEFAULT));
-        return $this->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
+        return $this->adminsTableModel->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
     }
 
     public function checkRecordExistsForUsername(string $username): bool
@@ -80,16 +81,16 @@ class AdminsModel extends DatabaseTableModel
             $columnValues['password_hash'] = password_hash($fieldValues['password_hash'], PASSWORD_DEFAULT);
         }
 
-        return parent::hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
+        return $this->adminsTableModel->hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
     }
 
-    public function getWithRoles(array $whereColumnsInfo = null)
+    public function getListView(array $whereColumnsInfo = null)
     {
         $selectClause = "SELECT ";
         $columnCount = 1;
-        foreach (self::COLUMNS as $columnNameSql) {
+        foreach (self::LIST_VIEW_COLUMNS as $columnNameSql) {
             $selectClause .= $columnNameSql;
-            if ($columnCount != count(self::COLUMNS)) {
+            if ($columnCount != count(self::LIST_VIEW_COLUMNS)) {
                 $selectClause .= ",";
             }
             $columnCount++;
@@ -108,7 +109,7 @@ class AdminsModel extends DatabaseTableModel
     private function validateWhereColumns(array $whereColumnsInfo)
     {
         foreach ($whereColumnsInfo as $columnNameSql => $columnWhereInfo) {
-            if (!in_array($columnNameSql, self::COLUMNS)) {
+            if (!in_array($columnNameSql, self::LIST_VIEW_COLUMNS)) {
                 throw new \Exception("Invalid where column $columnNameSql");
             }
         }
@@ -118,7 +119,7 @@ class AdminsModel extends DatabaseTableModel
     public static function getValidWhereColumnNames(): array
     {
         $names = [];
-        foreach (self::COLUMNS as $columnNameSql) {
+        foreach (self::LIST_VIEW_COLUMNS as $columnNameSql) {
             $names[] = explode(".", $columnNameSql)[1];
         }
 
@@ -127,8 +128,8 @@ class AdminsModel extends DatabaseTableModel
 
     public static function getColumnNameSqlForColumnName(string $columnName): string
     {
-        if (isset(self::COLUMNS[strtolower($columnName)])) {
-            return self::COLUMNS[strtolower($columnName)];
+        if (isset(self::LIST_VIEW_COLUMNS[strtolower($columnName)])) {
+            return self::LIST_VIEW_COLUMNS[strtolower($columnName)];
         }
         throw new \Exception("undefined column $columnName");
     }

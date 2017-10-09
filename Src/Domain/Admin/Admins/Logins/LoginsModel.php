@@ -37,6 +37,4 @@ class LoginsModel extends DatabaseTableModel
         $q = new QueryBuilder("SELECT id, admin_id, username, ip as ip_address, created as time_stamp, success FROM login_attempts ORDER BY created DESC");
         return $q->execute();
     }
-
-
 }

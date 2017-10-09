@@ -86,10 +86,10 @@ class SystemEventsController extends Controller
         $this->setRequestInput($request);
 
         if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME])) {
-            throw new \Exception("where session input must be set");
+            throw new \Exception("session filter input must be set");
         }
 
-        if (!$filterColumnsInfo = $this->getFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME], $this->model)) {
+        if (!$filterColumnsInfo = $this->getFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME])) {
             // redisplay form with error
             return $this->view->indexView($response);
         } else {

@@ -48,8 +48,8 @@ class SystemEventsView extends AdminView
             return $response->withRedirect($this->router->pathFor(ROUTE_SYSTEM_EVENTS));
         }
 
-        $whereColumnsInfo = (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) ? $_SESSION[self::SESSION_FILTER_COLUMNS] : null;
-        if ($results = pg_fetch_all($this->model->getView($whereColumnsInfo))) {
+        $filterColumnsInfo = (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) ? $_SESSION[self::SESSION_FILTER_COLUMNS] : null;
+        if ($results = pg_fetch_all($this->model->getListView($filterColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -71,15 +71,15 @@ class SystemEventsView extends AdminView
             $response,
             'admin/list.twig',
             [
-                'title' => $this->model->getFormalTableName(),
-                'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
+                'title' => $this->model->getListViewTitle(),
+                'updateColumn' => $this->model->getUpdateColumnName(),
                 'insertLink' => false,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
                 'filterValue' => $filterFieldValue,
                 'filterErrorMessage' => $filterErrorMessage,
                 'filterFormAction' => ROUTE_SYSTEM_EVENTS,
                 'filterFieldName' => self::SESSION_FILTER_FIELD_NAME,
-                'isFiltered' => $whereColumnsInfo,
+                'isFiltered' => $filterColumnsInfo,
                 'resetFilterRoute' => ROUTE_SYSTEM_EVENTS_RESET,
                 'updatePermitted' => false,
                 'updateRoute' => false,
@@ -87,8 +87,8 @@ class SystemEventsView extends AdminView
                 'deleteRoute' => false,
                 'results' => $results,
                 'numResults' => $numResults,
-                'sortColumn' => $this->model->getDefaultOrderByColumnName(),
-                'sortByAsc' => $this->model->getDefaultOrderByAsc(),
+                'sortColumn' => $this->model->getOrderByColumnName(),
+                'sortByAsc' => $this->model->getIsOrderByAsc(),
                 'navigationItems' => $this->navigationItems
             ]
         );

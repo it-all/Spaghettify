@@ -53,9 +53,9 @@
                     <tr id="row{{ rowId }}">
                         {% for key, value in row %}
                             {# for admins table, do not allow non-owners to edit owners #}
-                            {% if key == primaryKeyColumn and updatePermitted and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner') %}
+                            {% if key == updateColumn and updatePermitted and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner') %}
 
-                                <td><a href="{{ path_for(updateRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="update">{{ value }}</a></td>
+                                <td><a href="{{ path_for(updateRoute, {"primaryKey": attribute(row, updateColumn)}) }}" title="update">{{ value }}</a></td>
 
                             {%  else %}
                                 <td>{{ value }}</td>
@@ -66,7 +66,7 @@
                         {# for admins table, do not allow admin to delete themself or non-owners to delete owners #}
                         {% if addDeleteColumn %}
                             {% if attribute(row, 'username') != authentication.user.username and (authentication.user.role == 'owner' or attribute(row, 'role') != 'owner') %}
-                                <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, primaryKeyColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, primaryKeyColumn) }}?');">X</a></td>
+                                <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, updateColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, updateColumn) }}?');">X</a></td>
                             {% else %}
                                 <td>&nbsp;</td>
                             {% endif %}
