@@ -14,9 +14,9 @@ use Slim\Http\Response;
 class SystemEventsView extends AdminView
 {
     private $model;
-    const SESSION_WHERE_COLUMNS = 'systemEventsWhereColumnsInfo';
-    const SESSION_WHERE_VALUE_KEY = 'systemEventsWhereField';
-    const SESSION_WHERE_FIELD_NAME = 'systemEventsWhere';
+    const SESSION_FILTER_COLUMNS = 'systemEventsFilterColumnsInfo';
+    const SESSION_FILTER_VALUE_KEY = 'systemEventsFilterField';
+    const SESSION_FILTER_FIELD_NAME = 'systemEventsFilter';
 
     public function __construct(Container $container)
     {
@@ -38,17 +38,17 @@ class SystemEventsView extends AdminView
     public function indexView(Response $response, bool $resetFilter = false)
     {
         if ($resetFilter) {
-            if (isset($_SESSION[self::SESSION_WHERE_COLUMNS])) {
-                unset($_SESSION[self::SESSION_WHERE_COLUMNS]);
+            if (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) {
+                unset($_SESSION[self::SESSION_FILTER_COLUMNS]);
             }
-            if (isset($_SESSION[self::SESSION_WHERE_VALUE_KEY])) {
-                unset($_SESSION[self::SESSION_WHERE_VALUE_KEY]);
+            if (isset($_SESSION[self::SESSION_FILTER_VALUE_KEY])) {
+                unset($_SESSION[self::SESSION_FILTER_VALUE_KEY]);
             }
             // redirect to the clean url
             return $response->withRedirect($this->router->pathFor(ROUTE_SYSTEM_EVENTS));
         }
 
-        $whereColumnsInfo = (isset($_SESSION[self::SESSION_WHERE_COLUMNS])) ? $_SESSION[self::SESSION_WHERE_COLUMNS] : null;
+        $whereColumnsInfo = (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) ? $_SESSION[self::SESSION_FILTER_COLUMNS] : null;
         if ($results = pg_fetch_all($this->model->getView($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
@@ -56,15 +56,15 @@ class SystemEventsView extends AdminView
         }
 
         // determine where field value
-        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_WHERE_FIELD_NAME])) {
-            $whereFieldValue = $_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_WHERE_FIELD_NAME];
-        } elseif (isset($_SESSION[self::SESSION_WHERE_VALUE_KEY])) {
-            $whereFieldValue = $_SESSION[self::SESSION_WHERE_VALUE_KEY];
+        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_FILTER_FIELD_NAME])) {
+            $filterFieldValue = $_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_FILTER_FIELD_NAME];
+        } elseif (isset($_SESSION[self::SESSION_FILTER_VALUE_KEY])) {
+            $filterFieldValue = $_SESSION[self::SESSION_FILTER_VALUE_KEY];
         } else {
-            $whereFieldValue = '';
+            $filterFieldValue = '';
         }
 
-        $whereErrorMessage = FormHelper::getFieldError(self::SESSION_WHERE_FIELD_NAME);
+        $filterErrorMessage = FormHelper::getFieldError(self::SESSION_FILTER_FIELD_NAME);
         FormHelper::unsetSessionVars();
 
         return $this->view->render(
@@ -74,13 +74,13 @@ class SystemEventsView extends AdminView
                 'title' => $this->model->getFormalTableName(),
                 'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
                 'insertLink' => false,
-                'whereOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'whereValue' => $whereFieldValue,
-                'whereErrorMessage' => $whereErrorMessage,
-                'whereAction' => ROUTE_SYSTEM_EVENTS,
-                'whereFieldName' => self::SESSION_WHERE_FIELD_NAME,
+                'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
+                'filterValue' => $filterFieldValue,
+                'filterErrorMessage' => $filterErrorMessage,
+                'filterFormAction' => ROUTE_SYSTEM_EVENTS,
+                'filterFieldName' => self::SESSION_FILTER_FIELD_NAME,
                 'isFiltered' => $whereColumnsInfo,
-                'resetRoute' => ROUTE_SYSTEM_EVENTS_RESET,
+                'resetFilterRoute' => ROUTE_SYSTEM_EVENTS_RESET,
                 'updatePermitted' => false,
                 'updateRoute' => false,
                 'addDeleteColumn' => false,
