@@ -8,11 +8,23 @@ use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 
 class ListViewModel
 {
-    private $primaryTableModel;
+    protected $primaryTableModel;
+    protected $listViewColumns;
 
-    protected function __construct(DatabaseTableModel $primaryTableModel)
+    protected function __construct(DatabaseTableModel $primaryTableModel, array $listViewColumns)
     {
         $this->primaryTableModel = $primaryTableModel;
+        $this->listViewColumns = $listViewColumns;
+    }
+
+    // make sure each columnNameSql in columns
+    protected function validateFilterColumns(array $filterColumnsInfo)
+    {
+        foreach ($filterColumnsInfo as $columnNameSql => $columnWhereInfo) {
+            if (!in_array($columnNameSql, $this->listViewColumns)) {
+                throw new \Exception("Invalid where column $columnNameSql");
+            }
+        }
     }
 
     public function getPrimaryTableModel(): DatabaseTableModel

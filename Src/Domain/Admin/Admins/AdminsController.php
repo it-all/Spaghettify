@@ -6,8 +6,6 @@ namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableHelper;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
@@ -57,82 +55,9 @@ class AdminsController extends Controller
         }
     }
 
-    // parse the where field
-    public function getWhereFilterColumns(string $whereFieldValue): ?array
-    {
-        $whereColumnsInfo = [];
-        $whereParts = explode(",", $whereFieldValue);
-        if (strlen($whereParts[0]) == 0) {
-            FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => 'Not Entered']);
-            return null;
-        } else {
-
-            foreach ($whereParts as $whereFieldOperatorValue) {
-                //field:operator:value
-                $whereFieldOperatorValueParts = explode(":", $whereFieldOperatorValue);
-                if (count($whereFieldOperatorValueParts) != 3) {
-                    FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => 'Malformed']);
-                    return null;
-                }
-                $columnName = trim($whereFieldOperatorValueParts[0]);
-                $whereOperator = strtoupper(trim($whereFieldOperatorValueParts[1]));
-                $whereValue = trim($whereFieldOperatorValueParts[2]);
-
-                // validate the column name
-                try {
-                    $columnNameSql = $this->adminsModel::getColumnNameSqlForColumnName($columnName);
-                } catch (\Exception $e) {
-                    FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => "$columnName not found"]);
-                    return null;
-                }
-
-                // validate the operator
-                if (!QueryBuilder::validateWhereOperator($whereOperator)) {
-                    FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => "Invalid Operator $whereOperator"]);
-                    return null;
-                }
-
-                // null value only valid with IS and IS NOT operators
-                if (strtolower($whereValue) == 'null') {
-                    if ($whereOperator != 'IS' && $whereOperator != 'IS NOT') {
-                        FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => "Mismatched null, $whereOperator"]);
-                        return null;
-                    }
-                    $whereValue = null;
-                }
-
-                if (!isset($whereColumnsInfo[$columnNameSql])) {
-                    $whereColumnsInfo[$columnNameSql] = [
-                        'operators' => [$whereOperator],
-                        'values' => [$whereValue]
-                    ];
-                } else {
-                    $whereColumnsInfo[$columnNameSql]['operators'][] = $whereOperator;
-                    $whereColumnsInfo[$columnNameSql]['values'][] = $whereValue;
-                }
-            }
-        }
-
-        return $whereColumnsInfo;
-    }
-
     public function postIndexFilter(Request $request, Response $response, $args)
     {
-        $this->setRequestInput($request);
-
-        if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME])) {
-            throw new \Exception("where session input must be set");
-        }
-
-        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME])) {
-            // redisplay form with error
-            return $this->view->indexViewAdmins($response);
-        } else {
-            $_SESSION[$this->view::SESSION_FILTER_COLUMNS] = $whereColumnsInfo;
-            $_SESSION[$this->view::SESSION_FILTER_VALUE_KEY] = $_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME];
-            FormHelper::unsetSessionVars();
-            return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
-        }
+        return $this->setIndexFilter($request, $response, $args, $this->adminsModel::LIST_VIEW_COLUMNS, ROUTE_ADMIN_ADMINS, $this->view);
     }
 
     public function postInsert(Request $request, Response $response, $args)
@@ -181,8 +106,6 @@ class AdminsController extends Controller
 
         $redirectRoute = getRouteName(true, $this->routePrefix,'index');
 
-        $tableName = $this->adminsModel->getPrimaryTableModel()->getTableName();
-
         // make sure there is a record for the primary key in the model
         if (!$record = $this->adminsModel->getPrimaryTableModel()->selectForPrimaryKey($primaryKey)) {
             return SingleTableHelper::updateNoRecord($this->container, $response, $primaryKey, $this->adminsModel->getPrimaryTableModel(), $this->routePrefix);
@@ -220,7 +143,7 @@ class AdminsController extends Controller
             throw new \Exception("Update Failure");
         }
 
-        $this->systemEvents->insertInfo("Updated $tableName", (int) $this->authentication->getUserId(), "id:$primaryKey");
+        $this->systemEvents->insertInfo("Updated ".$this->adminsModel::TABLE_NAME, (int) $this->authentication->getUserId(), "id:$primaryKey");
 
         FormHelper::unsetSessionVars();
 

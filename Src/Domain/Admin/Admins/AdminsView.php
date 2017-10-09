@@ -8,9 +8,9 @@ use It_All\FormFormer\Fields\SelectField;
 use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
-use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
+use It_All\Spaghettify\Src\Infrastructure\ListView;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -18,68 +18,32 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsView extends AdminView
+class AdminsView extends ListView
 {
     protected $routePrefix;
     protected $adminsModel;
-    const SESSION_FILTER_COLUMNS = 'adminsFilterColumnsInfo';
-    const SESSION_FILTER_VALUE_KEY = 'adminsFilterField';
-    const SESSION_FILTER_FIELD_NAME = 'adminsFilter';
 
     public function __construct(Container $container)
     {
         $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
         $this->adminsModel = new AdminsModel();
-        parent::__construct($container);
+        parent::__construct($container, 'adminsFilterColumnsInfo', 'adminsFilterValue', 'adminsFilter');
     }
 
-    /**
-     * override to eliminate some columns
-     * @param $request
-     * @param $response
-     * @param $args
-     */
-    public function index(Request $request, Response $response, $args)
-    {
-        $this->indexViewAdmins($response);
-    }
-
-    public function indexResetFilter(Request $request, Response $response, $args)
-    {
-        // redirect to the clean url
-        return $this->indexViewAdmins($response, true);
-    }
-
-    public function indexViewAdmins(Response $response, bool $resetFilter = false)
+    public function indexView(Response $response, bool $resetFilter = false)
     {
         if ($resetFilter) {
-            if (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) {
-                unset($_SESSION[self::SESSION_FILTER_COLUMNS]);
-            }
-            if (isset($_SESSION[self::SESSION_FILTER_VALUE_KEY])) {
-                unset($_SESSION[self::SESSION_FILTER_VALUE_KEY]);
-            }
-            // redirect to the clean url
-            return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
+            return $this->resetFilter($response, ROUTE_ADMIN_ADMINS);
         }
 
-        $whereColumnsInfo = (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) ? $_SESSION[self::SESSION_FILTER_COLUMNS] : null;
-        if ($results = pg_fetch_all($this->adminsModel->getListView($whereColumnsInfo))) {
+        $filterColumnsInfo = (isset($_SESSION[$this->sessionFilterColumnsKey])) ? $_SESSION[$this->sessionFilterColumnsKey] : null;
+        if ($results = pg_fetch_all($this->adminsModel->getListView($filterColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
         }
 
-        // determine where field value
-        if (isset($_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_FILTER_FIELD_NAME])) {
-            $filterFieldValue = $_SESSION[SESSION_REQUEST_INPUT_KEY][self::SESSION_FILTER_FIELD_NAME];
-        } elseif (isset($_SESSION[self::SESSION_FILTER_VALUE_KEY])) {
-            $filterFieldValue = $_SESSION[self::SESSION_FILTER_VALUE_KEY];
-        } else {
-            $filterFieldValue = '';
-        }
-
-        $filterErrorMessage = FormHelper::getFieldError(self::SESSION_FILTER_FIELD_NAME);
+        $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
         FormHelper::unsetSessionVars();
 
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getListViewTitle(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
@@ -92,11 +56,11 @@ class AdminsView extends AdminView
                 'updateColumn' => $this->adminsModel->getUpdateColumnName(),
                 'insertLink' => $insertLink,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'filterValue' => $filterFieldValue,
+                'filterValue' => $this->getFilterFieldValue(),
                 'filterErrorMessage' => $filterErrorMessage,
                 'filterFormAction' => ROUTE_ADMIN_ADMINS,
-                'filterFieldName' => self::SESSION_FILTER_FIELD_NAME,
-                'isFiltered' => $whereColumnsInfo,
+                'filterFieldName' => $this->sessionFilterFieldKey,
+                'isFiltered' => $filterColumnsInfo,
                 'resetFilterRoute' => ROUTE_ADMIN_ADMINS_RESET,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),

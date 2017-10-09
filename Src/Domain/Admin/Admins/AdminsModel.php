@@ -10,6 +10,8 @@ use It_All\Spaghettify\Src\Infrastructure\ListViewModel;
 
 class AdminsModel extends ListViewModel
 {
+    const TABLE_NAME = 'admins';
+
     const LIST_VIEW_COLUMNS = [
         'id' => 'admins.id',
         'name' => 'admins.name',
@@ -20,7 +22,7 @@ class AdminsModel extends ListViewModel
 
     public function __construct()
     {
-        parent::__construct(new DatabaseTableModel('admins'));
+        parent::__construct(new DatabaseTableModel(self::TABLE_NAME), self::LIST_VIEW_COLUMNS);
     }
 
     public function insert(string $name, string $username, string $password, int $roleId)
@@ -51,7 +53,7 @@ class AdminsModel extends ListViewModel
     public function updateByPrimaryKey(int $primaryKeyValue, string $name, string $username, int $roleId, string $password = '', array $record = null)
     {
         if ($record == null && !$record = $this->selectForPrimaryKey($primaryKeyValue)) {
-            throw new \Exception("Invalid Primary Key $primaryKeyValue for $this->tableName");
+            throw new \Exception("Invalid Primary Key $primaryKeyValue for ".self::TABLE_NAME);
         }
 
         $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, password_hash($password, PASSWORD_DEFAULT));
@@ -71,20 +73,7 @@ class AdminsModel extends ListViewModel
         return $q->execute();
     }
 
-    // If a null password is passed, the password field is not checked
-    public function hasRecordChanged(array $fieldValues, $primaryKeyValue, array $skipColumns = null, array $record = null): bool
-    {
-        if (strlen($fieldValues['password_hash']) == 0) {
-            $skipColumns[] = 'password_hash';
-            $skipColumns[] = 'password_hash';
-        } else {
-            $columnValues['password_hash'] = password_hash($fieldValues['password_hash'], PASSWORD_DEFAULT);
-        }
-
-        return $this->adminsTableModel->hasRecordChanged($fieldValues, $primaryKeyValue, $skipColumns);
-    }
-
-    public function getListView(array $whereColumnsInfo = null)
+    public function getListView(array $filterColumnsInfo = null)
     {
         $selectClause = "SELECT ";
         $columnCount = 1;
@@ -97,40 +86,12 @@ class AdminsModel extends ListViewModel
         }
         $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
         $orderByClause = "ORDER BY roles.level";
-        if ($whereColumnsInfo != null) {
-            $this->validateWhereColumns($whereColumnsInfo);
+        if ($filterColumnsInfo != null) {
+            $this->validateFilterColumns($filterColumnsInfo);
         }
 
-        $q = new SelectBuilder($selectClause, $fromClause, $whereColumnsInfo, $orderByClause);
+        $q = new SelectBuilder($selectClause, $fromClause, $filterColumnsInfo, $orderByClause);
         return $q->execute();
     }
 
-    // make sure each columnNameSql in columns
-    private function validateWhereColumns(array $whereColumnsInfo)
-    {
-        foreach ($whereColumnsInfo as $columnNameSql => $columnWhereInfo) {
-            if (!in_array($columnNameSql, self::LIST_VIEW_COLUMNS)) {
-                throw new \Exception("Invalid where column $columnNameSql");
-            }
-        }
-    }
-
-    // returns just the column name ie [id, name, username] instead of [admins.id etc]
-    public static function getValidWhereColumnNames(): array
-    {
-        $names = [];
-        foreach (self::LIST_VIEW_COLUMNS as $columnNameSql) {
-            $names[] = explode(".", $columnNameSql)[1];
-        }
-
-        return $names;
-    }
-
-    public static function getColumnNameSqlForColumnName(string $columnName): string
-    {
-        if (isset(self::LIST_VIEW_COLUMNS[strtolower($columnName)])) {
-            return self::LIST_VIEW_COLUMNS[strtolower($columnName)];
-        }
-        throw new \Exception("undefined column $columnName");
-    }
 }

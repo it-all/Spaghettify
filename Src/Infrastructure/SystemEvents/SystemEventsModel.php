@@ -10,6 +10,8 @@ use It_All\Spaghettify\Src\Infrastructure\ListViewModel;
 
 class SystemEventsModel extends ListViewModel
 {
+    const TABLE_NAME = 'system_events';
+
     // event types: debug, info, notice, warning, error, critical, alert, emergency [props to monolog]
     const LIST_VIEW_COLUMNS = [
         'id' => 'se.id',
@@ -26,7 +28,7 @@ class SystemEventsModel extends ListViewModel
     public function __construct()
     {
         // note time_stamp is the alias for created used in view query
-        parent::__construct(new DatabaseTableModel('system_events', 'time_stamp', false));
+        parent::__construct(new DatabaseTableModel(self::TABLE_NAME, 'time_stamp', false), self::LIST_VIEW_COLUMNS);
     }
 
     public function insertDebug(string $title, int $adminId = null, string $notes = null)
@@ -113,14 +115,6 @@ class SystemEventsModel extends ListViewModel
         return $q->getOne();
     }
 
-    public static function getColumnNameSqlForColumnName(string $columnName): string
-    {
-        if (isset(self::LIST_VIEW_COLUMNS[strtolower($columnName)])) {
-            return self::LIST_VIEW_COLUMNS[strtolower($columnName)];
-        }
-        throw new \Exception("undefined column $columnName");
-    }
-
     public function getListView(array $filterColumnsInfo = null)
     {
         $selectClause = "SELECT ";
@@ -143,15 +137,5 @@ class SystemEventsModel extends ListViewModel
 
         $q = new SelectBuilder($selectClause, $fromClause, $filterColumnsInfo, $orderByClause);
         return $q->execute();
-    }
-
-    // make sure each columnNameSql in columns
-    private function validateFilterColumns(array $filterColumnsInfo)
-    {
-        foreach ($filterColumnsInfo as $columnNameSql => $columnWhereInfo) {
-            if (!in_array($columnNameSql, self::LIST_VIEW_COLUMNS)) {
-                throw new \Exception("Invalid where column $columnNameSql");
-            }
-        }
     }
 }

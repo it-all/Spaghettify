@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
-use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
+use It_All\Spaghettify\Src\Infrastructure\ListView;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -13,7 +13,7 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-abstract class SingleTableView extends AdminView
+abstract class SingleTableView extends ListView
 {
     protected $routePrefix;
     protected $model;
@@ -27,11 +27,6 @@ abstract class SingleTableView extends AdminView
         $this->model = $model;
         $this->routePrefix = $routePrefix;
         parent::__construct($container);
-    }
-
-    public function index(Request $request, Response $response, $args)
-    {
-        return $this->indexView($response);
     }
 
     public function indexView(Response $response, string $columns = '*')
