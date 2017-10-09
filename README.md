@@ -44,7 +44,7 @@ Administrative Layout including <a target="_blank" href="#adminNav">Navigation</
 <a target="_blank" href="#xss">Preventing XSS</a>  
 
 CODING NEW FUNCTIONALITY  
-Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses CRUD) or Domain/Admin/Admins (joined database tables so mostly custom code).  
+Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses SingleTable files) or Domain/Admin/Admins (joined database tables so mostly custom code).  
 Define a new global constant for the route name in index.php  
 Add the route(s) in routes.php.  
 If authorization is required at a resource or functionality level, add them to the 'adminMinimumPermissions' key in config.php, then add AuthorizationMiddleware to the route for resource authorization in routes.php.  
@@ -87,8 +87,8 @@ Certain events such as logging in, logging out, inserting, updating, and deletin
 <a name="csrf">CSRF</a>   
 The Slim Framework CSRF protection middleware (https://github.com/slimphp/Slim-Csrf) is used to check CSRF form fields. The CSRF key/value generators are added to the container for form field creation. They are also made available to Twig. A failure is logged to system_events as an error, the user's session is unset, and the user is redirected to the (frontend) homepage with an error message.
 
-<a name="crud">CRUD</a>  
-CRUD is like a quick and dirty ORM for single database tables, which is not meant to be complete, in that many data types and many constraints are not mapped. The Testimonials section in the admin under Marketing is there for an example of a database table which uses CRUD. Your application's views and controllers can extend the AdminCrudView and CrudController to take advantage of its functionality (see AdminsView and AdminsController for examples of this).
+<a name="crud">Single Table CRUD</a>  
+Single Table CRUD is like a quick and dirty ORM for single database tables, which is not meant to be complete, in that many data types and many constraints are not mapped. The Testimonials section in the admin under Marketing is there for an example of a database table which uses CRUD. Your application's views and controllers can extend the AdminCrudView and CrudController to take advantage of its functionality (see AdminsView and AdminsController for examples of this).
 
 <a name="authe">Authentication</a>  
 Admin pages are protected through authenticated sessions.

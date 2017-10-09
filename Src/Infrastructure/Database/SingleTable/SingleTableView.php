@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
 use It_All\Spaghettify\Src\Infrastructure\AdminView;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
@@ -12,7 +13,7 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-abstract class AdminCrudView extends AdminView
+abstract class SingleTableView extends AdminView
 {
     protected $routePrefix;
     protected $model;
@@ -48,8 +49,15 @@ abstract class AdminCrudView extends AdminView
             'admin/list.twig',
             [
                 'title' => $this->model->getFormalTableName(),
-                'primaryKeyColumn' => $this->model->getPrimaryKeyColumnName(),
+                'updateColumn' => $this->model->getPrimaryKeyColumnName(),
                 'insertLink' => $insertLink,
+                'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
+//                'filterValue' => $filterFieldValue,
+//                'filterErrorMessage' => $filterErrorMessage,
+//                'filterFormAction' => ROUTE_ADMIN_ADMINS,
+//                'filterFieldName' => self::SESSION_FILTER_FIELD_NAME,
+//                'isFiltered' => $whereColumnsInfo,
+//                'resetFilterRoute' => ROUTE_ADMIN_ADMINS_RESET,
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),
                 'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
@@ -99,7 +107,7 @@ abstract class AdminCrudView extends AdminView
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
+            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         $formFieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];

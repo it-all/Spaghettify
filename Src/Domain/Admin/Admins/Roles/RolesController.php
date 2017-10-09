@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class RolesController extends CrudController
+class RolesController extends SingleTableController
 {
     public function __construct(Container $container)
     {

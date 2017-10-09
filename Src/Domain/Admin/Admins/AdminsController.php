@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
+use It_All\Spaghettify\Src\Infrastructure\Controller;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
@@ -13,11 +14,20 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsController extends CrudController
+class AdminsController extends Controller
 {
+    private $adminsModel;
+    private $view;
+    private $routePrefix;
+    private $adminsSingleTableController;
+
     public function __construct(Container $container)
     {
-        parent::__construct($container, new DatabaseTableModel('admins'), new AdminsView($container), ROUTEPREFIX_ADMIN_ADMINS);
+        $this->adminsModel = new AdminsModel();
+        $this->view = new AdminsView($container);
+        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
+        $this->adminsSingleTableController = new SingleTableController($container, $this->adminsModel->getPrimaryTableModel(), $this->view, $this->routePrefix);
+        parent::__construct($container);
     }
 
     private function setValidation(array $record = null)
@@ -43,7 +53,7 @@ class AdminsController extends CrudController
                 return true; // skip validation if there is already an error for the field
             }, 'Already exists.');
 
-            $this->validator->rule('unique', 'username', $this->model->getColumnByName('name'), $this->validator);
+            $this->validator->rule('unique', 'username', $this->adminsModel->getPrimaryTableModel()->getColumnByName('username'), $this->validator);
         }
     }
 
@@ -53,7 +63,7 @@ class AdminsController extends CrudController
         $whereColumnsInfo = [];
         $whereParts = explode(",", $whereFieldValue);
         if (strlen($whereParts[0]) == 0) {
-            FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => 'Not Entered']);
+            FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => 'Not Entered']);
             return null;
         } else {
 
@@ -61,7 +71,7 @@ class AdminsController extends CrudController
                 //field:operator:value
                 $whereFieldOperatorValueParts = explode(":", $whereFieldOperatorValue);
                 if (count($whereFieldOperatorValueParts) != 3) {
-                    FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => 'Malformed']);
+                    FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => 'Malformed']);
                     return null;
                 }
                 $columnName = trim($whereFieldOperatorValueParts[0]);
@@ -70,22 +80,22 @@ class AdminsController extends CrudController
 
                 // validate the column name
                 try {
-                    $columnNameSql = $this->model::getColumnNameSqlForColumnName($columnName);
+                    $columnNameSql = $this->adminsModel::getColumnNameSqlForColumnName($columnName);
                 } catch (\Exception $e) {
-                    FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "$columnName not found"]);
+                    FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => "$columnName not found"]);
                     return null;
                 }
 
                 // validate the operator
                 if (!QueryBuilder::validateWhereOperator($whereOperator)) {
-                    FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "Invalid Operator $whereOperator"]);
+                    FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => "Invalid Operator $whereOperator"]);
                     return null;
                 }
 
                 // null value only valid with IS and IS NOT operators
                 if (strtolower($whereValue) == 'null') {
                     if ($whereOperator != 'IS' && $whereOperator != 'IS NOT') {
-                        FormHelper::setFieldErrors([$this->view::SESSION_WHERE_FIELD_NAME => "Mismatched null, $whereOperator"]);
+                        FormHelper::setFieldErrors([$this->view::SESSION_FILTER_FIELD_NAME => "Mismatched null, $whereOperator"]);
                         return null;
                     }
                     $whereValue = null;
@@ -110,16 +120,16 @@ class AdminsController extends CrudController
     {
         $this->setRequestInput($request);
 
-        if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME])) {
+        if (!isset($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME])) {
             throw new \Exception("where session input must be set");
         }
 
-        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME])) {
+        if (!$whereColumnsInfo = $this->getWhereFilterColumns($_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME])) {
             // redisplay form with error
             return $this->view->indexViewAdmins($response);
         } else {
-            $_SESSION[$this->view::SESSION_WHERE_COLUMNS] = $whereColumnsInfo;
-            $_SESSION[$this->view::SESSION_WHERE_VALUE_KEY] = $_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_WHERE_FIELD_NAME];
+            $_SESSION[$this->view::SESSION_FILTER_COLUMNS] = $whereColumnsInfo;
+            $_SESSION[$this->view::SESSION_FILTER_VALUE_KEY] = $_SESSION[SESSION_REQUEST_INPUT_KEY][$this->view::SESSION_FILTER_FIELD_NAME];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS));
         }
@@ -143,15 +153,14 @@ class AdminsController extends CrudController
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
-        if (!$res = $this->model->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
+        if (!$res = $this->adminsModel->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
             throw new \Exception("Insert Failure");
         }
 
         $returned = pg_fetch_all($res);
         $insertedRecordId = $returned[0]['id'];
 
-        $tableName = $this->model->getTableName();
-        $this->systemEvents->insertInfo("Inserted $tableName", (int) $this->authentication->getUserId(), "id:$insertedRecordId");
+        $this->systemEvents->insertInfo("Inserted admin", (int) $this->authentication->getUserId(), "id:$insertedRecordId");
 
         FormHelper::unsetSessionVars();
 
@@ -172,11 +181,11 @@ class AdminsController extends CrudController
 
         $redirectRoute = getRouteName(true, $this->routePrefix,'index');
 
-        $tableName = $this->model->getTableName();
+        $tableName = $this->adminsModel->getPrimaryTableModel()->getTableName();
 
         // make sure there is a record for the primary key in the model
-        if (!$record = $this->model->selectForPrimaryKey($primaryKey)) {
-            return CrudHelper::updateNoRecord($this->container, $response, $primaryKey, $this->model, $this->routePrefix);
+        if (!$record = $this->adminsModel->getPrimaryTableModel()->selectForPrimaryKey($primaryKey)) {
+            return SingleTableHelper::updateNoRecord($this->container, $response, $primaryKey, $this->adminsModel->getPrimaryTableModel(), $this->routePrefix);
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
@@ -193,7 +202,7 @@ class AdminsController extends CrudController
             // password_hash to match db column name
             $checkChangedFields['password_hash'] = password_hash($input['password'], PASSWORD_DEFAULT);
         }
-        if (!$this->haveAnyFieldsChanged($checkChangedFields, $record)) {
+        if (!$this->adminsSingleTableController->haveAnyFieldsChanged($checkChangedFields, $record)) {
             $_SESSION[SESSION_ADMIN_NOTICE] = ["No changes made (Record $primaryKey)", 'adminNoticeFailure'];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
@@ -207,7 +216,7 @@ class AdminsController extends CrudController
             return $this->view->updateView($request, $response, $args);
         }
 
-        if (!$this->model->updateByPrimaryKey((int) $primaryKey, $input['name'], $input['username'], (int) $input['role_id'], $input['password'], $record)) {
+        if (!$this->adminsModel->updateByPrimaryKey((int) $primaryKey, $input['name'], $input['username'], (int) $input['role_id'], $input['password'], $record)) {
             throw new \Exception("Update Failure");
         }
 
@@ -227,6 +236,6 @@ class AdminsController extends CrudController
             throw new \Exception('You cannot delete yourself from admins');
         }
 
-        return $this->getDeleteHelper($response, $args['primaryKey'],'username', true);
+        return $this->adminsSingleTableController->getDeleteHelper($response, $args['primaryKey'],'username', true);
     }
 }

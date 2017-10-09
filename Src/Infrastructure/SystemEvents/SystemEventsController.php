@@ -18,8 +18,8 @@ class SystemEventsController extends Controller
     public function __construct(Container $container)
     {
         $this->view = new SystemEventsView($container);
-        $this->model = new SystemEventsModel();
         parent::__construct($container);
+        $this->model = $this->systemEvents; // already in container as a service
     }
 
     // parse the where field

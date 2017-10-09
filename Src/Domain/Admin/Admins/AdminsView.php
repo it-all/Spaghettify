@@ -9,7 +9,7 @@ use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use It_All\Spaghettify\Src\Infrastructure\AdminView;
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudHelper;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableHelper;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
@@ -21,7 +21,7 @@ use Slim\Http\Response;
 class AdminsView extends AdminView
 {
     protected $routePrefix;
-    protected $model;
+    protected $adminsModel;
     const SESSION_FILTER_COLUMNS = 'adminsFilterColumnsInfo';
     const SESSION_FILTER_VALUE_KEY = 'adminsFilterField';
     const SESSION_FILTER_FIELD_NAME = 'adminsFilter';
@@ -29,7 +29,7 @@ class AdminsView extends AdminView
     public function __construct(Container $container)
     {
         $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
-        $this->model = new AdminsModel();
+        $this->adminsModel = new AdminsModel();
         parent::__construct($container);
     }
 
@@ -64,7 +64,7 @@ class AdminsView extends AdminView
         }
 
         $whereColumnsInfo = (isset($_SESSION[self::SESSION_FILTER_COLUMNS])) ? $_SESSION[self::SESSION_FILTER_COLUMNS] : null;
-        if ($results = pg_fetch_all($this->model->getListView($whereColumnsInfo))) {
+        if ($results = pg_fetch_all($this->adminsModel->getListView($whereColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
@@ -82,14 +82,14 @@ class AdminsView extends AdminView
         $filterErrorMessage = FormHelper::getFieldError(self::SESSION_FILTER_FIELD_NAME);
         FormHelper::unsetSessionVars();
 
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->model->getListViewTitle(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getListViewTitle(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
         return $this->view->render(
             $response,
             'admin/adminsList.twig',
             [
-                'title' => $this->model->getListViewTitle(),
-                'updateColumn' => $this->model->getUpdateColumnName(),
+                'title' => $this->adminsModel->getListViewTitle(),
+                'updateColumn' => $this->adminsModel->getUpdateColumnName(),
                 'insertLink' => $insertLink,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
                 'filterValue' => $filterFieldValue,
@@ -107,7 +107,7 @@ class AdminsView extends AdminView
                 'results' => $results,
                 'numResults' => $numResults,
                 'sortColumn' => 'level',
-                'sortByAsc' => $this->model->getIsOrderByAsc(),
+                'sortByAsc' => $this->adminsModel->getIsOrderByAsc(),
                 'navigationItems' => $this->navigationItems
             ]
         );
@@ -139,11 +139,11 @@ class AdminsView extends AdminView
 
         // Name Field
         $nameValue = (isset($fieldValues['name'])) ? $fieldValues['name'] : '';
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('name'), null, $nameValue);
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->adminsModel->getPrimaryTableModel()->getColumnByName('name'), null, $nameValue);
 
         // Username Field
         $usernameValue = (isset($fieldValues['username'])) ? $fieldValues['username'] : '';
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->model->getColumnByName('username'), null, $usernameValue);
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->adminsModel->getPrimaryTableModel()->getColumnByName('username'), null, $usernameValue);
 
         // Password Fields
         // determine values of pw and pw conf fields
@@ -184,32 +184,37 @@ class AdminsView extends AdminView
     }
 
     /** this can be called for both the initial get and the posted form if errors exist (from controller) */
-    public function insertView(Request $request, Response $response, $args)
+    public function getInsert(Request $request, Response $response, $args)
     {
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
-                'title' => 'Insert '. $this->model->getFormalTableName(false),
+                'title' => 'Insert '. $this->adminsModel->getListViewTitle(false),
                 'form' => $this->getForm($request),
                 'navigationItems' => $this->navigationItems
             ]
         );
     }
 
+    public function getUpdate(Request $request, Response $response, $args)
+    {
+        return $this->updateView($request, $response, $args);
+    }
+
     /** this can be called for both the initial get and the posted form if errors exist (from controller) */
     public function updateView(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
-        if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
+        if (!$record = $this->adminsModel->getPrimaryTableModel()->selectForPrimaryKey($args['primaryKey'])) {
+            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->adminsModel->getPrimaryTableModel(), $this->routePrefix);
         }
 
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
-                'title' => 'Update ' . $this->model->getFormalTableName(false),
+                'title' => 'Update ' . $this->adminsModel->getPrimaryTableModel()->getFormalTableName(false),
                 'form' => $this->getForm($request, 'update', (int) $args['primaryKey'], $record),
                 'primaryKey' => $args['primaryKey'],
                 'navigationItems' => $this->navigationItems

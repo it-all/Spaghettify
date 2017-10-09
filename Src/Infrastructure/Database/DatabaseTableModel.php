@@ -285,7 +285,7 @@ class DatabaseTableModel
         return $this->columns;
     }
 
-    public function getColumnByName(string $columnName)
+    public function getColumnByName(string $columnName): ?DatabaseColumnModel
     {
         foreach ($this->columns as $column) {
             if ($column->getName() == $columnName) {
@@ -293,7 +293,7 @@ class DatabaseTableModel
             }
         }
 
-        return false;
+        return null;
     }
 
     public function getUniqueColumnNames(): array

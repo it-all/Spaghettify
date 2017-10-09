@@ -1,15 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class CrudHelper
+class SingleTableHelper
 {
     public static function updateNoRecord(Container $container, Response $response, $primaryKey, DatabaseTableModel $model, string $routePrefix)
     {

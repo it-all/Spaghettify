@@ -23,8 +23,6 @@ class SystemEventsModel extends ListViewModel
         'resource' => 'se.resource'
     ];
 
-    private $systemEventsTableModel;
-
     public function __construct()
     {
         // note time_stamp is the alias for created used in view query

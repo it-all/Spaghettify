@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
 use Slim\Container;
 
-class LoginsController extends CrudController
+class LoginsController extends SingleTableController
 {
     public function __construct(Container $container)
     {

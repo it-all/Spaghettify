@@ -135,6 +135,7 @@ class QueryBuilder
             if ($opCount < count(self::OPERATORS)) {
                 $ops .= ", ";
             }
+            $opCount++;
         }
         return $ops;
     }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure;
 
+use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 
 class ListViewModel
@@ -12,6 +13,11 @@ class ListViewModel
     protected function __construct(DatabaseTableModel $primaryTableModel)
     {
         $this->primaryTableModel = $primaryTableModel;
+    }
+
+    public function getPrimaryTableModel(): DatabaseTableModel
+    {
+        return $this->primaryTableModel;
     }
 
     public function getListViewTitle(bool $plural = true): string
@@ -32,5 +38,10 @@ class ListViewModel
     public function getIsOrderByAsc(): bool
     {
         return $this->primaryTableModel->getDefaultOrderByAsc();
+    }
+
+    public function getColumnByName(string $columnName): ?DatabaseColumnModel
+    {
+        return $this->primaryTableModel->getColumnByName($columnName);
     }
 }

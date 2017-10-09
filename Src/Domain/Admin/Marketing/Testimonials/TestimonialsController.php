@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Marketing\Testimonials;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\CRUD\CrudController;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class TestimonialsController extends CrudController
+class TestimonialsController extends SingleTableController
 {
     const DELETE_RETURN_COLUMN = 'person';
 

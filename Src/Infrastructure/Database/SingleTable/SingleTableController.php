@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\Database\CRUD;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
+use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class CrudController extends Controller
+class SingleTableController extends Controller
 {
     protected $model;
     protected $view;
@@ -22,6 +23,11 @@ class CrudController extends Controller
         $this->view = $view;
         $this->routePrefix = $routePrefix;
         parent::__construct($container);
+    }
+
+    public function getModel(): DatabaseTableModel
+    {
+        return $this->model;
     }
 
     public function postInsert(Request $request, Response $response, $args)
@@ -88,7 +94,7 @@ class CrudController extends Controller
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            return CrudHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
+            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         // if no changes made, redirect
@@ -140,14 +146,14 @@ class CrudController extends Controller
         return $this->getDeleteHelper($response, $args['primaryKey']);
     }
 
-    protected function getDeleteHelper(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false, $routeType = 'index')
+    public function getDeleteHelper(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false, $routeType = 'index')
     {
         if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'delete'))) {
             throw new \Exception('No permission.');
         }
 
         try {
-            $this->delete($response, $primaryKey, $returnColumn, $sendEmail);
+            $this->delete($primaryKey, $returnColumn, $sendEmail);
         } catch (\Exception $e) {
             // no need to do anything, just redirect with error message already set
         }
@@ -161,7 +167,7 @@ class CrudController extends Controller
      * @param array $record
      * @return bool
      */
-    protected function haveAnyFieldsChanged(array $newValues, array $record): bool
+    public function haveAnyFieldsChanged(array $newValues, array $record): bool
     {
         foreach ($newValues as $columnName => $value) {
             // throw out any new values that are not model table columns
@@ -233,7 +239,7 @@ class CrudController extends Controller
         }
     }
 
-    protected function delete(Response $response, $primaryKey, string $returnColumn = null, bool $sendEmail = false)
+    protected function delete($primaryKey, string $returnColumn = null, bool $sendEmail = false)
     {
         $primaryKeyColumnName = $this->model->getPrimaryKeyColumnName();
         $tableName = $this->model->getTableName();

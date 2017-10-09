@@ -55,7 +55,7 @@ class AdminsModel extends ListViewModel
         }
 
         $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, password_hash($password, PASSWORD_DEFAULT));
-        return $this->adminsTableModel->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
+        return $this->getPrimaryTableModel()->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
     }
 
     public function checkRecordExistsForUsername(string $username): bool
