@@ -18,6 +18,11 @@ class TestimonialsController extends SingleTableController
         parent::__construct($container, new TestimonialsModel(), new TestimonialsView($container), ROUTEPREFIX_ADMIN_TESTIMONIALS);
     }
 
+    public function postIndexFilter(Request $request, Response $response, $args)
+    {
+        return $this->setIndexFilter($request, $response, $args, $this->model->getListViewColumns(), ROUTE_ADMIN_TESTIMONIALS, $this->view);
+    }
+
     // override for custom return column
     public function getDelete(Request $request, Response $response, $args)
     {

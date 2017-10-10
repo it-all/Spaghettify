@@ -48,7 +48,6 @@
                 {% set rowId = 0 %}
                 {% for row in results %}
                     {% set rowId = rowId + 1 %}
-                    <script type="text/javascript"></script>
                     <tr id="row{{ rowId }}">
                         {% for key, value in row %}
                             {% if key == updateColumn and updatePermitted %}

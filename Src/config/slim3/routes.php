@@ -180,6 +180,15 @@ $slim->get('/' . $config['dirs']['admin'] . '/testimonials',
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS);
 
+$slim->post('/' . $config['dirs']['admin'] . '/testimonials',
+    $testimonialsPath . 'TestimonialsController:postIndexFilter')
+    ->add(new AuthenticationMiddleware($container));
+
+$slim->get('/' . $config['dirs']['admin'] . '/testimonials/reset',
+    $testimonialsPath . 'TestimonialsView:indexResetFilter')
+    ->add(new AuthenticationMiddleware($container))
+    ->setName(ROUTE_ADMIN_TESTIMONIALS_RESET);
+
 $slim->get('/' . $config['dirs']['admin'] . '/testimonials/insert',
     $testimonialsPath . 'TestimonialsView:getInsert')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_INSERT]))

@@ -139,4 +139,18 @@ class QueryBuilder
         }
         return $ops;
     }
+
+    public function getSql(): ?string
+    {
+        if (isset($this->sql)) {
+            return $this->sql;
+        }
+
+        return null;
+    }
+
+    public function getArgs(): array
+    {
+        return $this->args;
+    }
 }

@@ -25,7 +25,7 @@ function getRouteName(bool $isAdmin = true, string $routePrefix = null, string $
     }
 
     if ($routeType !== null) {
-        $validRouteTypes = ['index', 'index.filter', 'insert', 'update', 'delete'];
+        $validRouteTypes = ['index', 'index.reset', 'insert', 'update', 'delete'];
         if (!in_array($routeType, $validRouteTypes)) {
             throw new \Exception("Invalid route type $routeType");
         }

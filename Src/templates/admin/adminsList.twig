@@ -49,7 +49,6 @@
                 {% set rowId = 0 %}
                 {% for row in results %}
                     {% set rowId = rowId + 1 %}
-                    <script type="text/javascript"></script>
                     <tr id="row{{ rowId }}">
                         {% for key, value in row %}
                             {# for admins table, do not allow non-owners to edit owners #}

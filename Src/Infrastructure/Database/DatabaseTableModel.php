@@ -6,6 +6,7 @@ namespace It_All\Spaghettify\Src\Infrastructure\Database;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertUpdateBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
+use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\UpdateBuilder;
 
 class DatabaseTableModel
@@ -102,9 +103,24 @@ class DatabaseTableModel
         return $constraints;
     }
 
-    public function select(string $columns = '*', string $orderByColumn = null, bool $orderByAsc = true)
+    public function getListViewColumns(): array
     {
-        $q = new QueryBuilder("SELECT $columns FROM $this->tableName");
+        $listViewColumns = [];
+        foreach ($this->columns as $column) {
+            $listViewColumns[$column->getName()] = $column->getName();
+        }
+
+        return $listViewColumns;
+    }
+
+    public function select(string $columns = '*', string $orderByColumn = null, bool $orderByAsc = true, array $whereColumnsInfo = null)
+    {
+        $q = new SelectBuilder("SELECT $columns", "FROM $this->tableName", $whereColumnsInfo, $this->getOrderByClause($orderByColumn, $orderByAsc));
+        return $q->execute();
+    }
+
+    private function getOrderByClause(string $orderByColumn = null, bool $orderByAsc = true): ?string
+    {
         if ($orderByColumn != null) {
             if ($orderByColumn == 'PRIMARYKEY') {
                 if ($this->primaryKeyColumnName === false) {
@@ -116,9 +132,9 @@ class DatabaseTableModel
             if (!$orderByAsc) {
                 $orderByString .= " DESC";
             }
-            $q->add($orderByString);
+            return $orderByString;
         }
-        return $q->execute();
+        return null;
     }
 
     public function hasColumnValue(DatabaseColumnModel $databaseColumnModel, $value): bool

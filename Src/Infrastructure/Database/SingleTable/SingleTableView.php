@@ -18,24 +18,32 @@ abstract class SingleTableView extends ListView
     protected $routePrefix;
     protected $model;
 
-    public function __construct(
-        Container $container,
-        DatabaseTableModel $model,
-        string $routePrefix
-    )
+    public function __construct(Container $container, DatabaseTableModel $model, string $routePrefix)
     {
         $this->model = $model;
         $this->routePrefix = $routePrefix;
-        parent::__construct($container);
+        parent::__construct($container, $routePrefix.'FilterColumnsInfo', $routePrefix.'FilterValue', $routePrefix.'Filter');
     }
 
-    public function indexView(Response $response, string $columns = '*')
+    public function indexView(Response $response, bool $resetFilter = false, string $columns = '*')
     {
-        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc()))) {
+        if ($resetFilter) {
+            return $this->resetFilter($response, ROUTE_ADMIN_TESTIMONIALS);
+        }
+
+        $filterColumnsInfo = (isset($_SESSION[$this->sessionFilterColumnsKey])) ? $_SESSION[$this->sessionFilterColumnsKey] : null;
+
+        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc(), $filterColumnsInfo))) {
             $numResults = count($results);
         } else {
             $numResults = 0;
         }
+
+        $filterFieldValue = $this->getFilterFieldValue();
+        $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
+
+        // make sure all session input necessary to send to twig is produced above
+        FormHelper::unsetSessionVars();
 
         $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
 
@@ -44,15 +52,15 @@ abstract class SingleTableView extends ListView
             'admin/list.twig',
             [
                 'title' => $this->model->getFormalTableName(),
-                'updateColumn' => $this->model->getPrimaryKeyColumnName(),
                 'insertLink' => $insertLink,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-//                'filterValue' => $filterFieldValue,
-//                'filterErrorMessage' => $filterErrorMessage,
-//                'filterFormAction' => ROUTE_ADMIN_ADMINS,
-//                'filterFieldName' => self::SESSION_FILTER_FIELD_NAME,
-//                'isFiltered' => $whereColumnsInfo,
-//                'resetFilterRoute' => ROUTE_ADMIN_ADMINS_RESET,
+                'filterValue' => $filterFieldValue,
+                'filterErrorMessage' => $filterErrorMessage,
+                'filterFormAction' => getRouteName(true, $this->routePrefix, 'index'),
+                'filterFieldName' => $this->sessionFilterFieldKey,
+                'isFiltered' => $filterColumnsInfo,
+                'resetFilterRoute' => getRouteName(true, $this->routePrefix, 'index.reset'),
+                'updateColumn' => $this->model->getPrimaryKeyColumnName(),
                 'updatePermitted' => $this->authorization
                     ->check($this->getAuthorizationMinimumLevel('update')),
                 'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),

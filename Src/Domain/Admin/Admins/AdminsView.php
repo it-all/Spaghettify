@@ -43,7 +43,10 @@ class AdminsView extends ListView
             $numResults = 0;
         }
 
+        $filterFieldValue = $this->getFilterFieldValue();
         $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
+
+        // make sure all session input necessary to send to twig is produced above
         FormHelper::unsetSessionVars();
 
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getListViewTitle(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
@@ -56,7 +59,7 @@ class AdminsView extends ListView
                 'updateColumn' => $this->adminsModel->getUpdateColumnName(),
                 'insertLink' => $insertLink,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'filterValue' => $this->getFilterFieldValue(),
+                'filterValue' => $filterFieldValue,
                 'filterErrorMessage' => $filterErrorMessage,
                 'filterFormAction' => ROUTE_ADMIN_ADMINS,
                 'filterFieldName' => $this->sessionFilterFieldKey,

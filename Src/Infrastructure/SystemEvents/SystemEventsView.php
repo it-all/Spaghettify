@@ -33,7 +33,10 @@ class SystemEventsView extends ListView
             $numResults = 0;
         }
 
+        $filterFieldValue = $this->getFilterFieldValue();
         $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
+
+        // make sure all session input necessary to send to twig is produced above
         FormHelper::unsetSessionVars();
 
         return $this->view->render(
@@ -41,15 +44,15 @@ class SystemEventsView extends ListView
             'admin/list.twig',
             [
                 'title' => $this->model->getListViewTitle(),
-                'updateColumn' => $this->model->getUpdateColumnName(),
                 'insertLink' => false,
                 'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'filterValue' => $this->getFilterFieldValue(),
+                'filterValue' => $filterFieldValue,
                 'filterErrorMessage' => $filterErrorMessage,
                 'filterFormAction' => ROUTE_SYSTEM_EVENTS,
                 'filterFieldName' => $this->sessionFilterFieldKey,
                 'isFiltered' => $filterColumnsInfo,
                 'resetFilterRoute' => ROUTE_SYSTEM_EVENTS_RESET,
+                'updateColumn' => $this->model->getUpdateColumnName(),
                 'updatePermitted' => false,
                 'updateRoute' => false,
                 'addDeleteColumn' => false,

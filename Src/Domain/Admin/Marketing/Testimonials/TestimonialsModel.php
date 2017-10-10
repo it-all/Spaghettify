@@ -7,8 +7,10 @@ use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
 
 class TestimonialsModel extends DatabaseTableModel
 {
+    const TABLE_NAME = 'testimonials';
+
     public function __construct()
     {
-        parent::__construct('testimonials', 'receive_date', false);
+        parent::__construct(self::TABLE_NAME, 'receive_date', false);
     }
 }
