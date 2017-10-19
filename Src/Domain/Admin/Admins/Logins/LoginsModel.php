@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Logins;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 
-class LoginsModel extends DatabaseTableModel
+class LoginsModel extends SingleTableModel
 {
     public function __construct()
     {
-        parent::__construct('login_attempts', 'created', false);
+        parent::__construct('login_attempts', '*', 'created', false);
     }
 
     public function insertSuccessfulLogin(string $username, int $adminId)

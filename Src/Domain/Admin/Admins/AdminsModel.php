@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
-use It_All\Spaghettify\Src\Infrastructure\ListViewModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\MultiTable\MultiTableModel;
 
-class AdminsModel extends ListViewModel
+class AdminsModel extends MultiTableModel
 {
     const TABLE_NAME = 'admins';
 
-    const LIST_VIEW_COLUMNS = [
+    const SELECT_COLUMNS = [
         'id' => 'admins.id',
         'name' => 'admins.name',
         'username' => 'admins.username',
@@ -22,7 +22,7 @@ class AdminsModel extends ListViewModel
 
     public function __construct()
     {
-        parent::__construct(new DatabaseTableModel(self::TABLE_NAME), self::LIST_VIEW_COLUMNS);
+        parent::__construct(new SingleTableModel(self::TABLE_NAME, '*', 'level', false), self::SELECT_COLUMNS);
     }
 
     public function insert(string $name, string $username, string $password, int $roleId)
@@ -73,24 +73,24 @@ class AdminsModel extends ListViewModel
         return $q->execute();
     }
 
-    public function getListView(array $filterColumnsInfo = null)
+    public function select(array $whereColumnsInfo = null)
     {
         $selectClause = "SELECT ";
         $columnCount = 1;
-        foreach (self::LIST_VIEW_COLUMNS as $columnNameSql) {
+        foreach (self::SELECT_COLUMNS as $columnNameSql) {
             $selectClause .= $columnNameSql;
-            if ($columnCount != count(self::LIST_VIEW_COLUMNS)) {
+            if ($columnCount != count(self::SELECT_COLUMNS)) {
                 $selectClause .= ",";
             }
             $columnCount++;
         }
         $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
         $orderByClause = "ORDER BY roles.level";
-        if ($filterColumnsInfo != null) {
-            $this->validateFilterColumns($filterColumnsInfo);
+        if ($whereColumnsInfo != null) {
+            $this->validateFilterColumns($whereColumnsInfo);
         }
 
-        $q = new SelectBuilder($selectClause, $fromClause, $filterColumnsInfo, $orderByClause);
+        $q = new SelectBuilder($selectClause, $fromClause, $whereColumnsInfo, $orderByClause);
         return $q->execute();
     }
 

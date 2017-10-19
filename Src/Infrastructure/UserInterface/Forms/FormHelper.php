@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms;
 
 use It_All\FormFormer\Fields\InputField;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\DatabaseColumnModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
 
 class FormHelper
@@ -195,7 +195,7 @@ class FormHelper
         return $columnValidation;
     }
 
-    public static function getDatabaseTableValidation(DatabaseTableModel $databaseTableModel): array
+    public static function getDatabaseTableValidation(SingleTableModel $databaseTableModel): array
     {
         $validation = [];
         foreach ($databaseTableModel->getColumns() as $column) {
@@ -210,7 +210,7 @@ class FormHelper
         return $validation;
     }
 
-    public static function getDatabaseTableValidationFields(DatabaseTableModel $databaseTableModel): array
+    public static function getDatabaseTableValidationFields(SingleTableModel $databaseTableModel): array
     {
         $fields = [];
         foreach ($databaseTableModel->getColumns() as $column) {

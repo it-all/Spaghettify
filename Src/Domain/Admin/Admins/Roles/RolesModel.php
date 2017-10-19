@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 
 // note that level 1 is the greatest permission
-class RolesModel extends DatabaseTableModel
+class RolesModel extends SingleTableModel
 {
     private $defaultRoleId;
     private $roles;
@@ -15,14 +15,14 @@ class RolesModel extends DatabaseTableModel
 
     public function __construct()
     {
-        parent::__construct('roles', 'level');
+        parent::__construct('roles', 'id, role','level');
         $this->addColumnNameConstraint('level', 'positive');
     }
 
     public function setRoles(string $defaultRole = null)
     {
         $this->roles = [];
-        $rs = $this->select('id, role', 'level');
+        $rs = $this->select();
         $lastRoleId = '';
         while ($row = pg_fetch_array($rs)) {
             $this->roles[$row['id']] = $row['role'];

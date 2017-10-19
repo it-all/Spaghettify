@@ -141,6 +141,15 @@ $slim->get('/' . $config['dirs']['admin'] . '/roles',
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES);
 
+$slim->post('/' . $config['dirs']['admin'] . '/roles',
+    $rolesPath . 'RolesController:postIndexFilter')
+    ->add(new AuthenticationMiddleware($container));
+
+$slim->get('/' . $config['dirs']['admin'] . '/roles/reset',
+    $rolesPath . 'RolesView:indexResetFilter')
+    ->add(new AuthenticationMiddleware($container))
+    ->setName(ROUTE_ADMIN_ROLES_RESET);
+
 $slim->get('/' . $config['dirs']['admin'] . '/roles/insert',
     $rolesPath . 'RolesView:getInsert')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES_INSERT]))

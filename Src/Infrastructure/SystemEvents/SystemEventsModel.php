@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\SystemEvents;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
-use It_All\Spaghettify\Src\Infrastructure\ListViewModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\MultiTable\MultiTableModel;
 
-class SystemEventsModel extends ListViewModel
+class SystemEventsModel extends MultiTableModel
 {
     const TABLE_NAME = 'system_events';
 
@@ -28,7 +28,7 @@ class SystemEventsModel extends ListViewModel
     public function __construct()
     {
         // note time_stamp is the alias for created used in view query
-        parent::__construct(new DatabaseTableModel(self::TABLE_NAME, 'time_stamp', false), self::LIST_VIEW_COLUMNS);
+        parent::__construct(new SingleTableModel(self::TABLE_NAME, '*','time_stamp', false), self::LIST_VIEW_COLUMNS);
     }
 
     public function insertDebug(string $title, int $adminId = null, string $notes = null)
@@ -115,7 +115,7 @@ class SystemEventsModel extends ListViewModel
         return $q->getOne();
     }
 
-    public function getListView(array $filterColumnsInfo = null)
+    public function select(array $filterColumnsInfo = null)
     {
         $selectClause = "SELECT ";
         $columnCount = 0;

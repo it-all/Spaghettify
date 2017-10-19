@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\ListView;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
@@ -13,68 +11,84 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-abstract class SingleTableView extends ListView
+class SingleTableView extends ListView
 {
     protected $routePrefix;
     protected $model;
 
-    public function __construct(Container $container, DatabaseTableModel $model, string $routePrefix)
+    public function __construct(Container $container, SingleTableModel $model, string $routePrefix, bool $addDeleteColumnToListView = true)
     {
         $this->model = $model;
         $this->routePrefix = $routePrefix;
-        parent::__construct($container, $routePrefix.'FilterColumnsInfo', $routePrefix.'FilterValue', $routePrefix.'Filter');
-    }
 
-    public function indexView(Response $response, bool $resetFilter = false, string $columns = '*')
-    {
-        if ($resetFilter) {
-            return $this->resetFilter($response, ROUTE_ADMIN_TESTIMONIALS);
-        }
+        //public function __construct(Container $container, string $sessionFilterColumnsKey, string $sessionFilterValueKey, string $sessionFilterFieldKey, string $indexRoute, $model, string $filterResetRoute, string $template = 'admin/list.twig')
 
-        $filterColumnsInfo = (isset($_SESSION[$this->sessionFilterColumnsKey])) ? $_SESSION[$this->sessionFilterColumnsKey] : null;
-
-        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getDefaultOrderByColumnName(), $this->model->getDefaultOrderByAsc(), $filterColumnsInfo))) {
-            $numResults = count($results);
-        } else {
-            $numResults = 0;
-        }
-
-        $filterFieldValue = $this->getFilterFieldValue();
-        $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
-
-        // make sure all session input necessary to send to twig is produced above
-        FormHelper::unsetSessionVars();
+        parent::__construct($container, $routePrefix.'FilterColumnsInfo', $routePrefix.'FilterValue', $routePrefix.'Filter', getRouteName(true, $routePrefix, 'index'), $this->model, getRouteName(true, $routePrefix, 'index.reset'));
 
         $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $this->setInsert($insertLink);
 
-        return $this->view->render(
-            $response,
-            'admin/list.twig',
-            [
-                'title' => $this->model->getFormalTableName(),
-                'insertLink' => $insertLink,
-                'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'filterValue' => $filterFieldValue,
-                'filterErrorMessage' => $filterErrorMessage,
-                'filterFormAction' => getRouteName(true, $this->routePrefix, 'index'),
-                'filterFieldName' => $this->sessionFilterFieldKey,
-                'isFiltered' => $filterColumnsInfo,
-                'resetFilterRoute' => getRouteName(true, $this->routePrefix, 'index.reset'),
-                'updateColumn' => $this->model->getPrimaryKeyColumnName(),
-                'updatePermitted' => $this->authorization
-                    ->check($this->getAuthorizationMinimumLevel('update')),
-                'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
-                'addDeleteColumn' => $this->authorization
-                    ->check($this->getAuthorizationMinimumLevel('delete')),
-                'deleteRoute' => getRouteName(true, $this->routePrefix, 'delete'),
-                'results' => $results,
-                'numResults' => $numResults,
-                'sortColumn' => $this->model->getDefaultOrderByColumnName(),
-                'sortByAsc' => $this->model->getDefaultOrderByAsc(),
-                'navigationItems' => $this->navigationItems
-            ]
-        );
+        $this->setUpdate($this->authorization->check($this->getAuthorizationMinimumLevel('update')), $this->model->getPrimaryKeyColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
+
+        $this->setDelete($this->container->authorization->check($this->getAuthorizationMinimumLevel('delete')), getRouteName(true, $this->routePrefix, 'delete'));
+
     }
+
+//    public function index(Request $request, Response $response, $args)
+//    {
+//        return $this->indexView($response);
+//    }
+//
+//    public function indexView(Response $response, bool $resetFilter = false, string $columns = '*')
+//    {
+//        if ($resetFilter) {
+//            return $this->resetFilter($response, getRouteName(true, $this->routePrefix, 'index'));
+//        }
+//
+//        $filterColumnsInfo = (isset($_SESSION[$this->sessionFilterColumnsKey])) ? $_SESSION[$this->sessionFilterColumnsKey] : null;
+//
+//        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getOrderByColumnName(), $this->model->getDefaultOrderByAsc(), $filterColumnsInfo))) {
+//            $numResults = count($results);
+//        } else {
+//            $numResults = 0;
+//        }
+//
+//        $filterFieldValue = $this->getFilterFieldValue();
+//        $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
+//
+//        // make sure all session input necessary to send to twig is produced above
+//        FormHelper::unsetSessionVars();
+//
+//        $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+//
+//        return $this->view->render(
+//            $response,
+//            'admin/list.twig',
+//            [
+//                'title' => $this->model->getFormalTableName(),
+//                'insertLink' => $insertLink,
+//                'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
+//                'filterValue' => $filterFieldValue,
+//                'filterErrorMessage' => $filterErrorMessage,
+//                'filterFormAction' => getRouteName(true, $this->routePrefix, 'index'),
+//                'filterFieldName' => $this->sessionFilterFieldKey,
+//                'isFiltered' => $filterColumnsInfo,
+//                'resetFilterRoute' => getRouteName(true, $this->routePrefix, 'index.reset'),
+//                'updateColumn' => $this->model->getPrimaryKeyColumnName(),
+//                'updatePermitted' => $this->authorization
+//                    ->check($this->getAuthorizationMinimumLevel('update')),
+//                'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
+//                'addDeleteColumn' => $this->authorization
+//                    ->check($this->getAuthorizationMinimumLevel('delete')),
+//                'deleteRoute' => getRouteName(true, $this->routePrefix, 'delete'),
+//                'results' => $results,
+//                'numResults' => $numResults,
+//                'sortColumn' => $this->model->getOrderByColumnName(),
+//                'sortByAsc' => $this->model->getOrderByAsc(),
+//                'navigationItems' => $this->navigationItems
+//            ]
+//        );
+//    }
 
     public function getInsert(Request $request, Response $response, $args)
     {

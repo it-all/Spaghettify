@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Domain\Admin\Marketing\Testimonials;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 
-class TestimonialsModel extends DatabaseTableModel
+class TestimonialsModel extends SingleTableModel
 {
     const TABLE_NAME = 'testimonials';
 
     public function __construct()
     {
-        parent::__construct(self::TABLE_NAME, 'receive_date', false);
+        parent::__construct(self::TABLE_NAME, '*', 'receive_date', false);
     }
 }

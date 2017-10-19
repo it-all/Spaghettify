@@ -39,8 +39,8 @@ class LoginsView extends AdminView
                 'deleteRoute' => false,
                 'results' => $results,
                 'numResults' => $numResults,
-                'sortColumn' => $this->model->getDefaultOrderByColumnName(),
-                'sortByAsc' => $this->model->getDefaultOrderByAsc(),
+                'sortColumn' => $this->model->getOrderByColumnName(),
+                'sortByAsc' => $this->model->getOrderByAsc(),
                 'navigationItems' => $this->navigationItems
             ]
         );

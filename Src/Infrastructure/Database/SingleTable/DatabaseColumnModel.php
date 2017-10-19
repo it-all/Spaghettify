@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\Database;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
+use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 
 class DatabaseColumnModel
@@ -39,7 +40,7 @@ class DatabaseColumnModel
     /** @var  array only applies to enum (USER-DEFINED) types */
     private $enumOptions;
 
-    function __construct(DatabaseTableModel $dbTableModel,  array $columnInfo)
+    function __construct(SingleTableModel $dbTableModel,  array $columnInfo)
     {
         $this->constraints = []; // initialize
         $this->enumOptions = []; // initialize

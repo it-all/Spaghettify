@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
@@ -25,9 +25,14 @@ class SingleTableController extends Controller
         parent::__construct($container);
     }
 
-    public function getModel(): DatabaseTableModel
+    public function getModel(): SingleTableModel
     {
         return $this->model;
+    }
+
+    public function postIndexFilter(Request $request, Response $response, $args)
+    {
+        return $this->setIndexFilter($request, $response, $args, $this->model->getListViewColumns(), getRouteName(true, $this->routePrefix, 'index'), $this->view);
     }
 
     public function postInsert(Request $request, Response $response, $args)

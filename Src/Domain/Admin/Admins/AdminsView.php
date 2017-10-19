@@ -9,7 +9,6 @@ use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
 use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableHelper;
-use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\ListView;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
@@ -27,57 +26,15 @@ class AdminsView extends ListView
     {
         $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
         $this->adminsModel = new AdminsModel();
-        parent::__construct($container, 'adminsFilterColumnsInfo', 'adminsFilterValue', 'adminsFilter');
-    }
 
-    public function indexView(Response $response, bool $resetFilter = false)
-    {
-        if ($resetFilter) {
-            return $this->resetFilter($response, ROUTE_ADMIN_ADMINS);
-        }
+        parent::__construct($container, 'systemEventsFilterColumnsInfo', 'systemEventsFilterValue', 'systemEventsFilter', ROUTE_ADMIN_ADMINS, $this->adminsModel, ROUTE_ADMIN_ADMINS_RESET, 'admin/adminsList.twig');
 
-        $filterColumnsInfo = (isset($_SESSION[$this->sessionFilterColumnsKey])) ? $_SESSION[$this->sessionFilterColumnsKey] : null;
-        if ($results = pg_fetch_all($this->adminsModel->getListView($filterColumnsInfo))) {
-            $numResults = count($results);
-        } else {
-            $numResults = 0;
-        }
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getPrimaryTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $this->setInsert($insertLink);
 
-        $filterFieldValue = $this->getFilterFieldValue();
-        $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
+        $this->setUpdate($this->authorization->check($this->getAuthorizationMinimumLevel('update')), $this->adminsModel->getUpdateColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
 
-        // make sure all session input necessary to send to twig is produced above
-        FormHelper::unsetSessionVars();
-
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getListViewTitle(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
-
-        return $this->view->render(
-            $response,
-            'admin/adminsList.twig',
-            [
-                'title' => $this->adminsModel->getListViewTitle(),
-                'updateColumn' => $this->adminsModel->getUpdateColumnName(),
-                'insertLink' => $insertLink,
-                'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-                'filterValue' => $filterFieldValue,
-                'filterErrorMessage' => $filterErrorMessage,
-                'filterFormAction' => ROUTE_ADMIN_ADMINS,
-                'filterFieldName' => $this->sessionFilterFieldKey,
-                'isFiltered' => $filterColumnsInfo,
-                'resetFilterRoute' => ROUTE_ADMIN_ADMINS_RESET,
-                'updatePermitted' => $this->authorization
-                    ->check($this->getAuthorizationMinimumLevel('update')),
-                'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
-                'addDeleteColumn' => $this->authorization
-                    ->check($this->getAuthorizationMinimumLevel('delete')),
-                'deleteRoute' => getRouteName(true, $this->routePrefix, 'delete'),
-                'results' => $results,
-                'numResults' => $numResults,
-                'sortColumn' => 'level',
-                'sortByAsc' => $this->adminsModel->getIsOrderByAsc(),
-                'navigationItems' => $this->navigationItems
-            ]
-        );
+        $this->setDelete($this->container->authorization->check($this->getAuthorizationMinimumLevel('delete')), getRouteName(true, $this->routePrefix, 'delete'));
     }
 
     private function pwFieldsHaveError(): bool
@@ -157,7 +114,7 @@ class AdminsView extends ListView
             $response,
             'admin/form.twig',
             [
-                'title' => 'Insert '. $this->adminsModel->getListViewTitle(false),
+                'title' => 'Insert '. $this->adminsModel->getPrimaryTableName(false),
                 'form' => $this->getForm($request),
                 'navigationItems' => $this->navigationItems
             ]

@@ -9,15 +9,15 @@ use It_All\FormFormer\Fields\SelectField;
 use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Fields\TextareaField;
 use It_All\FormFormer\Form;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseColumnModel;
-use It_All\Spaghettify\Src\Infrastructure\Database\DatabaseTableModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\DatabaseColumnModel;
+use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 
 class DatabaseTableForm extends Form
 {
     const TEXTAREA_COLS = 50;
     const TEXTAREA_ROWS = 5;
 
-    public function __construct(DatabaseTableModel $databaseTableModel, string $formAction, string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $databaseAction = 'insert', array $fieldData = null)
+    public function __construct(SingleTableModel $databaseTableModel, string $formAction, string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $databaseAction = 'insert', array $fieldData = null)
     {
         $this->validateDatabaseActionString($databaseAction);
 

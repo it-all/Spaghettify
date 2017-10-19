@@ -1,15 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Infrastructure\Database;
+namespace It_All\Spaghettify\Src\Infrastructure\Database\SingleTable;
 
+use It_All\Spaghettify\Src\Infrastructure\Database\Postgres;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\InsertUpdateBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\UpdateBuilder;
+use It_All\Spaghettify\Src\Infrastructure\Database\TableModel;
 
-class DatabaseTableModel
+class SingleTableModel implements TableModel
 {
     /** @var  array of column model objects */
     protected $columns;
@@ -21,10 +23,10 @@ class DatabaseTableModel
     protected $primaryKeyColumnName;
 
     /** @var bool|string  */
-    protected $defaultOrderByColumnName;
+    protected $orderByColumnName;
 
     /** @var bool  */
-    protected $defaultOrderByAsc;
+    protected $orderByAsc;
 
     /**
      * @var array of columnNames with UNIQUE constraint or index
@@ -34,8 +36,10 @@ class DatabaseTableModel
 
     private $uniqueColumns;
 
+    private $selectColumns;
 
-    public function __construct(string $tableName, string $defaultOrderByColumnName = null, bool $defaultOrderByAsc = true)
+
+    public function __construct(string $tableName, string $selectColumns = '*', string $orderByColumnName = null, bool $orderByAsc = true)
     {
         $this->tableName = $tableName;
         $this->primaryKeyColumnName = false; // initialize
@@ -47,8 +51,10 @@ class DatabaseTableModel
         // $this->uniqueColumnNames added (then used to set $column->isUnique
         $this->setConstraints();
 
-        $this->defaultOrderByColumnName = ($defaultOrderByColumnName != null) ? $defaultOrderByColumnName : $this->primaryKeyColumnName;
-        $this->defaultOrderByAsc = $defaultOrderByAsc;
+        $this->selectColumns = $selectColumns;
+
+        $this->orderByColumnName = ($orderByColumnName != null) ? $orderByColumnName : $this->primaryKeyColumnName;
+        $this->orderByAsc = $orderByAsc;
 
         // $this->uniqueColumns added
         $this->setColumns();
@@ -113,9 +119,30 @@ class DatabaseTableModel
         return $listViewColumns;
     }
 
-    public function select(string $columns = '*', string $orderByColumn = null, bool $orderByAsc = true, array $whereColumnsInfo = null)
+//    public function select(array $filterColumnsInfo = null)
+//    {
+//        $selectClause = "SELECT ";
+//        $columnCount = 1;
+//        foreach (self::SELECT_COLUMNS as $columnNameSql) {
+//            $selectClause .= $columnNameSql;
+//            if ($columnCount != count(self::SELECT_COLUMNS)) {
+//                $selectClause .= ",";
+//            }
+//            $columnCount++;
+//        }
+//        $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
+//        $orderByClause = "ORDER BY roles.level";
+//        if ($filterColumnsInfo != null) {
+//            $this->validateFilterColumns($filterColumnsInfo);
+//        }
+//
+//        $q = new SelectBuilder($selectClause, $fromClause, $filterColumnsInfo, $orderByClause);
+//        return $q->execute();
+//    }
+//
+    public function select(array $whereColumnsInfo = null)
     {
-        $q = new SelectBuilder("SELECT $columns", "FROM $this->tableName", $whereColumnsInfo, $this->getOrderByClause($orderByColumn, $orderByAsc));
+        $q = new SelectBuilder("SELECT $this->selectColumns", "FROM $this->tableName", $whereColumnsInfo, $this->getOrderByClause($this->orderByColumnName, $this->orderByAsc));
         return $q->execute();
     }
 
@@ -270,9 +297,9 @@ class DatabaseTableModel
         return $name;
     }
 
-    public function getTableName()
+    public function getTableName(bool $plural = true): string
     {
-        return $this->tableName;
+        return $this->getFormalTableName($plural);
     }
 
     /**
@@ -283,14 +310,14 @@ class DatabaseTableModel
         return $this->primaryKeyColumnName;
     }
 
-    public function getDefaultOrderByColumnName(): string
+    public function getOrderByColumnName(): string
     {
-        return $this->defaultOrderByColumnName;
+        return $this->orderByColumnName;
     }
 
-    public function getDefaultOrderByAsc(): bool
+    public function getOrderByAsc(): bool
     {
-        return $this->defaultOrderByAsc;
+        return $this->orderByAsc;
     }
 
     public function getColumns(): array
