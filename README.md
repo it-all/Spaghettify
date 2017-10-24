@@ -41,7 +41,7 @@ Data Validation with <a target="_blank" href="https://github.com/vlucas/valitron
 <a target="_blank" href="#authe">Authentication</a> (Log In/Out)  
 Administrative Layout including <a target="_blank" href="#adminNav">Navigation</a>  
 <a target="_blank" href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
-<a target="_blank" href="#xss">Preventing XSS</a>  
+<a target="_blank" href="#xss">XSS Prevention</a>  
 
 CODING NEW FUNCTIONALITY  
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses SingleTable files) or Domain/Admin/Admins (joined database tables so mostly custom code).  
@@ -99,7 +99,7 @@ See NavAdmin.php.
 <a name="autho">Authorization</a>  
 Admin pages and functionality can be protected against unauthorized use based on administrative roles. Resource and functionality access is defined in config.php in the 'adminMinimumPermissions' array key based on the role and is set in routes.php on resources as necessary, in NavAdmin to determine whether or not to display navigation options, and in views and controllers as necessary to grant or limit functionality access. Authorization failures result in alerts being written to the system_events table and the user redirected to the admin homepage with a red alert message displayed.
 
-<a name="xss">Preventing XSS</a>  
+<a name="xss">XSS Prevention</a>  
 The appropriate <a target="_blank" href="https://twig.sensiolabs.org/doc/2.x/filters/escape.html" target="_blank">Twig escape filter</a> are used for any user-input data* that is output through Twig. Note that Twig defaults to autoescape 'html' in the autoescape environment variable: https://twig.sensiolabs.org/api/2.x/Twig_Environment.html
 
 protectXSS() or arrayProtectRecursive() should be called for any user-input data* that is output into HTML independent of Twig (currently there is none).
@@ -110,8 +110,8 @@ Miscellaneous Instructions
 
 To add a form to a Twig template:  
 Be sure to include the csrf fields:  
-<input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}">  
-<input type="hidden" name="{{ csrf['tokenValueKey'] }}" value="{{ csrf['tokenValue'] }}">  
+&lt;input type="hidden" name="{{ csrf['tokenNameKey'] }}" value="{{ csrf['tokenName'] }}"&gt;  
+&lt;input type="hidden" name="{{ csrf['tokenValueKey'] }}" value="{{ csrf['tokenValue'] }}"&gt;  
 
 To print debugging info in admin pages:  
 Send a 'debug' variable to twig ie:   
