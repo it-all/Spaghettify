@@ -55,6 +55,7 @@ return [
     // if the index is not defined for a route or nav section, no authorization check is performed (all admins (logged in users) will be able to access resource or view nav section). therefore, indexes only need to be defined for routes and nav sections that require authorization greater than the base (least permission) role.
     'adminMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'manager',
+        ROUTE_LOGIN_ATTEMPTS_RESET => 'manager',
         ROUTE_SYSTEM_EVENTS => 'owner',
         ROUTE_SYSTEM_EVENTS_RESET => 'owner',
         ROUTE_ADMIN_ADMINS => 'director',

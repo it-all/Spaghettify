@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure;
 
-use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\TableModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
@@ -27,11 +26,11 @@ class ListView extends AdminView
     private $addDeleteColumn;
     private $deleteRoute;
 
-    public function __construct(Container $container, string $sessionFilterColumnsKey, string $sessionFilterValueKey, string $sessionFilterFieldKey, string $indexRoute, TableModel $model, string $filterResetRoute, string $template = 'admin/list.twig')
+    public function __construct(Container $container, string $filterFieldsPrefix, string $indexRoute, TableModel $model, string $filterResetRoute, string $template = 'admin/list.twig')
     {
-        $this->sessionFilterColumnsKey = $sessionFilterColumnsKey;
-        $this->sessionFilterValueKey = $sessionFilterValueKey;
-        $this->sessionFilterFieldKey = $sessionFilterFieldKey;
+        $this->sessionFilterColumnsKey = $filterFieldsPrefix . 'FilterColumns';
+        $this->sessionFilterValueKey = $filterFieldsPrefix . 'FilterValue';
+        $this->sessionFilterFieldKey = $filterFieldsPrefix . 'Filter';
         $this->indexRoute = $indexRoute;
         $this->model = $model;
         $this->template = $template;
@@ -80,7 +79,7 @@ class ListView extends AdminView
         return $this->indexView($response, true);
     }
 
-    private function indexView(Response $response, bool $resetFilter = false)
+    public function indexView(Response $response, bool $resetFilter = false)
     {
         if ($resetFilter) {
             return $this->resetFilter($response, $this->indexRoute);

@@ -21,9 +21,7 @@ class SingleTableView extends ListView
         $this->model = $model;
         $this->routePrefix = $routePrefix;
 
-        //public function __construct(Container $container, string $sessionFilterColumnsKey, string $sessionFilterValueKey, string $sessionFilterFieldKey, string $indexRoute, $model, string $filterResetRoute, string $template = 'admin/list.twig')
-
-        parent::__construct($container, $routePrefix.'FilterColumnsInfo', $routePrefix.'FilterValue', $routePrefix.'Filter', getRouteName(true, $routePrefix, 'index'), $this->model, getRouteName(true, $routePrefix, 'index.reset'));
+        parent::__construct($container, $routePrefix, getRouteName(true, $routePrefix, 'index'), $this->model, getRouteName(true, $routePrefix, 'index.reset'));
 
         $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
         $this->setInsert($insertLink);

@@ -24,6 +24,7 @@ define('ROUTE_ADMIN_HOME_DEFAULT', 'admin.home');
 define('ROUTE_LOGOUT', 'authentication.logout');
 // login attempts
 define('ROUTE_LOGIN_ATTEMPTS', ROUTEPREFIX_ADMIN.'.logins.index');
+define('ROUTE_LOGIN_ATTEMPTS_RESET', ROUTEPREFIX_ADMIN.'.logins.index.reset');
 // system events
 define('ROUTE_SYSTEM_EVENTS', ROUTEPREFIX_ADMIN.'.systemEvents.index');
 define('ROUTE_SYSTEM_EVENTS_RESET', ROUTEPREFIX_ADMIN.'.systemEvents.index.reset');

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
+namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Logins;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
 use Slim\Container;

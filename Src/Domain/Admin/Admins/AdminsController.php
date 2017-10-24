@@ -57,7 +57,7 @@ class AdminsController extends Controller
 
     public function postIndexFilter(Request $request, Response $response, $args)
     {
-        return $this->setIndexFilter($request, $response, $args, $this->adminsModel::LIST_VIEW_COLUMNS, ROUTE_ADMIN_ADMINS, $this->view);
+        return $this->setIndexFilter($request, $response, $args, $this->adminsModel::SELECT_COLUMNS, ROUTE_ADMIN_ADMINS, $this->view);
     }
 
     public function postInsert(Request $request, Response $response, $args)

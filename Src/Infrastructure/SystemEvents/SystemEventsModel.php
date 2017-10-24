@@ -13,7 +13,7 @@ class SystemEventsModel extends MultiTableModel
     const TABLE_NAME = 'system_events';
 
     // event types: debug, info, notice, warning, error, critical, alert, emergency [props to monolog]
-    const LIST_VIEW_COLUMNS = [
+    const SELECT_COLUMNS = [
         'id' => 'se.id',
         'time_stamp' => 'se.created',
         'type' => 'syet.event_type',
@@ -28,7 +28,7 @@ class SystemEventsModel extends MultiTableModel
     public function __construct()
     {
         // note time_stamp is the alias for created used in view query
-        parent::__construct(new SingleTableModel(self::TABLE_NAME, '*','time_stamp', false), self::LIST_VIEW_COLUMNS);
+        parent::__construct(new SingleTableModel(self::TABLE_NAME, '*','time_stamp', false), self::SELECT_COLUMNS);
     }
 
     public function insertDebug(string $title, int $adminId = null, string $notes = null)
@@ -119,10 +119,10 @@ class SystemEventsModel extends MultiTableModel
     {
         $selectClause = "SELECT ";
         $columnCount = 0;
-        foreach (self::LIST_VIEW_COLUMNS as $columnAlias => $columnNameSql) {
+        foreach (self::SELECT_COLUMNS as $columnAlias => $columnNameSql) {
             $selectClause .= " $columnNameSql as $columnAlias";
             $columnCount++;
-            if ($columnCount < count(self::LIST_VIEW_COLUMNS)) {
+            if ($columnCount < count(self::SELECT_COLUMNS)) {
                 $selectClause .= ",";
             }
         }

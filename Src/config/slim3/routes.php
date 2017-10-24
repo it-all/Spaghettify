@@ -77,11 +77,23 @@ $slim->get('/' . $config['dirs']['admin'] . '/systemEvents/reset',
     ->setName(ROUTE_SYSTEM_EVENTS_RESET);
 
 // logins
+$loginsPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\Logins\\';
 $slim->get('/' . $config['dirs']['admin'] . '/logins',
-    NAMESPACE_DOMAIN_ADMIN.'\Admins\Logins\LoginsView:index')
+    $loginsPath . 'LoginsView:index')
     ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_LOGIN_ATTEMPTS);
+
+$slim->post('/' . $config['dirs']['admin'] . '/logins',
+    $loginsPath . 'LoginsController:postIndexFilter')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
+    ->add(new AuthenticationMiddleware($container));
+
+$slim->get('/' . $config['dirs']['admin'] . '/logins/reset',
+    $loginsPath . 'LoginsView:indexResetFilter')
+    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS_RESET]))
+    ->add(new AuthenticationMiddleware($container))
+    ->setName(ROUTE_LOGIN_ATTEMPTS_RESET);
 
 // admins
 $adminsPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\\';
