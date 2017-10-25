@@ -15,7 +15,7 @@ class RolesModel extends SingleTableModel
 
     public function __construct()
     {
-        parent::__construct('roles', 'id, role','level');
+        parent::__construct('roles', 'id, role, level','level');
         $this->addColumnNameConstraint('level', 'positive');
     }
 
