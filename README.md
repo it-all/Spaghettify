@@ -29,19 +29,19 @@ See: https://travismaynard.com/writing/getting-started-with-gulp for further inf
 FEATURES  
 <a target="_blank" href="https://postgresql.org">PostGreSQL Database</a> Integration  
 MVC Structure  
-<a target="_blank" href="#eh">Custom Error Handling</a>  
+<a href="#eh">Custom Error Handling</a>  
 Emailing with <a target="_blank" href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>    
-<a target="_blank" href="#se">Database Logging of system events and errors  
-Logging of PHP Errors with Stack Trace  
-<a target="_blank" href="#csrf">CSRF Checking</a>  
-<a target="_blank" href="https://twig.symfony.com/">Twig</a> Templates     
+<a href="#se">Database Logging of system events and errors</a>  
+<a href="#errLog">Logging of PHP Errors with Stack Trace</a>  
+<a href="#csrf">CSRF Checking</a>  
+<a href="https://twig.symfony.com/">Twig</a> Templates     
 HTML Form Generation using <a target="_blank" href="https://github.com/it-all/FormFormer">FormFormer</a>   
 Data Validation with <a target="_blank" href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a target="_blank" href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
-<a target="_blank" href="#crud">CRUD for Single Database Tables</a>  
-<a target="_blank" href="#authe">Authentication</a> (Log In/Out)  
+<a href="#crud">CRUD for Single Database Tables</a>  
+<a href="#authe">Authentication</a> (Log In/Out)  
 Administrative Layout including <a target="_blank" href="#adminNav">Navigation</a>  
-<a target="_blank" href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
-<a target="_blank" href="#xss">XSS Prevention</a>  
+<a href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
+<a href="#xss">XSS Prevention</a>  
 
 CODING NEW FUNCTIONALITY  
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses SingleTable files) or Domain/Admin/Admins (joined database tables so mostly custom code).  
@@ -82,10 +82,13 @@ Reporting Methods:
 See ErrorHandler.php for further info.
 
 <a name="se">System Event Database Logging</a>  
-Certain events such as logging in, logging out, inserting, updating, and deleting database records are automatically logged into the system_events table. You can choose other events to insert as you write your application. For usage examples and help, search "systemEvents->insert" and see SystemEventsModel.php. Note that PHP errors are also logged to the system_events table by default (which can be turned off in config.php).
+Certain events such as logging in, logging out, inserting, updating, and deleting database records are automatically logged into the system_events table. You can choose other events to insert as you write your application. For usage examples and help, search "systemEvents->insert" and see SystemEventsModel.php. Note that PHP errors are also logged to the system_events table by default (this can be turned off in config.php).
 
+<a name="errLog">PHP Error Log</a>  
+PHP Errors with stack trace are logged to the file set in config['storage']['logs']['pathPhpErrors']  
+  
 <a name="csrf">CSRF</a>   
-The Slim Framework CSRF protection middleware (https://github.com/slimphp/Slim-Csrf) is used to check CSRF form fields. The CSRF key/value generators are added to the container for form field creation. They are also made available to Twig. A failure is logged to system_events as an error, the user's session is unset, and the user is redirected to the (frontend) homepage with an error message.
+The <a href="https://github.com/slimphp/Slim-Csrf" target="_blank">Slim Framework CSRF</a> protection middleware is used to check CSRF form fields. The CSRF key/value generators are added to the container for form field creation. They are also made available to Twig. A failure is logged to system_events as an error, the user's session is unset, and the user is redirected to the (frontend) homepage with an error message.
 
 <a name="crud">Single Table CRUD</a>  
 Single Table CRUD is like a quick and dirty ORM for single database tables, which is not meant to be complete, in that many data types and many constraints are not mapped. The Testimonials section in the admin under Marketing is there for an example of a database table which uses CRUD. Your application's views and controllers can extend the AdminCrudView and CrudController to take advantage of its functionality (see AdminsView and AdminsController for examples of this).
