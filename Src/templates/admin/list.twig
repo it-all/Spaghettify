@@ -1,4 +1,6 @@
-{% extends "base.twig" %}
+{% import 'admin/partials/list/macros.twig' as listMacros %}
+
+{% extends 'base.twig' %}
 
 {% block htmlHeadCss %}
     <link href="/css/adminFlexList.css" rel="stylesheet" type="text/css">
@@ -6,73 +8,24 @@
 
 {% block htmlBodyContent %}
 
-    {% include 'admin/partials/header.twig' %}
+{% include 'admin/partials/header.twig' %}
 
-    <main>
-        <div id="scrollingTableContainer">
-            <table class="scrollingTable sortable">
-                <thead>
-                    <tr>
-                        <th colspan="10">
-                            {{ title }} ({{ numResults }})
-                            {% if insertLink %}
-                                <a class="tableCaptionAction" href="{{ path_for(insertLink.route) }}">{{ insertLink.text }}</a>
-                            {% endif %}
+{% include 'admin/partials/list/startMain.twig' %}
 
-                            {% include 'admin/partials/listFilterForm.twig' %}
-                        </th>
-                    </tr>
-                    {% set break = false %}
-                    {% for row in results if not break %}
-                        <tr class="sortable-header-row">
-                            {% set colCount = 0 %}
-                            {% for key in row|keys %}
-                                {% if key == sortColumn %}
-                                    {% set thClass = (sortByAsc) ? 'sorttable_sorted' : 'sorttable_sorted_reverse' %}
-                                {% else %}
-                                    {% set thClass = '' %}
-                                {% endif %}
+    {# defaults to allowing all rows to be deleted #}
+    {% set deletePermitted = true %}
 
-                                <th class="{{ thClass }}">{{ key }}</th>
-                                {% set colCount = colCount + 1 %}
-                            {% endfor %}
+    {% set rowId = 0 %}
+    {% for row in results %}
+        {% set rowId = rowId + 1 %}
 
-                            {% if addDeleteColumn %}
-                                <th class="sorttable_nosort">X</th>
-                            {% endif %}
-                        </tr>
-                        {% set break = true %}
-                    {% endfor %}
-                </thead>
-                <tbody id="tbody">
-                {% set rowId = 0 %}
-                {% for row in results %}
-                    {% set rowId = rowId + 1 %}
-                    <tr id="row{{ rowId }}">
-                        {% for key, value in row %}
-                            {% if key == updateColumn and updatePermitted %}
+        {{ listMacros.bodyRow(row, rowId, updateColumn, updatePermitted, updateRoute, addDeleteColumn, deletePermitted, deleteRoute) }}
 
-                                <td><a href="{{ path_for(updateRoute, {"primaryKey": attribute(row, updateColumn)}) }}" title="update">{{ value }}</a></td>
+    {% endfor %}
 
-                            {%  else %}
-                                <td>{{ value }}</td>
-                            {% endif %}
-                        {% endfor %}
+{% include 'admin/partials/list/endMain.twig' %}
 
-
-                        {# add delete column if necessary #}
-                        {% if addDeleteColumn %}
-                            <td><a href="{{ path_for(deleteRoute, {"primaryKey": attribute(row, updateColumn)}) }}" title="delete" onclick="return confirm('Are you sure you want to delete record  {{ attribute(row, updateColumn) }}?');">X</a></td>
-                        {% endif %}
-
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </main>
-
-    {% include 'admin/partials/footer.twig' %}
+{% include 'admin/partials/footer.twig' %}
 
 {% endblock %}
 {% block htmlBodyJs %}
