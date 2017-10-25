@@ -70,7 +70,7 @@ class QueryBuilder
         if (!$res = pg_query_params($this->sql, $this->args)) {
             // note pg_last_error seems to often not return anything
             $msg = pg_last_error() . " " . $this->sql . " \nArgs: " . var_export($this->args, true);
-            throw new \Exception('Query Execution Failure See Error Log: '.$msg);
+            throw new \Exception("Query Execution Failure: $msg");
         }
         return $res;
     }
