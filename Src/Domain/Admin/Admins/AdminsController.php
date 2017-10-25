@@ -155,8 +155,14 @@ class AdminsController extends Controller
     public function getDelete(Request $request, Response $response, $args)
     {
         // make sure the current admin is not deleting themself
-        if (intval($args['primaryKey']) == $this->container->authentication->user()['id']) {
+        if ((int) ($args['primaryKey']) == $this->container->authentication->user()['id']) {
             throw new \Exception('You cannot delete yourself from admins');
+        }
+
+        // make sure there are no system events for admin being deleted
+        if ($this->container->systemEvents->hasForAdmin((int) $args['primaryKey'])) {
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["System Events exist for admin id ".$args['primaryKey']."", 'adminNoticeFailure'];
+            return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix,'index')));
         }
 
         return $this->adminsSingleTableController->getDeleteHelper($response, $args['primaryKey'],'username', true);
