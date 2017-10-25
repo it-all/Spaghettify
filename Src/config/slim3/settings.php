@@ -33,7 +33,6 @@ return [
         'mailer' => $mailer,
 
         'storage' => [
-            'pathLogs' => $config['storage']['logs']['pathEvents'],
             'pathTwigCache' => $config['storage']['cache']['pathCache'].'twig/',
         ],
 
