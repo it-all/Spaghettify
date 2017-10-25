@@ -202,8 +202,8 @@ ALTER SEQUENCE system_events_id_seq OWNED BY system_events.id;
 --
 
 CREATE TABLE testimonials (
-    testimonial_id bigint NOT NULL,
-    testimonial_text text NOT NULL,
+    id bigint NOT NULL,
+    testimonial text NOT NULL,
     person character varying(50) NOT NULL,
     place character varying(100) NOT NULL,
     active boolean DEFAULT true NOT NULL,
@@ -227,7 +227,7 @@ CREATE SEQUENCE testimonials_testimonial_id_seq
 -- Name: testimonials_testimonial_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE testimonials_testimonial_id_seq OWNED BY testimonials.testimonial_id;
+ALTER SEQUENCE testimonials_testimonial_id_seq OWNED BY testimonials.id;
 
 
 --
@@ -266,17 +266,17 @@ ALTER TABLE ONLY system_events ALTER COLUMN id SET DEFAULT nextval('system_event
 
 
 --
--- Name: testimonials testimonial_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: testimonials id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY testimonials ALTER COLUMN testimonial_id SET DEFAULT nextval('testimonials_testimonial_id_seq'::regclass);
+ALTER TABLE ONLY testimonials ALTER COLUMN id SET DEFAULT nextval('testimonials_testimonial_id_seq'::regclass);
 
 
 --
 -- Name: adminis_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('adminis_id_seq', 13, true);
+SELECT pg_catalog.setval('adminis_id_seq', 40, true);
 
 
 --
@@ -307,7 +307,7 @@ COPY login_attempts (id, admin_id, username, ip, created, success) FROM stdin;
 -- Name: login_attempts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('login_attempts_id_seq', 98, true);
+SELECT pg_catalog.setval('login_attempts_id_seq', 135, true);
 
 
 --
@@ -315,10 +315,7 @@ SELECT pg_catalog.setval('login_attempts_id_seq', 98, true);
 --
 
 COPY roles (id, role, level) FROM stdin;
-3	director	2
-4	manager	3
 1	owner	1
-5	user	4
 \.
 
 
@@ -326,7 +323,7 @@ COPY roles (id, role, level) FROM stdin;
 -- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('roles_id_seq', 30, true);
+SELECT pg_catalog.setval('roles_id_seq', 35, true);
 
 
 --
@@ -357,14 +354,14 @@ COPY system_events (id, event_type, title, notes, created, admin_id, ip_address,
 -- Name: system_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('system_events_id_seq', 313, true);
+SELECT pg_catalog.setval('system_events_id_seq', 843, true);
 
 
 --
 -- Data for Name: testimonials; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY testimonials (testimonial_id, testimonial_text, person, place, active, receive_date) FROM stdin;
+COPY testimonials (id, testimonial, person, place, active, receive_date) FROM stdin;
 \.
 
 
@@ -372,7 +369,7 @@ COPY testimonials (testimonial_id, testimonial_text, person, place, active, rece
 -- Name: testimonials_testimonial_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 20, true);
+SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 28, true);
 
 
 --
@@ -436,7 +433,7 @@ ALTER TABLE ONLY system_events
 --
 
 ALTER TABLE ONLY testimonials
-    ADD CONSTRAINT testimonials_pkey PRIMARY KEY (testimonial_id);
+    ADD CONSTRAINT testimonials_pkey PRIMARY KEY (id);
 
 
 --
@@ -444,6 +441,14 @@ ALTER TABLE ONLY testimonials
 --
 
 CREATE INDEX system_events_title_idx ON system_events USING btree (title);
+
+
+--
+-- Name: admins admins_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY admins
+    ADD CONSTRAINT admins_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id);
 
 
 --
