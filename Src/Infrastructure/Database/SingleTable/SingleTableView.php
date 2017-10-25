@@ -32,62 +32,6 @@ class SingleTableView extends ListView
 
     }
 
-//    public function index(Request $request, Response $response, $args)
-//    {
-//        return $this->indexView($response);
-//    }
-//
-//    public function indexView(Response $response, bool $resetFilter = false, string $columns = '*')
-//    {
-//        if ($resetFilter) {
-//            return $this->resetFilter($response, getRouteName(true, $this->routePrefix, 'index'));
-//        }
-//
-//        $filterColumnsInfo = (isset($_SESSION[$this->sessionFilterColumnsKey])) ? $_SESSION[$this->sessionFilterColumnsKey] : null;
-//
-//        if ($results = pg_fetch_all($this->model->select($columns, $this->model->getOrderByColumnName(), $this->model->getDefaultOrderByAsc(), $filterColumnsInfo))) {
-//            $numResults = count($results);
-//        } else {
-//            $numResults = 0;
-//        }
-//
-//        $filterFieldValue = $this->getFilterFieldValue();
-//        $filterErrorMessage = FormHelper::getFieldError($this->sessionFilterFieldKey);
-//
-//        // make sure all session input necessary to send to twig is produced above
-//        FormHelper::unsetSessionVars();
-//
-//        $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
-//
-//        return $this->view->render(
-//            $response,
-//            'admin/list.twig',
-//            [
-//                'title' => $this->model->getFormalTableName(),
-//                'insertLink' => $insertLink,
-//                'filterOpsList' => QueryBuilder::getWhereOperatorsText(),
-//                'filterValue' => $filterFieldValue,
-//                'filterErrorMessage' => $filterErrorMessage,
-//                'filterFormAction' => getRouteName(true, $this->routePrefix, 'index'),
-//                'filterFieldName' => $this->sessionFilterFieldKey,
-//                'isFiltered' => $filterColumnsInfo,
-//                'resetFilterRoute' => getRouteName(true, $this->routePrefix, 'index.reset'),
-//                'updateColumn' => $this->model->getPrimaryKeyColumnName(),
-//                'updatePermitted' => $this->authorization
-//                    ->check($this->getAuthorizationMinimumLevel('update')),
-//                'updateRoute' => getRouteName(true, $this->routePrefix, 'update', 'put'),
-//                'addDeleteColumn' => $this->authorization
-//                    ->check($this->getAuthorizationMinimumLevel('delete')),
-//                'deleteRoute' => getRouteName(true, $this->routePrefix, 'delete'),
-//                'results' => $results,
-//                'numResults' => $numResults,
-//                'sortColumn' => $this->model->getOrderByColumnName(),
-//                'sortByAsc' => $this->model->getOrderByAsc(),
-//                'navigationItems' => $this->navigationItems
-//            ]
-//        );
-//    }
-
     public function getInsert(Request $request, Response $response, $args)
     {
         return $this->insertView($request, $response, $args);
