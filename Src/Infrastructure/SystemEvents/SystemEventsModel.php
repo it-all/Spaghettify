@@ -142,7 +142,6 @@ class SystemEventsModel extends MultiTableModel
     public function hasForAdmin(int $adminId): bool
     {
         $q = new QueryBuilder("SELECT COUNT(*) FROM system_events WHERE admin_id = $1", $adminId);
-        $res = $q->getOne();
-        return (bool) $res;
+        return (bool) $q->getOne();
     }
 }

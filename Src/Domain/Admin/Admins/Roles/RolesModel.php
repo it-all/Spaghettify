@@ -74,4 +74,10 @@ class RolesModel extends SingleTableModel
         $q = new QueryBuilder("SELECT id FROM roles WHERE role = $1", $defaultRole);
         return $q->getOne();
     }
+
+    public static function hasAdmin(int $roleId): bool
+    {
+        $q = new QueryBuilder("SELECT COUNT(id) FROM admins WHERE role_id = $1", $roleId);
+        return (bool) $q->getOne();
+    }
 }

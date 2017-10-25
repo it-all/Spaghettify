@@ -15,18 +15,18 @@ class ListView extends AdminView
     protected $sessionFilterColumnsKey;
     protected $sessionFilterValueKey;
     protected $sessionFilterFieldKey;
-    private $indexRoute;
+    protected $indexRoute;
     protected $model;
-    private $template;
-    private $filterResetRoute;
-    private $insertLink; // false or ['text' => {link text}, 'route' => {route}]
-    private $updatePermitted;
-    private $updateColumn;
-    private $updateRoute;
-    private $addDeleteColumn;
-    private $deleteRoute;
+    protected $template;
+    protected $filterResetRoute;
+    protected $insertLink; // false or ['text' => {link text}, 'route' => {route}]
+    protected $updatePermitted;
+    protected $updateColumn;
+    protected $updateRoute;
+    protected $addDeleteColumn;
+    protected $deleteRoute;
 
-    public function __construct(Container $container, string $filterFieldsPrefix, string $indexRoute, TableModel $model, string $filterResetRoute, string $template = 'admin/list.twig')
+    public function __construct(Container $container, string $filterFieldsPrefix, string $indexRoute, TableModel $model, string $filterResetRoute, string $template = 'admin/lists/list.twig')
     {
         $this->sessionFilterColumnsKey = $filterFieldsPrefix . 'FilterColumns';
         $this->sessionFilterValueKey = $filterFieldsPrefix . 'FilterValue';

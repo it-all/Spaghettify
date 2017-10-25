@@ -161,7 +161,7 @@ class AdminsController extends Controller
 
         // make sure there are no system events for admin being deleted
         if ($this->container->systemEvents->hasForAdmin((int) $args['primaryKey'])) {
-            $_SESSION[SESSION_ADMIN_NOTICE] = ["System Events exist for admin id ".$args['primaryKey']."", 'adminNoticeFailure'];
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["System Events exist for admin id ".$args['primaryKey'], 'adminNoticeFailure'];
             return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix,'index')));
         }
 

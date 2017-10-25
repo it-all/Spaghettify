@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
-use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 use Slim\Container;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class RolesController extends SingleTableController
 {
@@ -16,13 +13,15 @@ class RolesController extends SingleTableController
         parent::__construct($container, new RolesModel(), new RolesView($container), ROUTEPREFIX_ADMIN_ROLES);
     }
 
-    // overrride for custom return column
-    public function getDelete(Request $request, Response $response, $args)
+    // override to check condition and add custom return column
+    protected function delete($primaryKey, string $returnColumn = null, bool $sendEmail = false)
     {
-        if (!$this->authorization->checkFunctionality(getRouteName(true, $this->routePrefix, 'delete'))) {
-            throw new \Exception('No permission.');
+        // make sure role is not being used
+        if ($this->model::hasAdmin((int) $primaryKey)) {
+            $_SESSION[SESSION_ADMIN_NOTICE] = ["Role in use", 'adminNoticeFailure'];
+            return false;
         }
 
-        return $this->getDeleteHelper($response, $args['primaryKey'],'role', true);
+        parent::delete($primaryKey, 'role', $sendEmail);
     }
 }

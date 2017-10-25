@@ -27,7 +27,7 @@ class AdminsView extends ListView
         $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
         $this->adminsModel = new AdminsModel();
 
-        parent::__construct($container, 'admins', ROUTE_ADMIN_ADMINS, $this->adminsModel, ROUTE_ADMIN_ADMINS_RESET, 'admin/adminsList.twig');
+        parent::__construct($container, 'admins', ROUTE_ADMIN_ADMINS, $this->adminsModel, ROUTE_ADMIN_ADMINS_RESET, 'admin/lists/adminsList.twig');
 
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getPrimaryTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
         $this->setInsert($insertLink);
