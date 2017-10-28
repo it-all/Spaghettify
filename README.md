@@ -13,9 +13,13 @@ Create a PostgreSQL database for this project and import spaghettify.postgres.sq
 
 Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.  
 
-Create a local site with Src/public as the root directory (default web server is Apache w/ .htaccess in Src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  
+Create a local site with Src/public as the root directory (default web server is Apache w/ .htaccess in Src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  You will probably have to:  
+$ chmod 777 storage/
+$ chmod 777 storage/cache
+$ chmod 777 storage/cache/twig
+$ chmod 777 storage/sessions
 
-Browse to it. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
+Browse to your local site. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
 
 If you want to use Gulp for CSS and/or JS preprocessing  
 ~$ cd /path/to/project  
