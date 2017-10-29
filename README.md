@@ -4,34 +4,36 @@ Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administra
 
 INSTALLATION  
 $ composer require it-all/spaghettify from your project folder  
+$ mkdir src  
+$ mv vendor/it-all/spaghettify/cssJsBuildTool/ .  
+$ mv vendor/it-all/spaghettify/storage/ .  
 
-move or copy the following folders and their files into your main project folder
-vendor/it-all/spaghettify/Src/config
-vendor/it-all/spaghettify/Src/cssJsBuildTool
-vendor/it-all/spaghettify/Src/prebuild
-vendor/it-all/spaghettify/Src/public
-vendor/it-all/spaghettify/Src/storage
-vendor/it-all/spaghettify/Src/templates
+mv vendor/it-all/spaghettify/Src/config/ ./src/  
+mv vendor/it-all/spaghettify/Src/prebuild/ ./src/  
+mv vendor/it-all/spaghettify/Src/public/ ./src/  
+mv vendor/it-all/spaghettify/Src/templates/ ./src/  
+
+$ cp src/config/env-sample.php src/config/env.php  
 
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
  - $ psql -U postgres
  - postgres=# create role mydbname with login;
  - postgres=# create database mydbname with owner mydbname;
  - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
-
-Copy Src/config/env-sample.php to Src/config/env.php and edit database and other settings as necessary.  
-
-in public/index.php, change
-require APP_ROOT . 'init.php';
-to
-require APP_ROOT . 'vendor/it-all/spaghettify/Src/init.php';
-
-Create a local site with Src/public as the root directory (default web server is Apache w/ .htaccess in Src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  You will probably have to:  
-$ chmod 777 storage/sessions
-$ chmod 777 storage/cache/twig
-
+  
+Edit database and other settings in Src/config/env.php.    
+  
+in public/index.php, change  
+require APP_ROOT . 'init.php';  
+to  
+require __DIR__ . '/../../vendor/it-all/spaghettify/Src/init.php';   
+  
+Create a local site with src/public as the root directory (default web server is Apache w/ .htaccess in src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  You will probably have to:  
+$ chmod 777 storage/sessions  
+$ chmod 777 storage/cache/twig  
+  
 Browse to your local site. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
-
+  
 If you want to use Gulp for CSS and/or JS preprocessing  
 ~$ cd /path/to/project  
 ~$ npm init  
