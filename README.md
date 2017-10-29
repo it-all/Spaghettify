@@ -3,7 +3,15 @@
 Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administration, based on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
 INSTALLATION  
-$ composer create-project --no-interaction it-all/spaghettify project-name  
+$ composer require it-all/spaghettify from your project folder  
+
+move or copy the following folders and their files into your main project folder
+vendor/it-all/spaghettify/Src/config
+vendor/it-all/spaghettify/Src/cssJsBuildTool
+vendor/it-all/spaghettify/Src/prebuild
+vendor/it-all/spaghettify/Src/public
+vendor/it-all/spaghettify/Src/storage
+vendor/it-all/spaghettify/Src/templates
 
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
  - $ psql -U postgres
@@ -11,13 +19,16 @@ Create a PostgreSQL database for this project and import spaghettify.postgres.sq
  - postgres=# create database mydbname with owner mydbname;
  - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
 
-Copy Src/config/env-sample.php to Src/config/env.php and edit database info and other fields as necessary.  
+Copy Src/config/env-sample.php to Src/config/env.php and edit database and other settings as necessary.  
+
+in public/index.php, change
+require APP_ROOT . 'init.php';
+to
+require APP_ROOT . 'vendor/it-all/spaghettify/Src/init.php';
 
 Create a local site with Src/public as the root directory (default web server is Apache w/ .htaccess in Src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  You will probably have to:  
-$ chmod 777 storage/
-$ chmod 777 storage/cache
-$ chmod 777 storage/cache/twig
 $ chmod 777 storage/sessions
+$ chmod 777 storage/cache/twig
 
 Browse to your local site. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
 
