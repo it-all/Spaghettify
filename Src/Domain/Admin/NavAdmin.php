@@ -21,7 +21,6 @@ class NavAdmin
     private function setNav()
     {
         $this->nav = [
-
             'Marketing' => [
                 // note, uncommenting the line below overrides the default setting
 //            'minimumPermissions' => 'director',
@@ -66,6 +65,9 @@ class NavAdmin
                         ]
                     ]
                 ]
+            ],
+            'Logout' => [
+                'link' => ROUTE_LOGOUT
             ]
         ];
     }
