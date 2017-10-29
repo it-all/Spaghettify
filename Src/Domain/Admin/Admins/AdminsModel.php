@@ -31,21 +31,29 @@ class AdminsModel extends MultiTableModel
         return $q->execute();
     }
 
-    private function getChangedColumns(array $record, string $name, string $username, int $roleId, string $password_hash = ''): array
+    private function getChangedColumns(array $record, string $name, string $username, int $roleId, string $password = ''): array
     {
         $changedColumns = [];
+
         if ($name != $record['name']) {
             $changedColumns['name'] = $name;
         }
+
         if ($username != $record['username']) {
             $changedColumns['username'] = $username;
         }
+
         if ($roleId != $record['role_id']) {
             $changedColumns['role_id'] = $roleId;
         }
-        if (strlen($password_hash) > 0 && $password_hash != $record['password_hash']) {
-            $changedColumns['password_hash'] = $password_hash;
+
+        if (strlen($password) > 0) {
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            if ($passwordHash != $record['password_hash']) {
+                $changedColumns['password_hash'] = $passwordHash;
+            }
         }
+
         return $changedColumns;
     }
 
@@ -56,7 +64,8 @@ class AdminsModel extends MultiTableModel
             throw new \Exception("Invalid Primary Key $primaryKeyValue for ".self::TABLE_NAME);
         }
 
-        $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, password_hash($password, PASSWORD_DEFAULT));
+        $changedColumns = $this->getChangedColumns($record, $name, $username, $roleId, $password);
+
         return $this->getPrimaryTableModel()->updateRecordByPrimaryKey($changedColumns, $primaryKeyValue);
     }
 
