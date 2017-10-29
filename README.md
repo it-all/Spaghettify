@@ -4,14 +4,13 @@ Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administra
 
 INSTALLATION  
 $ composer require it-all/spaghettify from your project folder  
-$ mkdir src  
 $ mv vendor/it-all/spaghettify/cssJsBuildTool/ .  
 $ mv vendor/it-all/spaghettify/storage/ .  
-
-mv vendor/it-all/spaghettify/Src/config/ ./src/  
-mv vendor/it-all/spaghettify/Src/prebuild/ ./src/  
-mv vendor/it-all/spaghettify/Src/public/ ./src/  
-mv vendor/it-all/spaghettify/Src/templates/ ./src/  
+$ mkdir src  
+$ mv vendor/it-all/spaghettify/Src/config/ ./src/  
+$ mv vendor/it-all/spaghettify/Src/prebuild/ ./src/  
+$ mv vendor/it-all/spaghettify/Src/public/ ./src/  
+$ mv vendor/it-all/spaghettify/Src/templates/ ./src/  
 
 $ cp src/config/env-sample.php src/config/env.php  
 
