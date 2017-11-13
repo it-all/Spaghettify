@@ -4,7 +4,7 @@ declare(strict_types=1);
 define('APP_ROOT', __DIR__ . '/../' );
 require APP_ROOT . '/../vendor/autoload.php';
 
-// in case of collision, env.php value overrides
+// In case of collision, env.php value overrides
 $config = array_replace_recursive(
     require APP_ROOT . 'config/config.php',
     require APP_ROOT . 'config/env.php'
@@ -21,11 +21,11 @@ $container = $slim->getContainer();
 // Set up Slim dependencies
 require APP_ROOT . 'config/slim3/dependencies.php';
 
-// remove Slim's Error Handling
+// Remove Slim's error handling
 unset($container['errorHandler']);
 unset($container['phpErrorHandler']);
 
-// Middleware registration
+// Global middleware registration
 require APP_ROOT . 'config/slim3/middleware.php';
 
 // Register routes

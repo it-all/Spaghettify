@@ -118,6 +118,12 @@ return [
         'service' => "service@".DOMAIN_NAME
     ],
 
+    // if exceeded in a session, will insert a system event and disallow further login attempts
+    'maxFailedLogins' => 5,
+
+    // removes leading and trailing blank space on all inputs
+    'trimAllUserInput' => true,
+
     // either functionalityCategory => minimumRole or functionalityCategory.functionality => minimum role
     // important to properly match the indexes to routes authorization
     // the role values must be in the database: roles.role
@@ -140,6 +146,7 @@ return [
         NAV_ADMIN_SYSTEM => 'owner',
     ],
 
+    // set the admin home route for users or roles
     'adminHomeRoutes' => [
         'usernames' => [],
         'roles' => [
@@ -148,9 +155,6 @@ return [
     ],
 
     // when entering a new admin, role will default to this
-    'adminDefaultRole' => 'owner',
+    'adminDefaultRole' => 'owner'
 
-    'maxFailedLogins' => 5,
-
-    'trimAllUserInput' => true
 ];

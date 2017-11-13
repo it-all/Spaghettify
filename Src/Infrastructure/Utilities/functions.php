@@ -231,35 +231,80 @@ function deleteCookie(string $cookieName)
     unset($_COOKIE[$cookieName]);
 }
 
-/**
- * @param $d1
- * @param $d2 if null compare to today
- * d1, d2 already verified to be isDbDate()
- * @return int
- */
-function dbDateCompare($d1, $d2 = null): int
-{
-    // inputs 2 dates (Y-m-d) and returns d1 - d2 in seconds
-    if ($d2 === null) {
-        $d2 = date('Y-m-d');
-    }
-    return convertDateMktime($d1) - convertDateMktime($d2);
-}
-
-/**
- * @param $dbDate already been verified to be isDbDate()
- * @return int
- */
-function convertDateMktime($dbDate): int
-{
-    return mktime(0, 0, 0, substr($dbDate, 5, 2), substr($dbDate, 8, 2), substr($dbDate, 0, 4));
-}
-
-function convertDbDateDbTimestamp($dbDate, $time = 'end')
-{
-    if ($time == 'end') {
-        return "$dbDate 23:59:59.999999";
-    } else {
-        return "$dbDate 0:0:0";
-    }
-}
+// saving work on dynamic route registration
+//function registerAll(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routes, array $adminMinimumPermissions)
+//{
+//    foreach ($routes as $route) {
+//        register($slim, $container, $route, $adminMinimumPermissions);
+//    }
+//}
+//
+//function register(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routeInfo, array $adminMinimumPermissions)
+//{
+//    if (!isset($routeInfo['method'])) {
+//        throw new Exception('Route method must be set');
+//    }
+//
+//    if (!isset($routeInfo['path'])) {
+//        throw new Exception('Route path must be set');
+//    }
+//
+//    if (!isset($routeInfo['handler'])) {
+//        throw new Exception('Route handler must be set');
+//    }
+//
+//    if (isset($routeInfo['name'])) {
+//        if (!is_string($routeInfo['name']) || strlen($routeInfo['name']) == 0) {
+//            throw new Exception('Invalid route name ' . $routeInfo['name']);
+//        }
+//
+//        $name = $routeInfo['name'];
+//    }
+//
+//    $method = $routeInfo['method'];
+//    $path = $routeInfo['path'];
+//    $handler = $routeInfo['handler'];
+//
+//    $a = $slim->$method(
+//        $path,
+//        $handler
+//    );
+//
+//    // add authorization middleware if $adminMinimumPermissions defined for route name
+//    // note that authorization middleware needs to be added before authentication middleware
+//    if (isset($name) && isset($adminMinimumPermissions[$name])) {
+//        $a->add(new AuthorizationMiddleware($container, $adminMinimumPermissions[$name]));
+//    }
+//
+//    if (isset($routeInfo['middleware'])) {
+//        if (!is_array($routeInfo['middleware'])) {
+//            throw new Exception("Invalid route middleware");
+//        }
+//
+//        foreach ($routeInfo['middleware'] as $middlewareInfo) {
+//            if (!is_array($middlewareInfo)) {
+//                throw new Exception("Invalid route middleware");
+//            }
+//
+//            if (!isset($middlewareInfo['name']) || !is_string($middlewareInfo['name']) || strlen($middlewareInfo['name']) == 0) {
+//                throw new Exception("Invalid middleware name");
+//            }
+//
+//            // hokey, because it requires defining all middleware in this switch statement in order to register it
+//            // eventually it would be better to be able to register middleware dynamically, which will entail dealing with a variable number of function parameters
+//            switch ($middlewareInfo['name']) {
+//                case 'Authentication':
+//                    $a->add(new AuthenticationMiddleware($container));
+//                    break;
+//
+//                default:
+//                    throw new Exception("Undefined middleware");
+//            }
+//        }
+//    }
+//
+//    // name the route
+//    if (isset($name)) {
+//        $a->setName($name);
+//    }
+//}
