@@ -2,7 +2,7 @@
 
 Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administration, based on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
-INSTALLATION  
+INSTALLATION  (Linux Instructions)
 $ composer require it-all/spaghettify from your project folder  
 $ mv vendor/it-all/spaghettify/cssJsBuildTool/ .  
 $ mv vendor/it-all/spaghettify/storage/ .  
@@ -16,7 +16,8 @@ $ cp src/config/env-sample.php src/config/env.php
 
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
  - $ psql -U postgres
- - postgres=# create role mydbname with login;
+ - postgres=# create role mydbname with login; (creating the role with the same name as the database name allows easy psql access)
+ - postgres=# alter role mydbname with encrypted password 'mypassword';
  - postgres=# create database mydbname with owner mydbname;
  - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
   
@@ -25,7 +26,7 @@ Edit database and other settings in Src/config/env.php.
 in public/index.php, change  
 require APP_ROOT . 'init.php';  
 to  
-require __DIR__ . '/../../vendor/it-all/spaghettify/Src/init.php';   
+require \_\_DIR\_\_ . '/../../vendor/it-all/spaghettify/Src/init.php';   
   
 Create a local site with src/public as the root directory (default web server is Apache w/ .htaccess in src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  You will probably have to:  
 $ chmod 777 storage/sessions  
