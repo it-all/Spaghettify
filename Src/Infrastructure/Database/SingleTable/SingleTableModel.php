@@ -39,10 +39,10 @@ class SingleTableModel implements TableModel
     private $selectColumns;
 
 
-    public function __construct(string $tableName, string $selectColumns = '*', string $orderByColumnName = null, bool $orderByAsc = true)
+    public function __construct(string $tableName, string $selectColumns = '*', ?string $orderByColumnName = null, bool $orderByAsc = true)
     {
         $this->tableName = $tableName;
-        $this->primaryKeyColumnName = false; // initialize
+        $this->primaryKeyColumnName = null; // initialize
 
         $this->uniqueColumns = [];
         $this->uniqueColumnNames = [];
@@ -53,7 +53,13 @@ class SingleTableModel implements TableModel
 
         $this->selectColumns = $selectColumns;
 
-        $this->orderByColumnName = ($orderByColumnName != null) ? $orderByColumnName : $this->primaryKeyColumnName;
+        if ($orderByColumnName != null) {
+            $this->orderByColumnName = $orderByColumnName;
+        } elseif ($this->primaryKeyColumnName != null) {
+            $this->orderByColumnName = $this->primaryKeyColumnName;
+        } else {
+            $this->orderByColumnName = null;
+        }
         $this->orderByAsc = $orderByAsc;
 
         // $this->uniqueColumns added
@@ -197,7 +203,9 @@ class SingleTableModel implements TableModel
     {
         $columnValues = $this->addBooleanColumnValues($columnValues);
         $ib = new InsertBuilder($this->tableName);
-        $ib->setPrimaryKeyName($this->getPrimaryKeyColumnName());
+        if ($this->getPrimaryKeyColumnName() !== null) {
+            $ib->setPrimaryKeyName($this->getPrimaryKeyColumnName());
+        }
         $this->addColumnsToBuilder($ib, $columnValues);
         try {
             return $ib->execute();
@@ -305,12 +313,12 @@ class SingleTableModel implements TableModel
     /**
      * @return string defaults to 'id', can be overridden by children
      */
-    public function getPrimaryKeyColumnName(): string
+    public function getPrimaryKeyColumnName(): ?string
     {
         return $this->primaryKeyColumnName;
     }
 
-    public function getOrderByColumnName(): string
+    public function getOrderByColumnName(): ?string
     {
         return $this->orderByColumnName;
     }

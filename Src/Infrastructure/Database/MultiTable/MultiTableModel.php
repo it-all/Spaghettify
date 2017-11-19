@@ -48,7 +48,7 @@ abstract class MultiTableModel implements TableModel
         return $this->primaryTableModel->getPrimaryKeyColumnName();
     }
 
-    public function getOrderByColumnName(): string
+    public function getOrderByColumnName(): ?string
     {
         return $this->primaryTableModel->getOrderByColumnName();
     }

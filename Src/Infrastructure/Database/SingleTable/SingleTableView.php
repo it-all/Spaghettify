@@ -26,7 +26,9 @@ class SingleTableView extends ListView
         $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
         $this->setInsert($insertLink);
 
-        $this->setUpdate($this->authorization->check($this->getAuthorizationMinimumLevel('update')), $this->model->getPrimaryKeyColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
+        $allowUpdate = $this->authorization->check($this->getAuthorizationMinimumLevel('update')) && $this->model->getPrimaryKeyColumnName() !== null;
+
+        $this->setUpdate($allowUpdate, $this->model->getPrimaryKeyColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
 
         $this->setDelete($this->container->authorization->check($this->getAuthorizationMinimumLevel('delete')), getRouteName(true, $this->routePrefix, 'delete'));
 
