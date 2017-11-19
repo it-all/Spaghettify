@@ -84,7 +84,9 @@ class SingleTableModel implements TableModel
 
     protected function setColumns()
     {
-        $rs = Postgres::getTableMetaData($this->tableName);
+        if (!$rs = Postgres::getTableMetaData($this->tableName)) {
+            throw new \Exception("Unable to set columns for table $this->tableName");
+        }
         while ($columnInfo = pg_fetch_assoc($rs)) {
             $columnInfo['is_unique'] = in_array($columnInfo['column_name'], $this->uniqueColumnNames);
             $c = new DatabaseColumnModel($this, $columnInfo);
