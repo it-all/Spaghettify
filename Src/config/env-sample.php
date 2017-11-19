@@ -6,6 +6,9 @@ return [
 
     'businessName' => 'Our Biz, LLC',
 
+    /* Doing Business As (Informal Business Name), leave blank to use businessName above */
+    'businessDba' => 'Our Biz',
+
     'domainName' => $domainName, // not currently referenced in the app
 
     /** set true for live server */

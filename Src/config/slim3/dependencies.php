@@ -77,6 +77,8 @@ $container['view'] = function ($container) {
     // make some config setting available inside templates
     $view->getEnvironment()->addGlobal('isLive', $settings['isLive']);
     $view->getEnvironment()->addGlobal('businessName', $settings['businessName']);
+    $businessDba = (strlen($settings['businessDba']) > 0) ? $settings['businessDba'] : $settings['businessName'];
+    $view->getEnvironment()->addGlobal('businessDba', $businessDba);
 
     // allow access to current script name inside templates
     $view->getEnvironment()->addGlobal('currentUri', $container['request']->getUri()->getPath());

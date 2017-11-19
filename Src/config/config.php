@@ -77,6 +77,8 @@ return [
 
     'businessName' => 'Spaghettify',
 
+    'businessDba' => '',
+
     'domainName' => DOMAIN_NAME,
 
     'isLive' => true,

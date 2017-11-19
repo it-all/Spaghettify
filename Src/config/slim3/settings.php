@@ -43,6 +43,7 @@ return [
         // General settings
         'isLive' => $config['isLive'],
         'businessName' => $config['businessName'],
+        'businessDba' => $config['businessDba'],
         'emails' => $config['emails'],
         'trimAllUserInput' => $config['trimAllUserInput'],
         'adminDefaultRole' => $config['adminDefaultRole'],
