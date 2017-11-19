@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authorization;
 
-use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
+use It_All\Spaghettify\Src\Domain\Admin\Administrators\Roles\RolesModel;
 use function It_All\Spaghettify\Src\Infrastructure\Utilities\getRouteName;
 
 class AuthorizationService

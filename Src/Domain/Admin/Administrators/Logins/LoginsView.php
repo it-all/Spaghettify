@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Logins;
+namespace It_All\Spaghettify\Src\Domain\Admin\Administrators\Logins;
 
 use It_All\Spaghettify\Src\Infrastructure\ListView;
 use Slim\Container;

@@ -232,14 +232,14 @@ function deleteCookie(string $cookieName)
 }
 
 // saving work on dynamic route registration
-//function registerAll(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routes, array $adminMinimumPermissions)
+//function registerAll(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routes, array $administratorMinimumPermissions)
 //{
 //    foreach ($routes as $route) {
-//        register($slim, $container, $route, $adminMinimumPermissions);
+//        register($slim, $container, $route, $administratorMinimumPermissions);
 //    }
 //}
 //
-//function register(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routeInfo, array $adminMinimumPermissions)
+//function register(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routeInfo, array $administratorMinimumPermissions)
 //{
 //    if (!isset($routeInfo['method'])) {
 //        throw new Exception('Route method must be set');
@@ -270,10 +270,10 @@ function deleteCookie(string $cookieName)
 //        $handler
 //    );
 //
-//    // add authorization middleware if $adminMinimumPermissions defined for route name
+//    // add authorization middleware if $administratorMinimumPermissions defined for route name
 //    // note that authorization middleware needs to be added before authentication middleware
-//    if (isset($name) && isset($adminMinimumPermissions[$name])) {
-//        $a->add(new AuthorizationMiddleware($container, $adminMinimumPermissions[$name]));
+//    if (isset($name) && isset($administratorMinimumPermissions[$name])) {
+//        $a->add(new AuthorizationMiddleware($container, $administratorMinimumPermissions[$name]));
 //    }
 //
 //    if (isset($routeInfo['middleware'])) {

@@ -42,12 +42,12 @@ class NavAdmin
                         'link' => ROUTE_SYSTEM_EVENTS_RESET,
                     ],
 
-                    'Admins' => [
-                        'link' => ROUTE_ADMIN_ADMINS_RESET,
+                    'Administrators' => [
+                        'link' => ROUTE_ADMIN_ADMINISTRATORS_RESET,
                         'subSections' => [
 
                             'Insert' => [
-                                'link' => ROUTE_ADMIN_ADMINS_INSERT,
+                                'link' => ROUTE_ADMIN_ADMINISTRATORS_INSERT,
                             ],
 
                             'Roles' => [

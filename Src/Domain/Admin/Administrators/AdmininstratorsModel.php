@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
+namespace It_All\Spaghettify\Src\Domain\Admin\Administrators;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\SelectBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\MultiTable\MultiTableModel;
 
-class AdminsModel extends MultiTableModel
+class AdministratorsModel extends MultiTableModel
 {
-    const TABLE_NAME = 'admins';
+    const TABLE_NAME = 'administrators';
 
     const SELECT_COLUMNS = [
-        'id' => 'admins.id',
-        'name' => 'admins.name',
-        'username' => 'admins.username',
+        'id' => 'administrators.id',
+        'name' => 'administrators.name',
+        'username' => 'administrators.username',
         'role' => 'roles.role',
         'level' => 'roles.level'
     ];
@@ -27,7 +27,7 @@ class AdminsModel extends MultiTableModel
 
     public function insert(string $name, string $username, string $password, int $roleId)
     {
-        $q = new QueryBuilder("INSERT INTO admins (name, username, password_hash, role_id) VALUES($1, $2, $3, $4) RETURNING id", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
+        $q = new QueryBuilder("INSERT INTO ".self::TABLE_NAME." (name, username, password_hash, role_id) VALUES($1, $2, $3, $4) RETURNING id", $name, $username, password_hash($password, PASSWORD_DEFAULT), $roleId);
         return $q->execute();
     }
 
@@ -71,14 +71,14 @@ class AdminsModel extends MultiTableModel
 
     public function checkRecordExistsForUsername(string $username): bool
     {
-        $q = new QueryBuilder("SELECT id FROM admins WHERE username = $1", $username);
+        $q = new QueryBuilder("SELECT id FROM ".self::TABLE_NAME." WHERE username = $1", $username);
         $res = $q->execute();
         return pg_num_rows($res) > 0;
     }
 
     public function selectForUsername(string $username)
     {
-        $q = new QueryBuilder("SELECT a.*, r.role FROM admins a JOIN roles r ON a.role_id = r.id WHERE a.username = $1", $username);
+        $q = new QueryBuilder("SELECT a.*, r.role FROM ".self::TABLE_NAME." a JOIN roles r ON a.role_id = r.id WHERE a.username = $1", $username);
         return $q->execute();
     }
 
@@ -93,7 +93,7 @@ class AdminsModel extends MultiTableModel
             }
             $columnCount++;
         }
-        $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
+        $fromClause = "FROM ".self::TABLE_NAME." JOIN roles ON ".self::TABLE_NAME.".role_id = roles.id";
         $orderByClause = "ORDER BY roles.level";
         if ($whereColumnsInfo != null) {
             $this->validateFilterColumns($whereColumnsInfo);

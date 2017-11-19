@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
+namespace It_All\Spaghettify\Src\Domain\Admin\Administrators;
 
 use It_All\Spaghettify\Src\Infrastructure\Controller;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableController;
@@ -12,19 +12,19 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsController extends Controller
+class AdministratorsController extends Controller
 {
-    private $adminsModel;
+    private $administratorsModel;
     private $view;
     private $routePrefix;
-    private $adminsSingleTableController;
+    private $administratorsSingleTableController;
 
     public function __construct(Container $container)
     {
-        $this->adminsModel = new AdminsModel();
-        $this->view = new AdminsView($container);
-        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
-        $this->adminsSingleTableController = new SingleTableController($container, $this->adminsModel->getPrimaryTableModel(), $this->view, $this->routePrefix);
+        $this->administratorsModel = new AdministratorsModel();
+        $this->view = new AdministratorsView($container);
+        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINISTRATORS;
+        $this->administratorsSingleTableController = new SingleTableController($container, $this->administratorsModel->getPrimaryTableModel(), $this->view, $this->routePrefix);
         parent::__construct($container);
     }
 
@@ -51,13 +51,13 @@ class AdminsController extends Controller
                 return true; // skip validation if there is already an error for the field
             }, 'Already exists.');
 
-            $this->validator->rule('unique', 'username', $this->adminsModel->getPrimaryTableModel()->getColumnByName('username'), $this->validator);
+            $this->validator->rule('unique', 'username', $this->administratorsModel->getPrimaryTableModel()->getColumnByName('username'), $this->validator);
         }
     }
 
     public function postIndexFilter(Request $request, Response $response, $args)
     {
-        return $this->setIndexFilter($request, $response, $args, $this->adminsModel::SELECT_COLUMNS, ROUTE_ADMIN_ADMINS, $this->view);
+        return $this->setIndexFilter($request, $response, $args, $this->administratorsModel::SELECT_COLUMNS, ROUTE_ADMIN_ADMINISTRATORS, $this->view);
     }
 
     public function postInsert(Request $request, Response $response, $args)
@@ -78,7 +78,7 @@ class AdminsController extends Controller
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
-        if (!$res = $this->adminsModel->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
+        if (!$res = $this->administratorsModel->insert($input['name'], $input['username'], $input['password'], (int) $input['role_id'])) {
             throw new \Exception("Insert Failure");
         }
 
@@ -90,7 +90,7 @@ class AdminsController extends Controller
         FormHelper::unsetSessionVars();
 
         $_SESSION[SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
-        return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINS_RESET)); // reset filter
+        return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINISTRATORS_RESET)); // reset filter
     }
 
     public function putUpdate(Request $request, Response $response, $args)
@@ -107,8 +107,8 @@ class AdminsController extends Controller
         $redirectRoute = getRouteName(true, $this->routePrefix,'index');
 
         // make sure there is a record for the primary key in the model
-        if (!$record = $this->adminsModel->getPrimaryTableModel()->selectForPrimaryKey($primaryKey)) {
-            return SingleTableHelper::updateNoRecord($this->container, $response, $primaryKey, $this->adminsModel->getPrimaryTableModel(), $this->routePrefix);
+        if (!$record = $this->administratorsModel->getPrimaryTableModel()->selectForPrimaryKey($primaryKey)) {
+            return SingleTableHelper::updateNoRecord($this->container, $response, $primaryKey, $this->administratorsModel->getPrimaryTableModel(), $this->routePrefix);
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
@@ -125,7 +125,7 @@ class AdminsController extends Controller
             // password_hash to match db column name
             $checkChangedFields['password_hash'] = password_hash($input['password'], PASSWORD_DEFAULT);
         }
-        if (!$this->adminsSingleTableController->haveAnyFieldsChanged($checkChangedFields, $record)) {
+        if (!$this->administratorsSingleTableController->haveAnyFieldsChanged($checkChangedFields, $record)) {
             $_SESSION[SESSION_ADMIN_NOTICE] = ["No changes made (Record $primaryKey)", 'adminNoticeFailure'];
             FormHelper::unsetSessionVars();
             return $response->withRedirect($this->router->pathFor($redirectRoute));
@@ -139,11 +139,11 @@ class AdminsController extends Controller
             return $this->view->updateView($request, $response, $args);
         }
 
-        if (!$this->adminsModel->updateByPrimaryKey((int) $primaryKey, $input['name'], $input['username'], (int) $input['role_id'], $input['password'], $record)) {
+        if (!$this->administratorsModel->updateByPrimaryKey((int) $primaryKey, $input['name'], $input['username'], (int) $input['role_id'], $input['password'], $record)) {
             throw new \Exception("Update Failure");
         }
 
-        $this->systemEvents->insertInfo("Updated ".$this->adminsModel::TABLE_NAME, (int) $this->authentication->getUserId(), "id:$primaryKey");
+        $this->systemEvents->insertInfo("Updated ".$this->administratorsModel::TABLE_NAME, (int) $this->authentication->getUserId(), "id:$primaryKey");
 
         FormHelper::unsetSessionVars();
 
@@ -156,7 +156,7 @@ class AdminsController extends Controller
     {
         // make sure the current admin is not deleting themself
         if ((int) ($args['primaryKey']) == $this->container->authentication->user()['id']) {
-            throw new \Exception('You cannot delete yourself from admins');
+            throw new \Exception('You cannot delete yourself from administrators');
         }
 
         // make sure there are no system events for admin being deleted
@@ -165,6 +165,6 @@ class AdminsController extends Controller
             return $response->withRedirect($this->router->pathFor(getRouteName(true, $this->routePrefix,'index')));
         }
 
-        return $this->adminsSingleTableController->getDeleteHelper($response, $args['primaryKey'],'username', true);
+        return $this->administratorsSingleTableController->getDeleteHelper($response, $args['primaryKey'],'username', true);
     }
 }

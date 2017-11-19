@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace It_All\Spaghettify\Src\Infrastructure\Security\Authentication;
 
 use It_All\FormFormer\Form;
-use It_All\Spaghettify\Src\Domain\Admin\Admins\AdminsModel;
-use It_All\Spaghettify\Src\Domain\Admin\Admins\Logins\LoginsModel;
+use It_All\Spaghettify\Src\Domain\Admin\Administrators\AdministratorsModel;
+use It_All\Spaghettify\Src\Domain\Admin\Administrators\Logins\LoginsModel;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\FormHelper;
 
@@ -81,8 +81,8 @@ class AuthenticationService
 
     public function attemptLogin(string $username, string $password): bool
     {
-        $admins = new AdminsModel();
-        $rs = $admins->selectForUsername($username);
+        $administrators = new AdministratorsModel();
+        $rs = $administrators->selectForUsername($username);
         $userRecord = pg_fetch_assoc($rs);
 
         // check if user exists
@@ -161,11 +161,11 @@ class AuthenticationService
 
     public function getForm(string $csrfNameKey, string $csrfNameValue, string $csrfValueKey, string $csrfValueValue, string $action)
     {
-        $adminsModel = new AdminsModel();
+        $administratorsModel = new AdministratorsModel();
 
         $fields = [];
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('username'));
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($adminsModel->getColumnByName('password_hash'), null, null, 'Password', 'password');
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($administratorsModel->getColumnByName('username'));
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($administratorsModel->getColumnByName('password_hash'), null, null, 'Password', 'password');
         $fields[] = FormHelper::getCsrfNameField($csrfNameKey, $csrfNameValue);
         $fields[] = FormHelper::getCsrfValueField($csrfValueKey, $csrfValueValue);
         $fields[] = FormHelper::getSubmitField();

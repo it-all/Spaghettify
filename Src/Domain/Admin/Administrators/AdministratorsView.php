@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins;
+namespace It_All\Spaghettify\Src\Domain\Admin\Administrators;
 
 use It_All\FormFormer\Fields\InputField;
 use It_All\FormFormer\Fields\SelectField;
 use It_All\FormFormer\Fields\SelectOption;
 use It_All\FormFormer\Form;
-use It_All\Spaghettify\Src\Domain\Admin\Admins\Roles\RolesModel;
+use It_All\Spaghettify\Src\Domain\Admin\Administrators\Roles\RolesModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableHelper;
 use It_All\Spaghettify\Src\Infrastructure\ListView;
 use It_All\Spaghettify\Src\Infrastructure\UserInterface\Forms\DatabaseTableForm;
@@ -17,22 +17,22 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminsView extends ListView
+class AdministratorsView extends ListView
 {
     protected $routePrefix;
-    protected $adminsModel;
+    protected $administratorsModel;
 
     public function __construct(Container $container)
     {
-        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINS;
-        $this->adminsModel = new AdminsModel();
+        $this->routePrefix = ROUTEPREFIX_ADMIN_ADMINISTRATORS;
+        $this->administratorsModel = new AdministratorsModel();
 
-        parent::__construct($container, 'admins', ROUTE_ADMIN_ADMINS, $this->adminsModel, ROUTE_ADMIN_ADMINS_RESET, 'admin/lists/adminsList.twig');
+        parent::__construct($container, 'administrators', ROUTE_ADMIN_ADMINISTRATORS, $this->administratorsModel, ROUTE_ADMIN_ADMINISTRATORS_RESET, 'admin/lists/administratorsList.twig');
 
-        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->adminsModel->getPrimaryTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->administratorsModel->getPrimaryTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
         $this->setInsert($insertLink);
 
-        $this->setUpdate($this->authorization->check($this->getAuthorizationMinimumLevel('update')), $this->adminsModel->getUpdateColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
+        $this->setUpdate($this->authorization->check($this->getAuthorizationMinimumLevel('update')), $this->administratorsModel->getUpdateColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
 
         $this->setDelete($this->container->authorization->check($this->getAuthorizationMinimumLevel('delete')), getRouteName(true, $this->routePrefix, 'delete'));
     }
@@ -63,11 +63,11 @@ class AdminsView extends ListView
 
         // Name Field
         $nameValue = (isset($fieldValues['name'])) ? $fieldValues['name'] : '';
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->adminsModel->getPrimaryTableModel()->getColumnByName('name'), null, $nameValue);
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->administratorsModel->getPrimaryTableModel()->getColumnByName('name'), null, $nameValue);
 
         // Username Field
         $usernameValue = (isset($fieldValues['username'])) ? $fieldValues['username'] : '';
-        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->adminsModel->getPrimaryTableModel()->getColumnByName('username'), null, $usernameValue);
+        $fields[] = DatabaseTableForm::getFieldFromDatabaseColumn($this->administratorsModel->getPrimaryTableModel()->getColumnByName('username'), null, $usernameValue);
 
         // Password Fields
         // determine values of pw and pw conf fields
@@ -114,7 +114,7 @@ class AdminsView extends ListView
             $response,
             'admin/form.twig',
             [
-                'title' => 'Insert '. $this->adminsModel->getPrimaryTableName(false),
+                'title' => 'Insert '. $this->administratorsModel->getPrimaryTableName(false),
                 'form' => $this->getForm($request),
                 'navigationItems' => $this->navigationItems
             ]
@@ -130,15 +130,15 @@ class AdminsView extends ListView
     public function updateView(Request $request, Response $response, $args)
     {
         // make sure there is a record for the model
-        if (!$record = $this->adminsModel->getPrimaryTableModel()->selectForPrimaryKey($args['primaryKey'])) {
-            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->adminsModel->getPrimaryTableModel(), $this->routePrefix);
+        if (!$record = $this->administratorsModel->getPrimaryTableModel()->selectForPrimaryKey($args['primaryKey'])) {
+            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->administratorsModel->getPrimaryTableModel(), $this->routePrefix);
         }
 
         return $this->view->render(
             $response,
             'admin/form.twig',
             [
-                'title' => 'Update ' . $this->adminsModel->getPrimaryTableModel()->getFormalTableName(false),
+                'title' => 'Update ' . $this->administratorsModel->getPrimaryTableModel()->getFormalTableName(false),
                 'form' => $this->getForm($request, 'update', (int) $args['primaryKey'], $record),
                 'primaryKey' => $args['primaryKey'],
                 'navigationItems' => $this->navigationItems

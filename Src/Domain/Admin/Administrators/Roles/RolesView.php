@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
+namespace It_All\Spaghettify\Src\Domain\Admin\Administrators\Roles;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableView;

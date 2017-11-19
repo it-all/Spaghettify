@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace It_All\Spaghettify\Src\Domain\Admin\Admins\Roles;
+namespace It_All\Spaghettify\Src\Domain\Admin\Administrators\Roles;
 
 use It_All\Spaghettify\Src\Infrastructure\Database\SingleTable\SingleTableModel;
 use It_All\Spaghettify\Src\Infrastructure\Database\Queries\QueryBuilder;
@@ -77,7 +77,7 @@ class RolesModel extends SingleTableModel
 
     public static function hasAdmin(int $roleId): bool
     {
-        $q = new QueryBuilder("SELECT COUNT(id) FROM admins WHERE role_id = $1", $roleId);
+        $q = new QueryBuilder("SELECT COUNT(id) FROM administrators WHERE role_id = $1", $roleId);
         return (bool) $q->getOne();
     }
 }

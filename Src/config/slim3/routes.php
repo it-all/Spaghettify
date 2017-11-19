@@ -61,95 +61,95 @@ $slim->get('/' . $config['dirs']['admin'] . '/logout',
 $systemEventsPath = NAMESPACE_INFRASTRUCTURE.'\SystemEvents\\';
 $slim->get('/' . $config['dirs']['admin'] . '/systemEvents',
     $systemEventsPath . 'SystemEventsView:index')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_SYSTEM_EVENTS);
 
 $slim->post('/' . $config['dirs']['admin'] . '/systemEvents',
     $systemEventsPath . 'SystemEventsController:postIndexFilter')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_SYSTEM_EVENTS]))
     ->add(new AuthenticationMiddleware($container));
 
 $slim->get('/' . $config['dirs']['admin'] . '/systemEvents/reset',
     $systemEventsPath . 'SystemEventsView:indexResetFilter')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_SYSTEM_EVENTS_RESET]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_SYSTEM_EVENTS_RESET]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_SYSTEM_EVENTS_RESET);
 
 // logins
-$loginsPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\Logins\\';
+$loginsPath = NAMESPACE_DOMAIN_ADMIN.'\Administrators\Logins\\';
 $slim->get('/' . $config['dirs']['admin'] . '/logins',
     $loginsPath . 'LoginsView:index')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_LOGIN_ATTEMPTS);
 
 $slim->post('/' . $config['dirs']['admin'] . '/logins',
     $loginsPath . 'LoginsController:postIndexFilter')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS]))
     ->add(new AuthenticationMiddleware($container));
 
 $slim->get('/' . $config['dirs']['admin'] . '/logins/reset',
     $loginsPath . 'LoginsView:indexResetFilter')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS_RESET]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_LOGIN_ATTEMPTS_RESET]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_LOGIN_ATTEMPTS_RESET);
 
-// admins
-$adminsPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\\';
-$slim->get('/' . $config['dirs']['admin'] . '/admins',
-    $adminsPath . 'AdminsView:index')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS]))
+// administrators
+$administratorsPath = NAMESPACE_DOMAIN_ADMIN.'\Administrators\\';
+$slim->get('/' . $config['dirs']['admin'] . '/administrators',
+    $administratorsPath . 'AdministratorsView:index')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS);
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS);
 
-$slim->post('/' . $config['dirs']['admin'] . '/admins',
-    $adminsPath . 'AdminsController:postIndexFilter')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS]))
+$slim->post('/' . $config['dirs']['admin'] . '/administrators',
+    $administratorsPath . 'AdministratorsController:postIndexFilter')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS]))
     ->add(new AuthenticationMiddleware($container));
 
-$slim->get('/' . $config['dirs']['admin'] . '/admins/reset',
-    $adminsPath . 'AdminsView:indexResetFilter')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_RESET]))
+$slim->get('/' . $config['dirs']['admin'] . '/administrators/reset',
+    $administratorsPath . 'AdministratorsView:indexResetFilter')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS_RESET]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS_RESET);
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS_RESET);
 
-$slim->get('/' . $config['dirs']['admin'] . '/admins/insert',
-    $adminsPath . 'AdminsView:getInsert')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_INSERT]))
+$slim->get('/' . $config['dirs']['admin'] . '/administrators/insert',
+    $administratorsPath . 'AdministratorsView:getInsert')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS_INSERT]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS_INSERT);
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS_INSERT);
 
-$slim->post('/' . $config['dirs']['admin'] . '/admins/insert',
-    $adminsPath . 'AdminsController:postInsert')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_INSERT]))
+$slim->post('/' . $config['dirs']['admin'] . '/administrators/insert',
+    $administratorsPath . 'AdministratorsController:postInsert')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS_INSERT]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS_INSERT_POST);
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS_INSERT_POST);
 
-$slim->get('/' . $config['dirs']['admin'] . '/admins/{primaryKey}',
-    $adminsPath . 'AdminsView:getUpdate')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_UPDATE]))
+$slim->get('/' . $config['dirs']['admin'] . '/administrators/{primaryKey}',
+    $administratorsPath . 'AdministratorsView:getUpdate')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS_UPDATE]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS_UPDATE);
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS_UPDATE);
 
-$slim->put('/' . $config['dirs']['admin'] . '/admins/{primaryKey}',
-    $adminsPath . 'AdminsController:putUpdate')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_UPDATE]))
+$slim->put('/' . $config['dirs']['admin'] . '/administrators/{primaryKey}',
+    $administratorsPath . 'AdministratorsController:putUpdate')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS_UPDATE]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS_UPDATE_PUT);
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS_UPDATE_PUT);
 
-$slim->get('/' . $config['dirs']['admin'] . '/admins/delete/{primaryKey}',
-    $adminsPath . 'AdminsController:getDelete')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ADMINS_DELETE]))
+$slim->get('/' . $config['dirs']['admin'] . '/administrators/delete/{primaryKey}',
+    $administratorsPath . 'AdministratorsController:getDelete')
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ADMINISTRATORS_DELETE]))
     ->add(new AuthenticationMiddleware($container))
-    ->setName(ROUTE_ADMIN_ADMINS_DELETE);
-// end admins
+    ->setName(ROUTE_ADMIN_ADMINISTRATORS_DELETE);
+// end administrators
 
 // roles
-$rolesPath = NAMESPACE_DOMAIN_ADMIN.'\Admins\Roles\\';
+$rolesPath = NAMESPACE_DOMAIN_ADMIN.'\Administrators\Roles\\';
 $slim->get('/' . $config['dirs']['admin'] . '/roles',
     $rolesPath . 'RolesView:index')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ROLES]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES);
 
@@ -164,31 +164,31 @@ $slim->get('/' . $config['dirs']['admin'] . '/roles/reset',
 
 $slim->get('/' . $config['dirs']['admin'] . '/roles/insert',
     $rolesPath . 'RolesView:getInsert')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES_INSERT]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ROLES_INSERT]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES_INSERT);
 
 $slim->post('/' . $config['dirs']['admin'] . '/roles/insert',
     $rolesPath . 'RolesController:postInsert')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES_INSERT]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ROLES_INSERT]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES_INSERT_POST);
 
 $slim->get('/' . $config['dirs']['admin'] . '/roles/{primaryKey}',
     $rolesPath . 'RolesView:getUpdate')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES_UPDATE]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ROLES_UPDATE]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES_UPDATE);
 
 $slim->put('/' . $config['dirs']['admin'] . '/roles/{primaryKey}',
     $rolesPath . 'RolesController:putUpdate')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES_UPDATE]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ROLES_UPDATE]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES_UPDATE_PUT);
 
 $slim->get('/' . $config['dirs']['admin'] . '/roles/delete/{primaryKey}',
     $rolesPath . 'RolesController:getDelete')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_ROLES_DELETE]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_ROLES_DELETE]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_ROLES_DELETE);
 // end roles
@@ -212,13 +212,13 @@ $slim->get('/' . $config['dirs']['admin'] . '/testimonials/reset',
 
 $slim->get('/' . $config['dirs']['admin'] . '/testimonials/insert',
     $testimonialsPath . 'TestimonialsView:getInsert')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_INSERT]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_INSERT]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS_INSERT);
 
 $slim->post('/' . $config['dirs']['admin'] . '/testimonials/insert',
     $testimonialsPath . 'TestimonialsController:postInsert')
-    ->add(new AuthorizationMiddleware($container, $config['adminMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_INSERT]))
+    ->add(new AuthorizationMiddleware($container, $config['administratorMinimumPermissions'][ROUTE_ADMIN_TESTIMONIALS_INSERT]))
     ->add(new AuthenticationMiddleware($container))
     ->setName(ROUTE_ADMIN_TESTIMONIALS_INSERT_POST);
 

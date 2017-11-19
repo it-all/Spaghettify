@@ -125,27 +125,6 @@ class SingleTableModel implements TableModel
         return $listViewColumns;
     }
 
-//    public function select(array $filterColumnsInfo = null)
-//    {
-//        $selectClause = "SELECT ";
-//        $columnCount = 1;
-//        foreach (self::SELECT_COLUMNS as $columnNameSql) {
-//            $selectClause .= $columnNameSql;
-//            if ($columnCount != count(self::SELECT_COLUMNS)) {
-//                $selectClause .= ",";
-//            }
-//            $columnCount++;
-//        }
-//        $fromClause = "FROM admins JOIN roles ON admins.role_id = roles.id";
-//        $orderByClause = "ORDER BY roles.level";
-//        if ($filterColumnsInfo != null) {
-//            $this->validateFilterColumns($filterColumnsInfo);
-//        }
-//
-//        $q = new SelectBuilder($selectClause, $fromClause, $filterColumnsInfo, $orderByClause);
-//        return $q->execute();
-//    }
-//
     public function select(array $whereColumnsInfo = null)
     {
         $q = new SelectBuilder("SELECT $this->selectColumns", "FROM $this->tableName", $whereColumnsInfo, $this->getOrderByClause($this->orderByColumnName, $this->orderByAsc));

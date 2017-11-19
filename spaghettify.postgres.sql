@@ -35,10 +35,10 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: admins; Type: TABLE; Schema: public; Owner: -
+-- Name: administrators; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE admins (
+CREATE TABLE administrators (
     id bigint NOT NULL,
     name character varying(100) NOT NULL,
     username character varying(20) NOT NULL,
@@ -63,7 +63,7 @@ CREATE SEQUENCE adminis_id_seq
 -- Name: adminis_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE adminis_id_seq OWNED BY admins.id;
+ALTER SEQUENCE adminis_id_seq OWNED BY administrators.id;
 
 
 --
@@ -198,10 +198,10 @@ ALTER SEQUENCE system_events_id_seq OWNED BY system_events.id;
 
 
 --
--- Name: testimonials; Type: TABLE; Schema: public; Owner: -
+-- Name: testimonial_examples; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE testimonials (
+CREATE TABLE testimonial_examples (
     id bigint NOT NULL,
     testimonial text NOT NULL,
     person character varying(50) NOT NULL,
@@ -212,10 +212,10 @@ CREATE TABLE testimonials (
 
 
 --
--- Name: testimonials_testimonial_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: testimonial_examples_testimonial_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE testimonials_testimonial_id_seq
+CREATE SEQUENCE testimonial_examples_testimonial_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -224,17 +224,17 @@ CREATE SEQUENCE testimonials_testimonial_id_seq
 
 
 --
--- Name: testimonials_testimonial_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: testimonial_examples_testimonial_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE testimonials_testimonial_id_seq OWNED BY testimonials.id;
+ALTER SEQUENCE testimonial_examples_testimonial_id_seq OWNED BY testimonial_examples.id;
 
 
 --
--- Name: admins id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: administrators id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY admins ALTER COLUMN id SET DEFAULT nextval('adminis_id_seq'::regclass);
+ALTER TABLE ONLY administrators ALTER COLUMN id SET DEFAULT nextval('adminis_id_seq'::regclass);
 
 
 --
@@ -266,10 +266,10 @@ ALTER TABLE ONLY system_events ALTER COLUMN id SET DEFAULT nextval('system_event
 
 
 --
--- Name: testimonials id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: testimonial_examples id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY testimonials ALTER COLUMN id SET DEFAULT nextval('testimonials_testimonial_id_seq'::regclass);
+ALTER TABLE ONLY testimonial_examples ALTER COLUMN id SET DEFAULT nextval('testimonial_examples_testimonial_id_seq'::regclass);
 
 
 --
@@ -280,10 +280,10 @@ SELECT pg_catalog.setval('adminis_id_seq', 40, true);
 
 
 --
--- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: administrators; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY admins (id, name, username, password_hash, role_id) FROM stdin;
+COPY administrators (id, name, username, password_hash, role_id) FROM stdin;
 1	FatCat	owner	$2y$10$v8wggQBQG4fYSBIoHyOD9OAJN5ShMijt9OGTRu8Ah1xdDnSLrZ9Vy	1
 \.
 
@@ -358,34 +358,34 @@ SELECT pg_catalog.setval('system_events_id_seq', 843, true);
 
 
 --
--- Data for Name: testimonials; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: testimonial_examples; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY testimonials (id, testimonial, person, place, active, receive_date) FROM stdin;
+COPY testimonial_examples (id, testimonial, person, place, active, receive_date) FROM stdin;
 \.
 
 
 --
--- Name: testimonials_testimonial_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: testimonial_examples_testimonial_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 28, true);
+SELECT pg_catalog.setval('testimonial_examples_testimonial_id_seq', 28, true);
 
 
 --
--- Name: admins adminis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: administrators adminis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY admins
+ALTER TABLE ONLY administrators
     ADD CONSTRAINT adminis_pkey PRIMARY KEY (id);
 
 
 --
--- Name: admins admins_username_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: administrators administrators_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY admins
-    ADD CONSTRAINT admins_username_key UNIQUE (username);
+ALTER TABLE ONLY administrators
+    ADD CONSTRAINT administrators_username_key UNIQUE (username);
 
 
 --
@@ -429,11 +429,11 @@ ALTER TABLE ONLY system_events
 
 
 --
--- Name: testimonials testimonials_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: testimonial_examples testimonial_examples_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY testimonials
-    ADD CONSTRAINT testimonials_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY testimonial_examples
+    ADD CONSTRAINT testimonial_examples_pkey PRIMARY KEY (id);
 
 
 --
@@ -444,11 +444,11 @@ CREATE INDEX system_events_title_idx ON system_events USING btree (title);
 
 
 --
--- Name: admins admins_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: administrators administrators_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY admins
-    ADD CONSTRAINT admins_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id);
+ALTER TABLE ONLY administrators
+    ADD CONSTRAINT administrators_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id);
 
 
 --
@@ -456,7 +456,7 @@ ALTER TABLE ONLY admins
 --
 
 ALTER TABLE ONLY system_events
-    ADD CONSTRAINT system_events_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES admins(id);
+    ADD CONSTRAINT system_events_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES administrators(id);
 
 
 --

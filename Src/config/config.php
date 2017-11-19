@@ -14,7 +14,7 @@ define('ROUTE_LOGIN_POST', 'authentication.post.login');
 
 // admin route prefixes
 define('ROUTEPREFIX_ADMIN', 'admin');
-define('ROUTEPREFIX_ADMIN_ADMINS', 'admins');
+define('ROUTEPREFIX_ADMIN_ADMINISTRATORS', 'administrators');
 define('ROUTEPREFIX_ADMIN_ROLES', 'roles');
 define('ROUTEPREFIX_ADMIN_TESTIMONIALS', 'testimonials');
 
@@ -27,14 +27,14 @@ define('ROUTE_LOGIN_ATTEMPTS_RESET', ROUTEPREFIX_ADMIN.'.logins.index.reset');
 // system events
 define('ROUTE_SYSTEM_EVENTS', ROUTEPREFIX_ADMIN.'.systemEvents.index');
 define('ROUTE_SYSTEM_EVENTS_RESET', ROUTEPREFIX_ADMIN.'.systemEvents.index.reset');
-// admins
-define('ROUTE_ADMIN_ADMINS', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.index');
-define('ROUTE_ADMIN_ADMINS_RESET', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.index.reset');
-define('ROUTE_ADMIN_ADMINS_INSERT', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.insert');
-define('ROUTE_ADMIN_ADMINS_INSERT_POST', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.post.insert');
-define('ROUTE_ADMIN_ADMINS_UPDATE', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.update');
-define('ROUTE_ADMIN_ADMINS_UPDATE_PUT', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.put.update');
-define('ROUTE_ADMIN_ADMINS_DELETE', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINS.'.delete');
+// administrators
+define('ROUTE_ADMIN_ADMINISTRATORS', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.index');
+define('ROUTE_ADMIN_ADMINISTRATORS_RESET', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.index.reset');
+define('ROUTE_ADMIN_ADMINISTRATORS_INSERT', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.insert');
+define('ROUTE_ADMIN_ADMINISTRATORS_INSERT_POST', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.post.insert');
+define('ROUTE_ADMIN_ADMINISTRATORS_UPDATE', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.update');
+define('ROUTE_ADMIN_ADMINISTRATORS_UPDATE_PUT', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.put.update');
+define('ROUTE_ADMIN_ADMINISTRATORS_DELETE', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ADMINISTRATORS.'.delete');
 // roles
 define('ROUTE_ADMIN_ROLES', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ROLES.'.index');
 define('ROUTE_ADMIN_ROLES_RESET', ROUTEPREFIX_ADMIN.'.'.ROUTEPREFIX_ADMIN_ROLES.'.index.reset');
@@ -127,17 +127,17 @@ return [
     // either functionalityCategory => minimumRole or functionalityCategory.functionality => minimum role
     // important to properly match the indexes to routes authorization
     // the role values must be in the database: roles.role
-    // if the index is not defined for a route or nav section, no authorization check is performed (all admins (logged in users) will be able to access resource or view nav section). therefore, indexes only need to be defined for routes and nav sections that require authorization greater than the base (least permission) role.
-    'adminMinimumPermissions' => [
+    // if the index is not defined for a route or nav section, no authorization check is performed (all administrators (logged in users) will be able to access resource or view nav section). therefore, indexes only need to be defined for routes and nav sections that require authorization greater than the base (least permission) role.
+    'administratorMinimumPermissions' => [
         ROUTE_LOGIN_ATTEMPTS => 'owner',
         ROUTE_LOGIN_ATTEMPTS_RESET => 'owner',
         ROUTE_SYSTEM_EVENTS => 'owner',
         ROUTE_SYSTEM_EVENTS_RESET => 'owner',
-        ROUTE_ADMIN_ADMINS => 'owner',
-        ROUTE_ADMIN_ADMINS_RESET => 'owner',
-        ROUTE_ADMIN_ADMINS_INSERT => 'owner',
-        ROUTE_ADMIN_ADMINS_UPDATE => 'owner',
-        ROUTE_ADMIN_ADMINS_DELETE => 'owner',
+        ROUTE_ADMIN_ADMINISTRATORS => 'owner',
+        ROUTE_ADMIN_ADMINISTRATORS_RESET => 'owner',
+        ROUTE_ADMIN_ADMINISTRATORS_INSERT => 'owner',
+        ROUTE_ADMIN_ADMINISTRATORS_UPDATE => 'owner',
+        ROUTE_ADMIN_ADMINISTRATORS_DELETE => 'owner',
         ROUTE_ADMIN_ROLES => 'owner',
         ROUTE_ADMIN_ROLES_INSERT => 'owner',
         ROUTE_ADMIN_ROLES_UPDATE => 'owner',

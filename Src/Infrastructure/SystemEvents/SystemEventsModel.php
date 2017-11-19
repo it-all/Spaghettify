@@ -18,7 +18,7 @@ class SystemEventsModel extends MultiTableModel
         'time_stamp' => 'se.created',
         'type' => 'syet.event_type',
         'event' => 'se.title',
-        'admin' => 'admins.name',
+        'admin' => 'administrators.name',
         'notes' => 'se.notes',
         'ip_address' => 'se.ip_address',
         'request_method' => 'se.request_method',
@@ -127,7 +127,7 @@ class SystemEventsModel extends MultiTableModel
             }
         }
 
-        $fromClause = "FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN admins ON se.admin_id = admins.id";
+        $fromClause = "FROM system_events se JOIN system_event_types syet ON se.event_type = syet.id LEFT OUTER JOIN administrators ON se.admin_id = administrators.id";
 
         $orderByClause = "ORDER BY se.created DESC";
 
