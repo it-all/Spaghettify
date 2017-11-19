@@ -48,10 +48,10 @@ CREATE TABLE administrators (
 
 
 --
--- Name: adminis_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: administrators_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE adminis_id_seq
+CREATE SEQUENCE administrators_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -60,10 +60,10 @@ CREATE SEQUENCE adminis_id_seq
 
 
 --
--- Name: adminis_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: administrators_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE adminis_id_seq OWNED BY administrators.id;
+ALTER SEQUENCE administrators_id_seq OWNED BY administrators.id;
 
 
 --
@@ -234,7 +234,7 @@ ALTER SEQUENCE testimonials_testimonial_id_seq OWNED BY testimonials.id;
 -- Name: administrators id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY administrators ALTER COLUMN id SET DEFAULT nextval('adminis_id_seq'::regclass);
+ALTER TABLE ONLY administrators ALTER COLUMN id SET DEFAULT nextval('administrators_id_seq'::regclass);
 
 
 --
@@ -273,19 +273,19 @@ ALTER TABLE ONLY testimonials ALTER COLUMN id SET DEFAULT nextval('testimonials_
 
 
 --
--- Name: adminis_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('adminis_id_seq', 42, true);
-
-
---
 -- Data for Name: administrators; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY administrators (id, name, username, password_hash, role_id) FROM stdin;
 1	owner	owner	$2y$10$v8wggQBQG4fYSBIoHyOD9OAJN5ShMijt9OGTRu8Ah1xdDnSLrZ9Vy	1
 \.
+
+
+--
+-- Name: administrators_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('administrators_id_seq', 42, true);
 
 
 --
@@ -373,19 +373,19 @@ SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 30, true);
 
 
 --
--- Name: administrators adminis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: administrators administrators_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY administrators
-    ADD CONSTRAINT adminis_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT administrators_pkey PRIMARY KEY (id);
 
 
 --
--- Name: administrators admins_username_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: administrators administrators_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY administrators
-    ADD CONSTRAINT admins_username_key UNIQUE (username);
+    ADD CONSTRAINT administrators_username_key UNIQUE (username);
 
 
 --
@@ -444,11 +444,11 @@ CREATE INDEX system_events_title_idx ON system_events USING btree (title);
 
 
 --
--- Name: administrators admins_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: administrators administrators_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY administrators
-    ADD CONSTRAINT admins_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id);
+    ADD CONSTRAINT administrators_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id);
 
 
 --
