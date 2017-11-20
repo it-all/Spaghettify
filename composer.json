@@ -3,7 +3,7 @@
   "description": "PHP/PostgreSQL Platform Built on Slim Framework",
   "license": "MIT",
   "require": {
-    "php": "^7",
+    "php": "^7.1",
     "slim/slim": "^3.0",
     "phpmailer/phpmailer": "^5.2",
     "slim/twig-view": "^2.2",
