@@ -2,7 +2,7 @@
 
 Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administration, based on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
-INSTALLATION  (Linux Instructions)
+INSTALLATION  (Linux Instructions)  
 $ composer require it-all/spaghettify from your project folder  
 $ mv vendor/it-all/spaghettify/cssJsBuildTool/ .  
 $ mv vendor/it-all/spaghettify/storage/ .  
