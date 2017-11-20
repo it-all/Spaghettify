@@ -43,7 +43,7 @@ abstract class MultiTableModel implements TableModel
         return $this->getPrimaryTableName($plural);
     }
 
-    public function getUpdateColumnName(): string
+    public function getUpdateColumnName(): ?string
     {
         return $this->primaryTableModel->getPrimaryKeyColumnName();
     }

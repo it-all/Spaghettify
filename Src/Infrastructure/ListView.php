@@ -51,9 +51,6 @@ class ListView extends AdminView
 
     protected function setUpdate(bool $updatePermitted, ?string $updateColumn, ?string $updateRoute)
     {
-        if ($updatePermitted && ($updateColumn == null || $updateRoute ==null)) {
-            throw new \Exception("update column and route must be defined");
-        }
         $this->updatePermitted = $updatePermitted; // initialize
         $this->updateColumn = $updateColumn; // initialize
         $this->updateRoute = $updateRoute; // initialize
