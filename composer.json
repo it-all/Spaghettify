@@ -13,7 +13,8 @@
   },
   "autoload": {
     "psr-4": {
-      "It_All\\Spaghettify\\": ""
+      "Domain\\": "src/Domain",
+      "Infrastructure\\": "src/Infrastructure"
     }
   }
 }
