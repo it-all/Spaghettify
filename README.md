@@ -26,6 +26,9 @@ $ chmod 777 storage/sessions
 $ chmod 777 storage/cache/twig  
   
 Browse to your local site. You should see the Spaghettify home page with a link to Login. When logged in, this link changes to Admin. The initial username / password = owner / ownerownerowner.  
+
+Note, if you see an unexpected error finding a namespaced file or class, try refreshing the composer autoload:  
+$ composer dump-autoload -o  
   
 If you want to use Gulp for CSS and/or JS preprocessing  
 ~$ cd /path/to/project  
