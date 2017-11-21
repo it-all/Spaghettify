@@ -7,6 +7,10 @@ INSTALLATION
 Clone the repo  
 git clone https://github.com/it-all/Spaghettify  
 
+Install Requirements  
+$ cd Spaghettify  
+$ composer install  
+
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
  - $ psql -U postgres
  - postgres=# create role mydbname with login; (creating the role with the same name as the database name allows easy psql access)
@@ -14,8 +18,8 @@ Create a PostgreSQL database for this project and import spaghettify.postgres.sq
  - postgres=# create database mydbname with owner mydbname;
  - $ psql -U mydbname < /path/to/spaghettify.postgres.sql  
   
-Create your environmental variables. Be sure to set the database connection.  
-Copy src/config/env-sample.php to src/config/env.php 
+Create your environmental variables by copying src/config/env-sample.php to src/config/env.php . Be sure to set the database connection. Note that a .gitignore file with env.php is included in the config directory to help prevent uploading your sensitive information to the web.  
+$ cp src/config/env-sample.php src/config/env.php 
   
 Create a local site with src/public as the root directory (default web server is Apache w/ .htaccess in src/public). Set your error log to /path/to/project/storage/logs/apacheErrors.log if you so desire. Remember to restart apache if necessary.  You will probably have to:  
 $ chmod 777 storage/sessions  
