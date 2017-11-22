@@ -64,4 +64,9 @@ abstract class MultiTableModel implements TableModel
     }
 
     abstract public function select(array $filterColumnsInfo = null);
+
+    public function getCountSelectColumns(): int
+    {
+        return count($this->selectColumns);
+    }
 }

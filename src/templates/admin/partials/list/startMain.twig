@@ -3,7 +3,11 @@
         <table class="scrollingTable sortable">
             <thead>
                 <tr>
-                    <th colspan="10">
+                    {% set colspan = numColumns %}
+                    {% if addDeleteColumn %}
+                        {% set colspan = colspan + 1 %}
+                    {% endif %}
+                    <th colspan="{{ colspan }}">
                         {{ title }} ({{ numResults }})
                         {% if insertLink %}
                             <a class="tableCaptionAction" href="{{ path_for(insertLink.route) }}">{{ insertLink.text }}</a>

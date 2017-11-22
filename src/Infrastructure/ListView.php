@@ -115,6 +115,7 @@ class ListView extends AdminView
                 'deleteRoute' => $this->deleteRoute,
                 'results' => $results,
                 'numResults' => $numResults,
+                'numColumns' => $this->model->getCountSelectColumns(),
                 'sortColumn' => $this->model->getOrderByColumnName(),
                 'sortByAsc' => $this->model->getOrderByAsc(),
                 'navigationItems' => $this->navigationItems

@@ -64,6 +64,7 @@ class RolesView extends SingleTableView
                 'allowDeleteRoles' => $allowDeleteRoles,
                 'results' => $results,
                 'numResults' => $numResults,
+                'numColumns' => $this->model->getCountSelectColumns(),
                 'sortColumn' => $this->model->getOrderByColumnName(),
                 'sortByAsc' => $this->model->getOrderByAsc(),
                 'navigationItems' => $this->navigationItems

@@ -337,4 +337,13 @@ class SingleTableModel implements TableModel
     {
         return $this->uniqueColumns;
     }
+
+    public function getCountSelectColumns(): int
+    {
+        if ($this->selectColumns == '*') {
+            return count($this->columns);
+        }
+
+        return count(explode(",", $this->selectColumns));
+    }
 }
