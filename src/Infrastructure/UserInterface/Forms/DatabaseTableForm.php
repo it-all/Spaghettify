@@ -190,9 +190,14 @@ class DatabaseTableForm extends Form
                     break;
 
 
+                case 'character':
+                    $fieldInfo['attributes']['size'] = $column->getCharacterMaximumLength();
+                    // continue into cv..
+                
                 case 'character varying':
                     $fieldInfo['tag'] = 'input';
                     $fieldInfo['attributes']['type'] = self::getInputType($inputTypeOverride);
+
                     // must have max defined
                     $fieldInfo['attributes']['maxlength'] = $column->getCharacterMaximumLength();
                     // value
