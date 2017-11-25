@@ -278,6 +278,7 @@ ALTER TABLE ONLY testimonials ALTER COLUMN id SET DEFAULT nextval('testimonials_
 
 COPY administrators (id, name, username, password_hash, role_id) FROM stdin;
 1	owner	owner	$2y$10$v8wggQBQG4fYSBIoHyOD9OAJN5ShMijt9OGTRu8Ah1xdDnSLrZ9Vy	1
+44	bookkeeper	bookkeeper	$2y$10$pPXV0lZMwIpXtr52Pt/anO7xFtByEZF7moqUVP.Exqg/SK4D2siy2	40
 \.
 
 
@@ -285,7 +286,7 @@ COPY administrators (id, name, username, password_hash, role_id) FROM stdin;
 -- Name: administrators_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('administrators_id_seq', 42, true);
+SELECT pg_catalog.setval('administrators_id_seq', 44, true);
 
 
 --
@@ -307,7 +308,7 @@ COPY login_attempts (id, admin_id, username, ip, created, success) FROM stdin;
 -- Name: login_attempts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('login_attempts_id_seq', 151, true);
+SELECT pg_catalog.setval('login_attempts_id_seq', 156, true);
 
 
 --
@@ -316,6 +317,10 @@ SELECT pg_catalog.setval('login_attempts_id_seq', 151, true);
 
 COPY roles (id, role, level) FROM stdin;
 1	owner	1
+38	manager	3
+37	director	2
+39	user	4
+40	bookkeeper	5
 \.
 
 
@@ -323,7 +328,7 @@ COPY roles (id, role, level) FROM stdin;
 -- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('roles_id_seq', 36, true);
+SELECT pg_catalog.setval('roles_id_seq', 40, true);
 
 
 --
@@ -354,7 +359,7 @@ COPY system_events (id, event_type, title, notes, created, admin_id, ip_address,
 -- Name: system_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('system_events_id_seq', 1408, true);
+SELECT pg_catalog.setval('system_events_id_seq', 1452, true);
 
 
 --
@@ -369,7 +374,7 @@ COPY testimonials (id, testimonial, person, place, active, receive_date) FROM st
 -- Name: testimonials_testimonial_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 30, true);
+SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 32, true);
 
 
 --
@@ -386,14 +391,6 @@ ALTER TABLE ONLY administrators
 
 ALTER TABLE ONLY administrators
     ADD CONSTRAINT administrators_username_key UNIQUE (username);
-
-
---
--- Name: system_event_types log_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY system_event_types
-    ADD CONSTRAINT log_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -418,6 +415,14 @@ ALTER TABLE ONLY roles
 
 ALTER TABLE ONLY roles
     ADD CONSTRAINT roles_role_key UNIQUE (role);
+
+
+--
+-- Name: system_event_types system_event_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY system_event_types
+    ADD CONSTRAINT system_event_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -452,11 +457,11 @@ ALTER TABLE ONLY administrators
 
 
 --
--- Name: system_events system_events_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: system_events fk_admin_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY system_events
-    ADD CONSTRAINT system_events_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES administrators(id);
+    ADD CONSTRAINT fk_admin_id FOREIGN KEY (admin_id) REFERENCES administrators(id);
 
 
 --
