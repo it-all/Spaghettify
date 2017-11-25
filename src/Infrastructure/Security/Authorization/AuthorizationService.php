@@ -6,70 +6,105 @@ namespace Infrastructure\Security\Authorization;
 use Domain\Admin\Administrators\Roles\RolesModel;
 use function Infrastructure\Utilities\getRouteName;
 
+/* There are two methods of Authorization: either by minimum permission, where the user role equal to or better than the minimum permission is authorized (in this case, the permission is a string). Or by a permission set, where the user role in the set of authorized permissions is authorized (permission is an array) */
 class AuthorizationService
 {
-    private $functionalityMinimumPermissions;
+    private $functionalityPermissions;
     private $roles;
     private $baseRole;
 
-    public function __construct(array $functionalityMinimumPermissions = [])
+    public function __construct(array $functionalityPermissions)
     {
-        $this->functionalityMinimumPermissions = $functionalityMinimumPermissions;
+        $this->functionalityPermissions = $functionalityPermissions;
         $rolesModel = new RolesModel();
         $this->roles = $rolesModel->getRoles();
         $this->baseRole = $rolesModel->getBaseRole();
     }
 
     // $functionality like 'marketing' or 'marketing.index'
+    // the return value can either be a string or an array, based on configuration. See comment at the top of class for info.
     // if not found as an exact match or category match, the base (least permission) role is returned
-    public function getMinimumPermission(string $functionality): string
+    public function getPermissions(string $functionality)
     {
-        if (!isset($this->functionalityMinimumPermissions[$functionality])) {
+        if (!isset($this->functionalityPermissions[$functionality])) {
 
             // no exact match, so see if there are multiple terms and first term matches
             $fParts = explode('.', $functionality);
-            if (count($fParts) > 1 && isset($this->functionalityMinimumPermissions[getRouteName(true, $fParts[0])])) {
-                return $this->functionalityMinimumPermissions[getRouteName(true, $fParts[0])];
+            if (count($fParts) > 1 && isset($this->functionalityPermissions[getRouteName(true, $fParts[0])])) {
+                return $this->functionalityPermissions[getRouteName(true, $fParts[0])];
             }
 
             // no matches
             return $this->baseRole;
         }
 
-        return $this->functionalityMinimumPermissions[$functionality];
+        return $this->functionalityPermissions[$functionality];
     }
 
-    public function check(string $minimumPermission = 'owner'): bool
+    public function getUserRole(): ?string
     {
-        if (!in_array($minimumPermission, $this->roles)) {
-            throw new \Exception("minimumRole $minimumPermission must be a valid role");
+        $userRole = $_SESSION[SESSION_USER][SESSION_USER_ROLE];
+
+        if (!in_array($userRole, $this->roles)) {
+            unset($_SESSION[SESSION_USER]); // force logout
+            return null;
+        }
+
+        return $userRole;
+    }
+
+    private function checkMinimum(string $minimumRole): bool
+    {
+        if (!in_array($minimumRole, $this->roles)) {
+            throw new \Exception("Invalid role: $minimumRole");
         }
         if (!isset($_SESSION[SESSION_USER][SESSION_USER_ROLE])) {
             return false;
         }
 
-        $role = $_SESSION[SESSION_USER][SESSION_USER_ROLE];
-
-        if (!in_array($role, $this->roles)) {
-            // database this event
-            unset($_SESSION[SESSION_USER]); // force logout
+        if (!$userRole = $this->getUserRole()) {
             return false;
         }
 
-        if (array_search($role, $this->roles) <= array_search($minimumPermission, $this->roles)) {
+        return array_search($userRole, $this->roles) <= array_search($minimumRole, $this->roles);
+    }
 
-            return true;
+    private function checkSet(array $authorizedRoles): bool
+    {
+        foreach ($authorizedRoles as $authorizedRole) {
+            if (!is_string($authorizedRole)) {
+                throw new \Exception("Invalid role type, must be strings");
+            }
+            if (!in_array($authorizedRole, $this->roles)) {
+                throw new \Exception("Invalid role $authorizedRole");
+            }
         }
 
-        return false;
+        if (!$userRole = $this->getUserRole()) {
+            return false;
+        }
+
+        return in_array($userRole, $authorizedRoles);
+    }
+
+    public function check($permissions): bool
+    {
+        if (is_string($permissions)) {
+            return $this->checkMinimum($permissions);
+        } elseif (is_array($permissions)) {
+            return $this->checkSet($permissions);
+        } else {
+            throw new \Exception('Invalid permissions');
+        }
     }
 
     // note, returns false if the minimum permission for $functionality is not defined
     public function checkFunctionality(string $functionality): bool
     {
-        if (!$p = $this->getMinimumPermission($functionality)) {
+        if (!$permissions = $this->getPermissions($functionality)) {
             return false;
         }
-        return $this->check($p);
+
+        return $this->check($permissions);
     }
 }

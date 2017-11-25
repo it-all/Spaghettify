@@ -22,8 +22,9 @@ class NavAdmin
     {
         $this->nav = [
             'Marketing' => [
-                // note, uncommenting the line below overrides the default setting
-//            'minimumPermissions' => 'director',
+                // note, uncommenting a line below overrides the config or default setting
+//            'permissions' => 'director',
+//            'permissions' => ['director', 'bookkeeper'],
                 'subSections' => [
                     'Testimonials' => [
                         'link' => ROUTE_ADMIN_TESTIMONIALS,
@@ -76,26 +77,26 @@ class NavAdmin
     // 1. directly set by minimumPermissions key in the section
     // 2. by section link
     // 3. by section name
-    private function getSectionMinimumPermission(array $section, string $sectionName)
+    private function getSectionPermissions(array $section, string $sectionName)
     {
-        if (isset($section['minimumPermissions'])) {
-            return $section['minimumPermissions'];
+        if (isset($section['permissions'])) {
+            return $section['permissions'];
         }
 
         if (isset($section['link'])) {
-            return $this->container->authorization->getMinimumPermission($section['link']);
+            return $this->container->authorization->getPermissions($section['link']);
         }
 
         // by nav section - ie NAV_ADMIN_SYSTEM
-        return $this->container->authorization->getMinimumPermission(constant('NAV_ADMIN_'.strtoupper(str_replace(" ", "_", $sectionName))));
+        return $this->container->authorization->getPermissions(constant('NAV_ADMIN_'.strtoupper(str_replace(" ", "_", $sectionName))));
 
     }
 
     private function getSectionForUserRecurs(array $section, string $sectionName)
     {
         // if there are section permissions and they are not met
-        if ($minimumPermissions = $this->getSectionMinimumPermission($section, $sectionName)) {
-            if (!$this->container->authorization->check($minimumPermissions)) {
+        if ($permissions = $this->getSectionPermissions($section, $sectionName)) {
+            if (!$this->container->authorization->check($permissions)) {
                 return false;
             }
         }

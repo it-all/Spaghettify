@@ -120,35 +120,31 @@ return [
         'service' => "service@".DOMAIN_NAME
     ],
 
-    // if exceeded in a session, will insert a system event and disallow further login attempts
+    // If exceeded in a session, will insert a system event and disallow further login attempts
     'maxFailedLogins' => 5,
 
-    // removes leading and trailing blank space on all inputs
+    // Removes leading and trailing blank space on all inputs
     'trimAllUserInput' => true,
 
-    // either functionalityCategory => minimumRole or functionalityCategory.functionality => minimum role
-    // important to properly match the indexes to routes authorization
-    // the role values must be in the database: roles.role
-    // if the index is not defined for a route or nav section, no authorization check is performed (all administrators (logged in users) will be able to access resource or view nav section). therefore, indexes only need to be defined for routes and nav sections that require authorization greater than the base (least permission) role.
-    'administratorMinimumPermissions' => [
-        ROUTE_LOGIN_ATTEMPTS => 'owner',
-        ROUTE_LOGIN_ATTEMPTS_RESET => 'owner',
-        ROUTE_SYSTEM_EVENTS => 'owner',
-        ROUTE_SYSTEM_EVENTS_RESET => 'owner',
-        ROUTE_ADMIN_ADMINISTRATORS => 'owner',
-        ROUTE_ADMIN_ADMINISTRATORS_RESET => 'owner',
+
+    /* Either functionalityCategory => permissions or functionalityCategory.functionality => permissions where permissions is either a string equal to the minimum authorized role or an array of authorized roles */
+    // Important to properly match the indexes to routes authorization
+    // The role values must be in the database: roles.role
+    // If the index is not defined for a route or nav section, no authorization check is performed (all administrators (logged in users) will be able to access resource or view nav section). therefore, indexes only need to be defined for routes and nav sections that require authorization greater than the base (least permission) role.
+    // Note also that it's possible to give a role access to a resource, but then hide the navigation to to that resource to that role, which would usually be undesirable. For example, below the bookkeeper is authorized to view System Events, but will not see the System nav section because of the NAV_ADMIN_SYSTEM entry permissions being set to 'owner'
+    'administratorPermissions' => [
+        ROUTE_LOGIN_ATTEMPTS => 'director',
+        ROUTE_SYSTEM_EVENTS => ['owner', 'bookkeeper'],
+        ROUTE_ADMIN_ADMINISTRATORS => 'director',
+        ROUTE_ADMIN_ADMINISTRATORS_RESET => 'director',
         ROUTE_ADMIN_ADMINISTRATORS_INSERT => 'owner',
         ROUTE_ADMIN_ADMINISTRATORS_UPDATE => 'owner',
         ROUTE_ADMIN_ADMINISTRATORS_DELETE => 'owner',
         ROUTE_ADMIN_ROLES => 'owner',
-        ROUTE_ADMIN_ROLES_INSERT => 'owner',
-        ROUTE_ADMIN_ROLES_UPDATE => 'owner',
-        ROUTE_ADMIN_ROLES_DELETE => 'owner',
-        ROUTE_ADMIN_TESTIMONIALS_INSERT => 'owner',
         NAV_ADMIN_SYSTEM => 'owner',
     ],
 
-    // set the admin home route for users or roles
+    // Set the admin home route for users or roles
     'adminHomeRoutes' => [
         'usernames' => [],
         'roles' => [
@@ -156,7 +152,7 @@ return [
         ]
     ],
 
-    // when entering a new admin, role will default to this
-    'adminDefaultRole' => 'owner'
+    // When entering a new admin, role will default to this
+    'adminDefaultRole' => 'user'
 
 ];

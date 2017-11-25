@@ -23,14 +23,14 @@ class SingleTableView extends ListView
 
         parent::__construct($container, $routePrefix, getRouteName(true, $routePrefix, 'index'), $this->model, getRouteName(true, $routePrefix, 'index.reset'));
 
-        $insertLink = ($this->authorization->check($this->getAuthorizationMinimumLevel('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
+        $insertLink = ($this->authorization->check($this->getPermissions('insert'))) ? ['text' => 'Insert '.$this->model->getFormalTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
         $this->setInsert($insertLink);
 
-        $allowUpdate = $this->authorization->check($this->getAuthorizationMinimumLevel('update')) && $this->model->getPrimaryKeyColumnName() !== null;
+        $allowUpdate = $this->authorization->check($this->getPermissions('update')) && $this->model->getPrimaryKeyColumnName() !== null;
 
         $this->setUpdate($allowUpdate, $this->model->getPrimaryKeyColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
 
-        $this->setDelete($this->container->authorization->check($this->getAuthorizationMinimumLevel('delete')), getRouteName(true, $this->routePrefix, 'delete'));
+        $this->setDelete($this->container->authorization->check($this->getPermissions('delete')), getRouteName(true, $this->routePrefix, 'delete'));
 
     }
 

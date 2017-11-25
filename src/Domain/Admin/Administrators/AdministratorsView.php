@@ -32,9 +32,9 @@ class AdministratorsView extends ListView
         $insertLink = ($this->authorization->check($this->container->settings['authorization'][getRouteName(true, $this->routePrefix, 'insert')])) ? ['text' => 'Insert '.$this->administratorsModel->getPrimaryTableName(false), 'route' => getRouteName(true, $this->routePrefix, 'insert')] : false;
         $this->setInsert($insertLink);
 
-        $this->setUpdate($this->authorization->check($this->getAuthorizationMinimumLevel('update')), $this->administratorsModel->getUpdateColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
+        $this->setUpdate($this->authorization->check($this->getPermissions('update')), $this->administratorsModel->getUpdateColumnName(), getRouteName(true, $this->routePrefix, 'update', 'put'));
 
-        $this->setDelete($this->container->authorization->check($this->getAuthorizationMinimumLevel('delete')), getRouteName(true, $this->routePrefix, 'delete'));
+        $this->setDelete($this->container->authorization->check($this->getPermissions('delete')), getRouteName(true, $this->routePrefix, 'delete'));
     }
 
     private function pwFieldsHaveError(): bool

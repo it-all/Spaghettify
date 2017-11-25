@@ -20,7 +20,7 @@ class AdminView extends View
         $this->navigationItems = $navAdmin->getNavForUser();
     }
 
-    protected function getAuthorizationMinimumLevel(string $type = 'index')
+    protected function getPermissions(string $type = 'index')
     {
         if (!isset($this->routePrefix)) {
             throw new \Exception("The routePrefix property must be set.");
@@ -30,6 +30,6 @@ class AdminView extends View
             throw new \Exception("Invalid type $type");
         }
 
-        return $this->container->authorization->getMinimumPermission(getRouteName(true, $this->routePrefix, $type));
+        return $this->container->authorization->getPermissions(getRouteName(true, $this->routePrefix, $type));
     }
 }

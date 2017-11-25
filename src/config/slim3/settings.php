@@ -16,7 +16,7 @@ return [
             'adminHomeRoutes' => $config['adminHomeRoutes']
         ],
 
-        'authorization' => $config['administratorMinimumPermissions'],
+        'authorization' => $config['administratorPermissions'],
 
         // Twig Settings
         'view' => [

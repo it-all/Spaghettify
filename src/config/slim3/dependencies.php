@@ -58,11 +58,6 @@ $container['view'] = function ($container) {
         'user' => $container->authentication->user()
     ]);
 
-    // make authorization class available inside templates
-    $view->getEnvironment()->addGlobal('authorization', [
-        'check' => $container->authorization->check()
-    ]);
-
     if (isset($_SESSION[SESSION_ADMIN_NOTICE])) {
         $view->getEnvironment()->addGlobal('adminNotice', $_SESSION[SESSION_ADMIN_NOTICE]);
         unset($_SESSION[SESSION_ADMIN_NOTICE]);

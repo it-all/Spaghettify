@@ -33,10 +33,10 @@ class AuthenticationService
         return isset($_SESSION[SESSION_USER]);
     }
 
-    public function getUserId(): ?string
+    public function getUserId(): ?int
     {
         if (isset($_SESSION[SESSION_USER][SESSION_USER_ID])) {
-            return $_SESSION[SESSION_USER][SESSION_USER_ID];
+            return (int) $_SESSION[SESSION_USER][SESSION_USER_ID];
         }
         return null;
     }
