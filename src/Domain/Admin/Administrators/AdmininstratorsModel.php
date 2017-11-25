@@ -22,7 +22,12 @@ class AdministratorsModel extends MultiTableModel
 
     public function __construct()
     {
-        parent::__construct(new SingleTableModel(self::TABLE_NAME, '*', 'level', false), self::SELECT_COLUMNS);
+        parent::__construct(new SingleTableModel(self::TABLE_NAME), self::SELECT_COLUMNS);
+    }
+
+    public function getOrderByColumnName(): ?string
+    {
+        return 'level';
     }
 
     public function insert(string $name, string $username, string $password, int $roleId)
