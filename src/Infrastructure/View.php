@@ -26,7 +26,7 @@ class View
         return $this->view->render(
             $response,
             'frontend/pageNotFound.twig',
-            ['title' => 'Spaghettify', 'pageType' => 'public', 'adminLinkRoute' => $this->authentication->getAdminHomeRouteForUser()]
+            ['title' => $this->settings['businessDba'], 'pageType' => 'public', 'adminLinkRoute' => $this->authentication->getAdminHomeRouteForUser()]
         );
     }
 }
