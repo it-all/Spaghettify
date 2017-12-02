@@ -54,8 +54,6 @@ return [
     'notFoundHandler' => function ($container) {
         return function ($request, $response) use ($container) {
             return $container['response']
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'text/html')
                 ->withRedirect($container->router->pathFor(ROUTE_PAGE_NOT_FOUND));
         };
     }
