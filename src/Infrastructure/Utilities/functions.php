@@ -69,7 +69,7 @@ function protectXSS(string $input)
  * @param bool optional $isEmptyIdValid
  * @return bool
  */
-function sessionValidId($sessionId, $isEmptyIdValid = true): bool
+function sessionValidId(string $sessionId, $isEmptyIdValid = true): bool
 {
     if ($isEmptyIdValid && strlen($sessionId) == 0) { // if blank, there is no session id
         return true;
