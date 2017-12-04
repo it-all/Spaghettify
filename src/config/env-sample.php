@@ -41,6 +41,11 @@ return [
         'service' => "service@$domainName"
     ],
 
+    /* uncomment below to use the default session save path from php.ini instead of storage/sessions */
+//    'session' => [
+//        'savePath' => null
+//    ],
+
     'storage' => [
         'cache' => [
             'routerCacheFile' => false // for increased performance, remove this entry when routes are stable (recommended for production use only, and mainly improves speed for many routes that have parameters: https://akrabat.com/slims-route-cache-file/ : "Note that there's no invalidation on this cache, so if you add or change any routes, you need to delete this file. Generally, it's best to only set this in production.")

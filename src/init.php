@@ -86,7 +86,9 @@ if (!Utilities\isRunningFromCommandLine()) {
     if (!Utilities\sessionValidId(session_id())) {
         session_regenerate_id(true);
     }
-    session_save_path($config['session']['savePath']);
+    if (isset($config['session']['savePath']) && strlen($config['session']['savePath']) > 0) {
+        session_save_path($config['session']['savePath']);
+    }
     session_start();
     $_SESSION[SESSION_LAST_ACTIVITY] = time(); // update last activity time stamp
 }
