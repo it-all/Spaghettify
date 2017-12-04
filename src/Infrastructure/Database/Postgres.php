@@ -77,7 +77,7 @@ Class Postgres
         $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = $1";
         foreach ($skipTables as $sk) {
             $query .= " AND table_name";
-            $query .= (substr($sk, strlen($sk) - 1) === '%') ? " NOT LIKE '$sk'" : " != '$sk'";
+            $query .= (substr($sk, mb_strlen($sk) - 1) === '%') ? " NOT LIKE '$sk'" : " != '$sk'";
         }
         $query .= " ORDER BY table_name";
         $q = new QueryBuilder($query, $schema);

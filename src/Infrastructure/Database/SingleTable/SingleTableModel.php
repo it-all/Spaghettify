@@ -281,7 +281,7 @@ class SingleTableModel implements TableModel
     {
         $name = ucwords(str_replace('_', ' ', $this->tableName));
         if (!$plural) {
-            $name = substr($name, 0, strlen($this->tableName) - 1);
+            $name = substr($name, 0, mb_strlen($this->tableName) - 1);
         }
         return $name;
     }
