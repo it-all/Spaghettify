@@ -89,22 +89,22 @@ return [
 
     'session' => [
         'ttlHours' => 24,
-        'savePath' => APP_ROOT . '../storage/sessions',
+        'savePath' => __DIR__ . '/../../storage/sessions',
     ],
 
     'storage' => [
         'logs' => [
-            'pathPhpErrors' => APP_ROOT . '../storage/logs/phpErrors.log'
+            'pathPhpErrors' => __DIR__ . '/../../storage/logs/phpErrors.log'
         ],
 
         'cache' => [
-            'pathCache' => APP_ROOT . '../storage/cache/',
-            'routerCacheFile' => APP_ROOT . '../storage/cache/router.txt'
+            'pathCache' => __DIR__ . '/../../storage/cache/',
+            'routerCacheFile' => __DIR__ . '/../../storage/cache/router.txt'
         ]
     ],
 
-    'pathTemplates' => APP_ROOT . 'templates/',
-    'pathTwigMacros' => APP_ROOT . '../vendor/it-all/form-former/src/twigMacros',
+    'pathTemplates' => __DIR__ . '/../templates/',
+    'pathTwigMacros' => __DIR__ . '/../../vendor/it-all/form-former/src/twigMacros',
 
     'errors' => [
         'emailTo' => ['owner', 'programmer'], // emails must be set in 'emails' section

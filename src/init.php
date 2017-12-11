@@ -1,11 +1,18 @@
 <?php
 declare(strict_types=1);
-
 /** note: this file can also be called for cli scripts.*/
 
+use Infrastructure\Utilities;
+
+require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/Infrastructure/Utilities/functions.php';
 
-use Infrastructure\Utilities;
+
+// In case of collision, env.php value overrides
+$config = array_replace_recursive(
+    require __DIR__ . '/config/config.php',
+    require __DIR__ . '/config/env.php'
+);
 
 // used in error handler and container
 $disableMailerSend = !$config['isLive'] && !$config['errors']['emailDev'];
