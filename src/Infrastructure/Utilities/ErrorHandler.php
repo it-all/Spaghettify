@@ -147,7 +147,7 @@ class ErrorHandler
     public function throwableHandler(\Throwable $e)
     {
         $message = $this->generateMessageBodyCommon($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
-        $message .= "\nStack Trace:\n" . $e->getTraceAsString();
+        $message .= PHP_EOL . "Stack Trace:" . PHP_EOL . $e->getTraceAsString();
         $exitPage = ($e->getCode() == E_ERROR || $e->getCode() == E_USER_ERROR) ? true : false;
 
         $this->handleError($message, $e->getCode(), $exitPage);
@@ -163,7 +163,7 @@ class ErrorHandler
      */
     public function phpErrorHandler(int $errno, string $errstr, string $errfile = null, string $errline = null)
     {
-        $message = $this->generateMessageBodyCommon($errno, $errstr, $errfile, $errline) . "\nStack Trace:\n". $this->getDebugBacktraceString();
+        $message = $this->generateMessageBodyCommon($errno, $errstr, $errfile, $errline) . PHP_EOL . "Stack Trace:" . PHP_EOL . $this->getDebugBacktraceString();
 
         $this->handleError($message, $errno, false);
     }
@@ -178,12 +178,12 @@ class ErrorHandler
             global $argv;
             $message .= "Command line: " . $argv[0];
         } else {
-            $message .= "\nWeb Page: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'];
+            $message .= PHP_EOL . "Web Page: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'];
             if (strlen($_SERVER['QUERY_STRING']) > 0) {
                 $message .= "?" . $_SERVER['QUERY_STRING'];
             }
         }
-        $message .= "\n$messageBody\n\n";
+        $message .= PHP_EOL . "$messageBody" . PHP_EOL . PHP_EOL;
         return $message;
     }
 
@@ -198,7 +198,7 @@ class ErrorHandler
     private function generateMessageBodyCommon(int $errno, string $errstr, string $errfile = null, $errline = null): string
     {
         $message = $this->getErrorType($errno).": ";
-        $message .= htmlspecialchars_decode($errstr)."\n";
+        $message .= htmlspecialchars_decode($errstr) . PHP_EOL;
 
         if (!is_null($errfile)) {
             $message .= "$errfile";
@@ -293,7 +293,7 @@ class ErrorHandler
             if (isset($call['args'])) {
                 $outLine .= " {".arrayWalkToStringRecursive($call['args'])."}";
             }
-            $out .= "$outLine\n\n";
+            $out .= "$outLine" . PHP_EOL . PHP_EOL;
         }
 
         return $out;

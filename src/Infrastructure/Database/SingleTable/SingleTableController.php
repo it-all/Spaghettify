@@ -200,7 +200,7 @@ class SingleTableController extends Controller
                 $settings = $this->container->get('settings');
                 $this->mailer->send(
                     $_SERVER['SERVER_NAME'] . " Event",
-                    "Inserted into $tableName.\n See event log for details.",
+                    "Inserted into $tableName.".PHP_EOL." See event log for details.",
                     [$settings['emails']['programmer']]
                 );
             }
@@ -230,7 +230,7 @@ class SingleTableController extends Controller
                 $settings = $this->container->get('settings');
                 $this->mailer->send(
                     $_SERVER['SERVER_NAME'] . " Event",
-                    "Updated $tableName.\n See event log for details.",
+                    "Updated $tableName.".PHP_EOL." See event log for details.",
                     [$settings['emails']['programmer']]
                 );
             }
@@ -274,7 +274,7 @@ class SingleTableController extends Controller
             $settings = $this->container->get('settings');
             $this->mailer->send(
                 $_SERVER['SERVER_NAME'] . " Event",
-                "Deleted record from $tableName.\nSee event log for details.",
+                "Deleted record from $tableName.".PHP_EOL."See event log for details.",
                 [$settings['emails']['programmer']]
             );
         }
