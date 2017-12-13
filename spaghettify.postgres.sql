@@ -172,9 +172,9 @@ CREATE TABLE system_events (
     notes text,
     created timestamp without time zone DEFAULT now() NOT NULL,
     admin_id bigint,
-    ip_address character varying(50) NOT NULL,
-    resource character varying(100) NOT NULL,
-    request_method character varying(20) NOT NULL
+    ip_address character varying(50),
+    resource character varying(100),
+    request_method character varying(20)
 );
 
 
@@ -207,7 +207,8 @@ CREATE TABLE testimonials (
     person character varying(50) NOT NULL,
     place character varying(100) NOT NULL,
     active boolean DEFAULT true NOT NULL,
-    receive_date date NOT NULL
+    receive_date date NOT NULL,
+    temp character(1)
 );
 
 
@@ -308,7 +309,7 @@ COPY login_attempts (id, admin_id, username, ip, created, success) FROM stdin;
 -- Name: login_attempts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('login_attempts_id_seq', 156, true);
+SELECT pg_catalog.setval('login_attempts_id_seq', 159, true);
 
 
 --
@@ -359,14 +360,14 @@ COPY system_events (id, event_type, title, notes, created, admin_id, ip_address,
 -- Name: system_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('system_events_id_seq', 1452, true);
+SELECT pg_catalog.setval('system_events_id_seq', 7629, true);
 
 
 --
 -- Data for Name: testimonials; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY testimonials (id, testimonial, person, place, active, receive_date) FROM stdin;
+COPY testimonials (id, testimonial, person, place, active, receive_date, temp) FROM stdin;
 \.
 
 
@@ -374,7 +375,7 @@ COPY testimonials (id, testimonial, person, place, active, receive_date) FROM st
 -- Name: testimonials_testimonial_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 32, true);
+SELECT pg_catalog.setval('testimonials_testimonial_id_seq', 33, true);
 
 
 --
