@@ -31,6 +31,9 @@ $echoErrors = !$config['isLive'];
 $emailErrors = $config['isLive'] || $config['errors']['emailDev'];
 $emailErrorsTo = [];
 foreach ($config['errors']['emailTo'] as $roleEmail) {
+    if (!isset($config['emails'][$roleEmail])) {
+        throw new Exception("$roleEmail email not set in config");
+    }
     $emailErrorsTo[] = $config['emails'][$roleEmail];
 }
 

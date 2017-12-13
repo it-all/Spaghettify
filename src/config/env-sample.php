@@ -11,10 +11,10 @@ return [
 
     'domainName' => $domainName, // not currently referenced in the app
 
-    /** set true for live server */
+    /* set true for live server */
     'isLive' => false,
 
-    /** remove for live server or change to your dev server name */
+    /* set to $domainName on live server or host name on dev server */
     'hostName' => 'localhost',
 
     'dirs' => [
@@ -48,9 +48,11 @@ return [
 
     'storage' => [
         'cache' => [
-            'routerCacheFile' => false // for increased performance, remove this entry when routes are stable (recommended for production use only, and mainly improves speed for many routes that have parameters: https://akrabat.com/slims-route-cache-file/ : "Note that there's no invalidation on this cache, so if you add or change any routes, you need to delete this file. Generally, it's best to only set this in production.")
+            /* for increased performance, remove this entry when routes are stable (recommended for production use only, and mainly improves speed for many routes that have parameters: https://akrabat.com/slims-route-cache-file/ : "Note that there's no invalidation on this cache, so if you add or change any routes, you need to delete this file. Generally, it's best to only set this in production.") */
+            'routerCacheFile' => false
         ]
     ],
 
-    'twigAutoReload' => true // true is good when developing in order to recompile twig templates when source code changes (https://twig.symfony.com/doc/2.x/api.html)
+    /* true is good when developing in order to recompile twig templates when source code changes (https://twig.symfony.com/doc/2.x/api.html) */
+    'twigAutoReload' => true
 ];

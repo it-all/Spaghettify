@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 // GLOBAL CONSTANTS
 
-define('DOMAIN_NAME', 'it-all.com');
-
 // routes
 // KISS - don't use array constants because may be tricky to access in twig
 define('ROUTE_HOME', 'home');
@@ -73,17 +71,20 @@ define('SESSION_GOTO_ADMIN_PATH', 'gotoAdminPath');
 
 // END GLOBAL CONSTANTS
 
+/* override all settings below that use this in .env */
+$domainName = 'example.com';
+
 return [
 
-    'businessName' => 'Spaghettify',
+    'businessName' => '',
 
     'businessDba' => '',
 
-    'domainName' => DOMAIN_NAME,
+    'domainName' => $domainName,
 
-    'isLive' => true,
+    'isLive' => false,
 
-    'hostName' => DOMAIN_NAME,
+    'hostName' => '',
 
     'domainUseWww' => false,
 
@@ -107,17 +108,18 @@ return [
     'pathTwigMacros' => __DIR__ . '/../../vendor/it-all/form-former/src/twigMacros',
 
     'errors' => [
-        'emailTo' => ['owner', 'programmer'], // emails must be set in 'emails' section
+        'emailTo' => ['owner', 'programmer'], // these emails must be set in 'emails' section
         'fatalMessage' => 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.',
         'logToDatabase' => true,
         'echoDev' => true, // echo on dev servers (note, live server will never echo)
         'emailDev' => false // email on dev servers (note, live server will always email)
     ],
 
+    /* owner, programmer, and service must be set */
     'emails' => [
-        'owner' => "owner@".DOMAIN_NAME,
-        'programmer' => "programmer@".DOMAIN_NAME,
-        'service' => "service@".DOMAIN_NAME
+        'owner' => "owner@$domainName",
+        'programmer' => "programmer@$domainName",
+        'service' => "service@$domainName"
     ],
 
     // If exceeded in a session, will insert a system event and disallow further login attempts
