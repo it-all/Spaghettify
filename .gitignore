@@ -2,3 +2,4 @@ vendor/
 ignored/
 .idea/
 .gitignore~
+nbproject/
