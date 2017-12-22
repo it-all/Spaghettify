@@ -103,6 +103,14 @@ function isRunningFromCommandLine(): bool
     return php_sapi_name() == 'cli';
 }
 
+function getHostWithoutWww(): string
+{
+    if (substr($_SERVER['HTTP_HOST'], 0, 4) == 'www.') {
+        return substr($_SERVER['HTTP_HOST'], 4);
+    }
+    return $_SERVER['HTTP_HOST'];
+}
+
 function getBaseUrl()
 {
     global $config;
@@ -110,7 +118,7 @@ function getBaseUrl()
     if ($config['domainUseWww']) {
         $baseUrl .= "www.";
     }
-    $baseUrl .= $_SERVER['SERVER_NAME'];
+    $baseUrl .= getHostWithoutWww();
     return $baseUrl;
 }
 
