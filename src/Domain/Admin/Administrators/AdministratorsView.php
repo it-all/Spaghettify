@@ -50,14 +50,17 @@ class AdministratorsView extends ListView
 
         $fields = [];
 
+        // pw fields are not required on edit forms (leave blank to keep existing)
         if ($action == 'insert') {
             $fieldValues = ($request->isGet()) ? [] : $_SESSION[SESSION_REQUEST_INPUT_KEY];
             $formAction = $this->router->pathFor(getRouteName(true, $this->routePrefix, 'insert', 'post'));
             $passwordLabel = 'Password';
+            $passwordFieldsRequired = true;
         } else {
             $fieldValues = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];
             $formAction = $this->router->pathFor(getRouteName(true, $this->routePrefix, 'update', 'put'), ['primaryKey' => $primaryKey]);
             $passwordLabel = 'Password [leave blank to keep existing]';
+            $passwordFieldsRequired = false;
             $fields[] = FormHelper::getPutMethodField();
         }
 
@@ -80,9 +83,16 @@ class AdministratorsView extends ListView
             $passwordConfirmationValue = ($this->pwFieldsHaveError()) ? '' : $fieldValues['password_confirm'];
         }
 
-        $fields[] = new InputField($passwordLabel, ['name' => 'password', 'id' => 'password', 'type' => 'password', 'required' => 'required', 'value' => $passwordValue], FormHelper::getFieldError('password'));
+        $passwordFieldAttributes = ['name' => 'password', 'id' => 'password', 'type' => 'password', 'value' => $passwordValue];
+        $passwordConfirmationFieldAttributes = ['name' => 'password_confirm', 'id' => 'password_confirm', 'type' => 'password', 'value' => $passwordConfirmationValue];
+        if ($passwordFieldsRequired) {
+            $passwordFieldAttributes = array_merge($passwordFieldAttributes, ['required' => 'required']);
+            $passwordConfirmationFieldAttributes = array_merge($passwordConfirmationFieldAttributes, ['required' => 'required']);
+        }
 
-        $fields[] = new InputField('Confirm Password', ['name' => 'password_confirm', 'id' => 'password_confirm', 'type' => 'password', 'required' => 'required', 'value' => $passwordConfirmationValue], FormHelper::getFieldError('password_confirm'));
+        $fields[] = new InputField($passwordLabel, $passwordFieldAttributes, FormHelper::getFieldError('password'));
+
+        $fields[] = new InputField('Confirm Password', $passwordConfirmationFieldAttributes, FormHelper::getFieldError('password_confirm'));
 
         // Role Field
         $rolesOptions = [];
