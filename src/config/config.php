@@ -84,8 +84,6 @@ return [
 
     'isLive' => false,
 
-    'hostName' => '',
-
     'domainUseWww' => false,
 
     'session' => [

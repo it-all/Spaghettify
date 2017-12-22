@@ -14,8 +14,7 @@ return [
     /* set true for live server */
     'isLive' => false,
 
-    /* set to $domainName on live server or host name on dev server */
-    'hostName' => 'localhost',
+    'domainUseWww' => false,
 
     'dirs' => [
         'admin' => 'private' // browse to this dir to get to the admin login page

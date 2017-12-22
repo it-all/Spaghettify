@@ -124,20 +124,24 @@ function getCurrentUri(bool $includeQueryString = true): string
     return $uri;
 }
 
-// if called with no args, redirects to current URI with proper protocol, www or not based on config, and query string
-function redirect(string $toURI = null)
+function getRedirect(string $toURI = null)
 {
     if (is_null($toURI)) {
-        $toURI = getCurrentUri(true, false);
+        $toURI = getCurrentUri(true);
     }
 
-    // add / if nec
+    // add initial '/' if nec
     if (substr($toURI, 0, 1) != "/") {
         $toURI = "/" . $toURI;
     }
 
-    $to = getBaseUrl() . $toURI;
-    header("Location: $to");
+    return getBaseUrl() . $toURI;
+}
+
+// if called with no args, redirects to current URI with proper protocol, www or not based on config, and query string
+function redirect(string $toURI = null)
+{
+    header("Location: ".getRedirect($toURI));
     exit();
 }
 

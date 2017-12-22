@@ -39,7 +39,7 @@ foreach ($config['errors']['emailTo'] as $roleEmail) {
 
 $errorHandler = new Utilities\ErrorHandler(
     $config['storage']['logs']['pathPhpErrors'],
-    $config['hostName']."/",
+    Utilities\getRedirect(),
     $echoErrors,
     $emailErrors,
     $emailErrorsTo,
