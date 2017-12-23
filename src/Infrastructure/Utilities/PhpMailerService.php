@@ -37,12 +37,13 @@ class PhpMailerService {
             return;
         }
 
+        $toEmails = array_unique($toEmails);
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->Body = $body;
         $toEmailsString = '';
         foreach ($toEmails as $email) {
             $toEmailsString .= "$email ";
-            $this->phpMailer->addAddress($email);
+            $this->phpMailer->addAddress(strtolower($email));
         }
         if ($fromEmail == null) {
             $fromEmail = $this->defaultFromEmail;
