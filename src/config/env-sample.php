@@ -40,6 +40,10 @@ return [
         'service' => "service@$domainName"
     ],
 
+    'errors' => [
+        'emailDev' => true
+    ],
+
     /* uncomment below to use the default session save path from php.ini instead of storage/sessions */
 //    'session' => [
 //        'savePath' => null
