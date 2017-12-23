@@ -10,7 +10,7 @@ use Slim\Http\Response;
 
 class SingleTableHelper
 {
-    public static function updateNoRecord(Container $container, Response $response, $primaryKey, SingleTableModel $model, string $routePrefix)
+    public static function updateRecordNotFound(Container $container, Response $response, $primaryKey, SingleTableModel $model, string $routePrefix)
     {
         $eventNote = $model->getPrimaryKeyColumnName().":$primaryKey|Table: ".$model->getTableName();
         $container->systemEvents->insertWarning('Record not found for update', (int) $container->authentication->getUserId(), $eventNote);

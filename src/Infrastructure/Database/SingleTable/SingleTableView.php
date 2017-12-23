@@ -68,7 +68,7 @@ class SingleTableView extends ListView
     {
         // make sure there is a record for the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
+            return SingleTableHelper::updateRecordNotFound($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         $formFieldData = ($request->isGet()) ? $record : $_SESSION[SESSION_REQUEST_INPUT_KEY];

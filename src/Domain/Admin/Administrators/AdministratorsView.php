@@ -141,7 +141,7 @@ class AdministratorsView extends ListView
     {
         // make sure there is a record for the model
         if (!$record = $this->administratorsModel->getPrimaryTableModel()->selectForPrimaryKey($args['primaryKey'])) {
-            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->administratorsModel->getPrimaryTableModel(), $this->routePrefix);
+            return SingleTableHelper::updateRecordNotFound($this->container, $response, $args['primaryKey'], $this->administratorsModel->getPrimaryTableModel(), $this->routePrefix);
         }
 
         return $this->view->render(

@@ -99,7 +99,7 @@ class SingleTableController extends Controller
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->model->selectForPrimaryKey($args['primaryKey'])) {
-            return SingleTableHelper::updateNoRecord($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
+            return SingleTableHelper::updateRecordNotFound($this->container, $response, $args['primaryKey'], $this->model, $this->routePrefix);
         }
 
         // if no changes made, redirect

@@ -108,7 +108,7 @@ class AdministratorsController extends Controller
 
         // make sure there is a record for the primary key in the model
         if (!$record = $this->administratorsModel->getPrimaryTableModel()->selectForPrimaryKey($primaryKey)) {
-            return SingleTableHelper::updateNoRecord($this->container, $response, $primaryKey, $this->administratorsModel->getPrimaryTableModel(), $this->routePrefix);
+            return SingleTableHelper::updateRecordNotFound($this->container, $response, $primaryKey, $this->administratorsModel->getPrimaryTableModel(), $this->routePrefix);
         }
 
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
