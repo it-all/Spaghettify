@@ -46,7 +46,6 @@ class RolesModel extends SingleTableModel
         $this->baseRoleId = $lastRoleId;
     }
 
-    /** pass in $defaultRole in order to set $defaultRoleId */
     public function getRoles(): array
     {
         return $this->roles;
@@ -78,7 +77,7 @@ class RolesModel extends SingleTableModel
         return (bool) $q->getOne();
     }
 
-    public function getIdSelectField(array $fieldAttributes, string $fieldLabel = 'Role', ?int $selectedOption, bool $useDefaultRoleIdAsSelectedIfNotProvided = true, ?string $fieldError)
+    public function getIdSelectField(array $fieldAttributes, string $fieldLabel = 'Role', ?int $selectedOption, bool $useDefaultAdminRoleIdAsSelectedIfNotProvided = true, ?string $fieldError)
     {
         // validate a provided selectedOption by verifying it is a valid role
         $selectedOptionValid = ($selectedOption === null) ? true : false;
@@ -98,7 +97,7 @@ class RolesModel extends SingleTableModel
 
         // alter selectedOption and fieldError to send to SelectField constructor as empty string if null
         if ($selectedOption === null) {
-            $selectedOption = ($useDefaultRoleIdAsSelectedIfNotProvided) ? $this->defaultRoleId : '';
+            $selectedOption = ($useDefaultAdminRoleIdAsSelectedIfNotProvided) ? $this->defaultAdminRoleId : '';
         }
         if ($fieldError === null) {
             $fieldError = '';
