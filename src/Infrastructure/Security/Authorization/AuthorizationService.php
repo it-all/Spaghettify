@@ -13,10 +13,10 @@ class AuthorizationService
     private $roles;
     private $baseRole;
 
-    public function __construct(array $functionalityPermissions)
+    public function __construct(array $functionalityPermissions, string $defaultAdminRole)
     {
         $this->functionalityPermissions = $functionalityPermissions;
-        $rolesModel = new RolesModel();
+        $rolesModel = new RolesModel($defaultAdminRole);
         $this->roles = $rolesModel->getRoles();
         $this->baseRole = $rolesModel->getBaseRole();
     }

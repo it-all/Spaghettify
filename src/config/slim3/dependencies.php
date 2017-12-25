@@ -26,7 +26,7 @@ $container['authentication'] = function($container) {
 // Authorization
 $container['authorization'] = function($container) {
     $settings = $container->get('settings');
-    return new AuthorizationService($settings['authorization']);
+    return new AuthorizationService($settings['authorization'], $settings['adminDefaultRole']);
 };
 
 // System Events (Database Log)

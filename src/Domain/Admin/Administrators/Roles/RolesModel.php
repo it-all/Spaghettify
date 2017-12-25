@@ -5,21 +5,29 @@ namespace Domain\Admin\Administrators\Roles;
 
 use Infrastructure\Database\SingleTable\SingleTableModel;
 use Infrastructure\Database\Queries\QueryBuilder;
+use It_All\FormFormer\Fields\SelectField;
+use It_All\FormFormer\Fields\SelectOption;
 
 // note that level 1 is the greatest permission
 class RolesModel extends SingleTableModel
 {
-    private $defaultRoleId;
+    /* int */
+    private $defaultAdminRoleId;
+
+    /* array */
     private $roles;
+
+    /* int */
     private $baseRoleId;
 
-    public function __construct()
+    public function __construct(string $defaultAdminRole)
     {
         parent::__construct('roles', 'id, role, level','level');
         $this->addColumnNameConstraint('level', 'positive');
+        $this->setRoles($defaultAdminRole);
     }
 
-    public function setRoles(string $defaultRole = null)
+    public function setRoles(string $defaultAdminRole)
     {
         $this->roles = [];
         $rs = $this->select();
@@ -27,11 +35,11 @@ class RolesModel extends SingleTableModel
         while ($row = pg_fetch_array($rs)) {
             $this->roles[$row['id']] = $row['role'];
 
-            if ($defaultRole != null && $row['role'] == $defaultRole) {
-                $this->defaultRoleId = $row['id'];
+            if ($row['role'] == $defaultAdminRole) {
+                $this->defaultAdminRoleId = (int) $row['id'];
             }
 
-            $lastRoleId = $row['id'];
+            $lastRoleId = (int) $row['id'];
         }
 
         // the last role returned is set to baseRole since order by level
@@ -39,45 +47,63 @@ class RolesModel extends SingleTableModel
     }
 
     /** pass in $defaultRole in order to set $defaultRoleId */
-    public function getRoles(string $defaultRole = null): array
+    public function getRoles(): array
     {
-        if (!isset($this->roles)) {
-            $this->setRoles($defaultRole);
-        }
-
         return $this->roles;
     }
 
-    public function getBaseRoleId(): string
+    public function getBaseRoleId(): int
     {
-        if (!isset($this->roles)) {
-            $this->setRoles();
-        }
-
         return $this->baseRoleId;
     }
 
     public function getBaseRole()
     {
-        if (!isset($this->roles)) {
-            $this->setRoles();
-        }
-
         return $this->roles[$this->baseRoleId];
     }
 
-    public function getDefaultRoleId(string $defaultRole)
+    public function getDefaultAdminRoleId(): int
     {
-        if (isset($this->defaultRoleId)) {
-            return $this->defaultRoleId;
-        }
-        $q = new QueryBuilder("SELECT id FROM roles WHERE role = $1", $defaultRole);
-        return $q->getOne();
+        return $this->defaultAdminRoleId;
+    }
+
+    public function getDefaultAdminRole(): string
+    {
+        return $this->roles[$this->defaultAdminRoleId];
     }
 
     public static function hasAdmin(int $roleId): bool
     {
         $q = new QueryBuilder("SELECT COUNT(id) FROM administrators WHERE role_id = $1", $roleId);
         return (bool) $q->getOne();
+    }
+
+    public function getIdSelectField(array $fieldAttributes, string $fieldLabel = 'Role', ?int $selectedOption, bool $useDefaultRoleIdAsSelectedIfNotProvided = true, ?string $fieldError)
+    {
+        // validate a provided selectedOption by verifying it is a valid role
+        $selectedOptionValid = ($selectedOption === null) ? true : false;
+
+        // create the options
+        $rolesOptions = [];
+        foreach ($this->getRoles() as $roleId => $role) {
+            $rolesOptions[] = new SelectOption($role, (string) $roleId);
+            if (!$selectedOptionValid && $roleId == $selectedOption) {
+                $selectedOptionValid = true;
+            }
+        }
+
+        if (!$selectedOptionValid) {
+            throw new \Exception("Invalid selected option $selectedOption does not exist in roles");
+        }
+
+        // alter selectedOption and fieldError to send to SelectField constructor as empty string if null
+        if ($selectedOption === null) {
+            $selectedOption = ($useDefaultRoleIdAsSelectedIfNotProvided) ? $this->defaultRoleId : '';
+        }
+        if ($fieldError === null) {
+            $fieldError = '';
+        }
+
+        return new SelectField($rolesOptions, (string) $selectedOption, $fieldLabel, $fieldAttributes, $fieldError);
     }
 }

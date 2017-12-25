@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Domain\Admin\Administrators;
 
-use It_All\FormFormer\Fields\InputField;
-use It_All\FormFormer\Fields\SelectField;
-use It_All\FormFormer\Fields\SelectOption;
-use It_All\FormFormer\Form;
+use Domain\Admin\Administrators\Roles\Roles;
 use Domain\Admin\Administrators\Roles\RolesModel;
+use It_All\FormFormer\Fields\InputField;
+use It_All\FormFormer\Form;
 use Infrastructure\Database\SingleTable\SingleTableHelper;
 use Infrastructure\ListView;
 use Infrastructure\UserInterface\Forms\DatabaseTableForm;
@@ -95,14 +94,9 @@ class AdministratorsView extends ListView
         $fields[] = new InputField('Confirm Password', $passwordConfirmationFieldAttributes, FormHelper::getFieldError('password_confirm'));
 
         // Role Field
-        $rolesOptions = [];
-        $rolesModel = new RolesModel();
-        foreach ($rolesModel->getRoles() as $roleId => $role) {
-            $rolesOptions[] = new SelectOption($role, (string) $roleId);
-        }
-
-        $selectedOptionValue = (isset($fieldValues['role_id'])) ? $fieldValues['role_id'] : (string) $rolesModel->getDefaultRoleId($this->container->settings['adminDefaultRole']);
-        $fields[] = new SelectField($rolesOptions, $selectedOptionValue, 'Role', ['name' => 'role_id', 'id' => 'role_id', 'required' => 'required'], FormHelper::getFieldError('role_id'));
+        $rolesModel = new RolesModel($this->container->settings['adminDefaultRole']);
+        $selectedOption = (isset($fieldValues['role_id'])) ? (int) $fieldValues['role_id'] : null;
+        $fields[] = $rolesModel->getIdSelectField(['name' => 'role_id', 'id' => 'role_id', 'required' => 'required'], 'Role', $selectedOption, true, FormHelper::getFieldError('role_id'));
 
         // CSRF Fields
         $fields[] = FormHelper::getCsrfNameField($this->csrf->getTokenNameKey(), $this->csrf->getTokenName());
