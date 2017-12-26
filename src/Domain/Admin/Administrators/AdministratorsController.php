@@ -33,17 +33,20 @@ class AdministratorsController extends Controller
         $input = $_SESSION[SESSION_REQUEST_INPUT_KEY];
         $this->validator = $this->validator->withData($input);
 
+        // bool - either inserting or !inserting (editing)
+        $inserting = $record == null;
+
         $this->validator->rule('required', ['name', 'username', 'role_id']);
         $this->validator->rule('regex', 'name', '%^[a-zA-Z\s]+$%')->message('must be letters and spaces only');
         $this->validator->rule('lengthMin', 'username', 4);
-        if ($record != null && strlen($input['password']) > 0) {
+        if ($inserting || strlen($input['password']) > 0) {
             $this->validator->rule('required', ['password', 'password_confirm']);
-            $this->validator->rule('lengthMin', 'password', 12);
+            $this->validator->rule('regex', 'password', '%^\S*(?=\S{12,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$%')->message('Must be at least 12 characters long and have an uppercase, lowercase, and number');
             $this->validator->rule('equals', 'password', 'password_confirm')->message('must be the same as Confirm Password');
         }
 
         // unique column rule for username if it has changed
-        if ($record == null || $record['username'] != $input['username']) {
+        if ($inserting || $record['username'] != $input['username']) {
             $this->validator::addRule('unique', function($field, $value, array $params = [], array $fields = []) {
                 if (!$params[1]->errors($field)) {
                     return !$params[0]->recordExistsForValue($value);
