@@ -88,12 +88,12 @@ class AdministratorsController extends Controller
         $returned = pg_fetch_all($res);
         $insertedRecordId = $returned[0]['id'];
 
-        $this->systemEvents->insertInfo("Inserted admin", (int) $this->authentication->getUserId(), "id:$insertedRecordId");
+        $this->systemEvents->insertInfo("Inserted administrator", (int) $this->authentication->getUserId(), "id:$insertedRecordId");
 
         FormHelper::unsetSessionVars();
 
         $_SESSION[SESSION_ADMIN_NOTICE] = ["Inserted record $insertedRecordId", 'adminNoticeSuccess'];
-        return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINISTRATORS_RESET)); // reset filter
+        return $response->withRedirect($this->router->pathFor(ROUTE_ADMIN_ADMINISTRATORS));
     }
 
     public function putUpdate(Request $request, Response $response, $args)
