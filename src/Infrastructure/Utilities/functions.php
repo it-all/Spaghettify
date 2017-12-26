@@ -243,6 +243,11 @@ function deleteCookie(string $cookieName)
     unset($_COOKIE[$cookieName]);
 }
 
+function isPositiveInteger(string $check)
+{
+    return is_numeric($check) && $check > 0 && $check == round($check);
+}
+
 // saving work on dynamic route registration
 //function registerAll(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routes, array $administratorPermissions)
 //{
