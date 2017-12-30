@@ -248,6 +248,11 @@ function isPositiveInteger(string $check)
     return is_numeric($check) && $check > 0 && $check == round($check);
 }
 
+function getIntOrNull(?string $input)
+{
+    return ($input == null) ? null : (int) $input;
+}
+
 // saving work on dynamic route registration
 //function registerAll(Slim\App $slim, Psr\Container\ContainerInterface $container, array $routes, array $administratorPermissions)
 //{
