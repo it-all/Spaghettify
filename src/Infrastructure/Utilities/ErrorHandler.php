@@ -20,7 +20,7 @@ class ErrorHandler
 
     public function __construct(
         string $logPath,
-        string $redirectPage,
+        ?string $redirectPage,
         bool $echoErrors = false,
         bool $emailErrors = true,
         array $emailTo = [],
@@ -115,8 +115,10 @@ class ErrorHandler
 
         // will only get here if errors have not been echoed above
         if ($die) {
-            $_SESSION[SESSION_NOTICE] = [$this->fatalMessage, 'error'];
-            header("Location: $this->redirectPage");
+            if ($this->redirectPage != null) {
+                $_SESSION[SESSION_NOTICE] = [$this->fatalMessage, 'error'];
+                header("Location: $this->redirectPage");
+            }
             exit();
         }
     }

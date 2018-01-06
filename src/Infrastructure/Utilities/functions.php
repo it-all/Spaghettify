@@ -132,9 +132,12 @@ function getCurrentUri(bool $includeQueryString = true): string
     return $uri;
 }
 
-function getRedirect(string $toURI = null)
+function getRedirect(string $toURI = null): ?string
 {
     if (is_null($toURI)) {
+        if (isRunningFromCommandLine()) {
+            return null;
+        }
         $toURI = getCurrentUri(true);
     }
 
