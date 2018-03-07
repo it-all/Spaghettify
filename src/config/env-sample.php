@@ -21,9 +21,9 @@ return [
     ],
 
     'database' => [
-        'name' => 'yourDbName',
-        'username' => 'yourDbUsername',
-        'password' => 'yourDbPw',
+        'name' => 'mydbname',
+        'username' => 'mydbname',
+        'password' => 'mypassword',
         'host' => '127.0.0.1',
         'port' => 5432
     ],

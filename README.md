@@ -12,7 +12,7 @@ $ cd Spaghettify
 $ composer install  
 
 Create a PostgreSQL database for this project and import spaghettify.postgres.sql (top level) ie:  
- - $ psql -U postgres
+ - $ psql -U postgres (note you may have to edit your pg_hba.conf file to allow local md5 or trust login https://stackoverflow.com/questions/45632463/peer-authentication-failed-for-user-in-postgresql)
  - postgres=# create role mydbname with login; (creating the role with the same name as the database name allows easy psql access)
  - postgres=# alter role mydbname with encrypted password 'mypassword';
  - postgres=# create database mydbname with owner mydbname;
