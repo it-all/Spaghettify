@@ -207,8 +207,7 @@ CREATE TABLE testimonials (
     person character varying(50) NOT NULL,
     place character varying(100) NOT NULL,
     active boolean DEFAULT true NOT NULL,
-    receive_date date NOT NULL,
-    temp character(1)
+    receive_date date NOT NULL
 );
 
 
@@ -367,7 +366,7 @@ SELECT pg_catalog.setval('system_events_id_seq', 7629, true);
 -- Data for Name: testimonials; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY testimonials (id, testimonial, person, place, active, receive_date, temp) FROM stdin;
+COPY testimonials (id, testimonial, person, place, active, receive_date) FROM stdin;
 \.
 
 
