@@ -69,7 +69,7 @@ $container['view'] = function ($container) {
         unset($_SESSION[SESSION_NOTICE]);
     }
 
-    // make some config setting available inside templates
+    // make some config settings available inside templates
     $view->getEnvironment()->addGlobal('isLive', $settings['isLive']);
     $view->getEnvironment()->addGlobal('businessName', $settings['businessName']);
     $businessDba = (mb_strlen($settings['businessDba']) > 0) ? $settings['businessDba'] : $settings['businessName'];
