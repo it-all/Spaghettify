@@ -14,7 +14,7 @@ $config = array_replace_recursive(
     require __DIR__ . '/config/env.php'
 );
 
-// emailer is used in error handler and container
+// emailer, if available, is used in error handler and container
 // null it out if on dev server and config setting is false
 if (!$config['isLive'] && !$config['sendEmailsOnDevServer']) {
     $mailer = null;
