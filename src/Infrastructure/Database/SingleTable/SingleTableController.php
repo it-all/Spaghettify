@@ -195,8 +195,7 @@ class SingleTableController extends Controller
             $tableName = $this->model->getTableName();
 
             $this->systemEvents->insertInfo("Inserted $tableName", (int) $this->authentication->getUserId(), "$primaryKeyColumnName:$insertedRecordId");
-
-            if ($sendEmail) {
+            if ($sendEmail && $this->mailer !== null) {
                 $settings = $this->container->get('settings');
                 $this->mailer->send(
                     $_SERVER['SERVER_NAME'] . " Event",

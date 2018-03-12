@@ -16,10 +16,7 @@ class PhpMailerService {
     private $smtpPort;
     private $phpMailer;
 
-    /** @var bool this can allow disabling service entirely, ie for a dev site */
-    private $disableSend;
-
-    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol = 'smtp', string $smtpHost = null, int $smtpPort = null, bool $disableSend = false)
+    public function __construct(string $logPath, string $defaultFromEmail, string $defaultFromName, string $protocol = 'smtp', string $smtpHost = null, int $smtpPort = null)
     {
         $this->logPath = $logPath;
         $this->defaultFromEmail = $defaultFromEmail;
@@ -28,15 +25,10 @@ class PhpMailerService {
         $this->smtpHost = $smtpHost;
         $this->smtpPort = $smtpPort;
         $this->phpMailer = $this->create();
-        $this->disableSend = $disableSend;
     }
 
     public function send(string $subject, string $body, array $toEmails, string $fromEmail = null, string $fromName = null)
     {
-        if ($this->disableSend) {
-            return;
-        }
-
         $toEmails = array_unique($toEmails);
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->Body = $body;

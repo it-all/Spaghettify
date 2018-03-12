@@ -22,15 +22,14 @@ class ErrorHandler
         string $logPath,
         ?string $redirectPage,
         bool $echoErrors = false,
-        bool $emailErrors = true,
-        array $emailTo = [],
         PhpMailerService $m = null,
+        array $emailTo = [],
         $fatalMessage = 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.'
     )
     {
         $this->logPath = $logPath;
         $this->redirectPage = $redirectPage;
-        $this->emailErrors = $emailErrors;
+        $this->emailErrors = $m !== null;
         $this->echoErrors = $echoErrors;
         $this->mailer = $m;
         $this->emailTo = $emailTo;

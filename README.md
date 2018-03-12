@@ -2,6 +2,23 @@
 
 Spaghettify is a PHP 7, PostgreSQL RESTful web platform with built-in administration, based on <a target="_blank" href="https://www.slimframework.com/">Slim Framework</a>.  
 
+FEATURES  
+<a target="_blank" href="https://postgresql.org">PostGreSQL Database</a> Integration  
+MVC Structure  
+<a href="#eh">Custom Error Handling</a>  
+<a href="emailing">Emailing</a> with <a target="_blank" href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>    
+<a href="#se">Database Logging of system events and errors</a>  
+<a href="#errLog">Logging of PHP Errors with Stack Trace</a>  
+<a href="#csrf">CSRF Checking</a>  
+<a href="https://twig.symfony.com/">Twig</a> Templates     
+HTML Form Generation using <a target="_blank" href="https://github.com/it-all/FormFormer">FormFormer</a>   
+Data Validation with <a target="_blank" href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a target="_blank" href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
+<a href="#crud">CRUD for Single Database Tables</a>  
+<a href="#authe">Authentication</a> (Log In/Out)  
+Administrative Layout including <a target="_blank" href="#adminNav">Navigation</a>  
+<a href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
+<a href="#xss">XSS Prevention</a>  
+
 INSTALLATION  
 
 Clone the repo  
@@ -38,23 +55,6 @@ If you want to use Gulp for CSS and/or JS preprocessing
 ~$ npm install gulp-plumber gulp-sourcemaps gulp-sass gulp-autoprefixer gulp-cssnano gulp-concat gulp-uglify gulp-babel --save-dev  
 ~$ gulp watch  
 See: https://travismaynard.com/writing/getting-started-with-gulp for further information.  
-
-FEATURES  
-<a target="_blank" href="https://postgresql.org">PostGreSQL Database</a> Integration  
-MVC Structure  
-<a href="#eh">Custom Error Handling</a>  
-Emailing with <a target="_blank" href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>    
-<a href="#se">Database Logging of system events and errors</a>  
-<a href="#errLog">Logging of PHP Errors with Stack Trace</a>  
-<a href="#csrf">CSRF Checking</a>  
-<a href="https://twig.symfony.com/">Twig</a> Templates     
-HTML Form Generation using <a target="_blank" href="https://github.com/it-all/FormFormer">FormFormer</a>   
-Data Validation with <a target="_blank" href="https://github.com/vlucas/valitron">Valitron</a> (NOTE: If you are comparing floating-point numbers with min/max validators, you should install the PHP <a target="_blank" href="http://php.net/manual/en/book.bc.php">BCMath extension</a> for greater accuracy and reliability. The extension is not required for Valitron to work, but Valitron will use it if available, and it is highly recommended.)  
-<a href="#crud">CRUD for Single Database Tables</a>  
-<a href="#authe">Authentication</a> (Log In/Out)  
-Administrative Layout including <a target="_blank" href="#adminNav">Navigation</a>  
-<a href="#autho">Authorization</a> (Permissions for Resource and Functionality Access)    
-<a href="#xss">XSS Prevention</a>  
 
 CODING NEW FUNCTIONALITY  
 Create a new directory under Domain/Admin or Domain/Frontend and create a Model/View/Controller there as necessary. Model these files after existing functionality such as Domain/Admin/Marketing/Testimonials (single database table functionality so uses SingleTable files) or Domain/Admin/Administrators (joined database tables so mostly custom code).  
@@ -94,6 +94,13 @@ Reporting Methods:
 
 See ErrorHandler.php for further info.
 
+<a name="emailing">Emailing with phpMailer</a>  
+Verify mailer service exists (it may not on dev servers, depending on $config['sendEmailsOnDevServer']).  
+// magic method to access mailer inside container  
+if ($this->mailer !== null) {  
+&nbsp;&nbsp;&nbsp;&nbsp;$this->mailer->send(...)  
+}
+                
 <a name="se">System Event Database Logging</a>  
 Certain events such as logging in, logging out, inserting, updating, and deleting database records are automatically logged into the system_events table. You can choose other events to insert as you write your application. For usage examples and help, search "systemEvents->insert" and see SystemEventsModel.php. Note that PHP errors are also logged to the system_events table by default (this can be turned off in config.php).
 

@@ -110,8 +110,9 @@ return [
         'fatalMessage' => 'Apologies, there has been an error on our site. We have been alerted and will correct it as soon as possible.',
         'logToDatabase' => true,
         'echoDev' => true, // echo on dev servers (note, live server will never echo)
-        'emailDev' => false // email on dev servers (note, live server will always email)
     ],
+
+    'sendEmailsOnDevServer' => true,
 
     /* owner, programmer, and service must be set */
     'emails' => [

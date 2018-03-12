@@ -14,21 +14,23 @@ $config = array_replace_recursive(
     require __DIR__ . '/config/env.php'
 );
 
-// used in error handler and container
-$disableMailerSend = !$config['isLive'] && !$config['errors']['emailDev'];
-$mailer = new \Infrastructure\Utilities\PhpMailerService(
-    $config['storage']['logs']['pathPhpErrors'],
-    $config['emails']['service'],
-    $config['businessName'],
-    $config['phpmailer']['protocol'],
-    $config['phpmailer']['smtpHost'],
-    $config['phpmailer']['smtpPort'],
-    $disableMailerSend
-);
+// emailer is used in error handler and container
+// null it out if on dev server and config setting is false
+if (!$config['isLive'] && !$config['sendEmailsOnDevServer']) {
+    $mailer = null;
+} else {
+    $mailer = new \Infrastructure\Utilities\PhpMailerService(
+        $config['storage']['logs']['pathPhpErrors'],
+        $config['emails']['service'],
+        $config['businessName'],
+        $config['phpmailer']['protocol'],
+        $config['phpmailer']['smtpHost'],
+        $config['phpmailer']['smtpPort']
+    );
+}
 
 // error handling
 $echoErrors = !$config['isLive'];
-$emailErrors = $config['isLive'] || $config['errors']['emailDev'];
 $emailErrorsTo = [];
 foreach ($config['errors']['emailTo'] as $roleEmail) {
     if (!isset($config['emails'][$roleEmail])) {
@@ -41,9 +43,8 @@ $errorHandler = new Utilities\ErrorHandler(
     $config['storage']['logs']['pathPhpErrors'],
     Utilities\getRedirect(),
     $echoErrors,
-    $emailErrors,
-    $emailErrorsTo,
-    $mailer
+    $mailer,
+    $emailErrorsTo
 );
 
 // workaround for catching some fatal errors like parse errors. note that parse errors in this file and index.php are not handled, but cause a fatal error with display (not displayed if display_errors is off in php.ini, but the ini_set call will not affect it).
