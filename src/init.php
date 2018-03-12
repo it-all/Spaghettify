@@ -59,7 +59,7 @@ ini_set( 'display_startup_errors', 'off' );
 // any errors prior to the following line will not be logged
 ini_set('error_log', $config['storage']['logs']['pathPhpErrors']); // even though the error handler logs errors, this ensures errors in the error handler itself or in this file after this point will be logged. note, if using slim error handling, this will log all php errors
 
-// used in error handler and container
+// database is used in error handler and container
 // do this after setting error handler in case connection fails
 $dbPassword = (isset($config['database']['password'])) ? $config['database']['password'] : null;
 $dbHost = (isset($config['database']['host'])) ? $config['database']['host'] : null;
@@ -72,7 +72,7 @@ $database = new \Infrastructure\Database\Postgres(
     $dbPort
 );
 
-// used in error handler and container
+// system events model is used in error handler and container
 $systemEventsModel = new \Infrastructure\SystemEvents\SystemEventsModel();
 
 if ($config['errors']['logToDatabase']) {
